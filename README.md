@@ -2,7 +2,7 @@
 
 突然想到的名字，那么就作为项目代号吧！`Project PRPR`就类似于田牌大法的`Project Spatan`~
 
-**1月上旬会更新[网站](http://prpr.mewx.org)以及放出初版app设计的思维导图，所有进展都会标记在思维导图上，届时欢迎关注~**
+**1月中旬会更新[网站](http://prpr.mewx.org)，届时欢迎关注~ 思维导图已更新~**
 
 ## 再来简介一下构想
 
@@ -16,8 +16,8 @@
 - 最重要的是，**毕业设计之后开源 =。= 非盈利嗯 JUST FOR FUN**
 - **长期维护！长期维护！长期维护！**如果用户量超过30,000会考虑加入捐助功能，并且自建辅助服务器用以提高用户体验；
 
-## 思维导图 - 未完成版
+## 思维导图 - 完善中
 
-*Last updated: 2015/12/22*
+*Last updated: 2016/01/12*
 
 ![MindProject](https://raw.githubusercontent.com/MewX/prpr-reader/gh-pages/mindproject.jpeg)
