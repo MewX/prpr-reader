@@ -1,4 +1,4 @@
-package org.mewx.prdemo;
+package org.mewx.projectprpr;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

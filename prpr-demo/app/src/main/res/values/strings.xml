@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">PluggableReaderDemo</string>
+    <string name="app_name">Project PRPR DEMO</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">General Settings</string>
+
+    <string name="title_activity_main">Project PRPR</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
+    <string name="drawer_item_name_library_local">Local Library</string>
 </resources>

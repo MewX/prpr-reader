@@ -1,4 +1,4 @@
-package org.mewx.prdemo;
+package org.mewx.projectprpr;
 
 import org.junit.Test;
 

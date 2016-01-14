@@ -5,13 +5,16 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "org.mewx.prdemo"
+        applicationId "org.mewx.projectprpr"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "under developing"
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -24,9 +27,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // google
+    compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 
-    // third party
+    // .jar only is enough, because .so is automatically synced in main/jniLibs
+    compile fileTree(dir: 'libs', include: ['.jar', '.so'])
 
+    // third party
+    compile 'com.github.mcxiaoke:android-volley:1.0.19'
 }

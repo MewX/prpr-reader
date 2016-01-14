@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Project PRPR 演示版</string>
+    <string name="action_settings">通用设置</string>
+    <string name="navigation_drawer_close">关闭导航栏</string>
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="drawer_item_name_library_local">本地书架</string>
+    <string name="title_activity_main">Project PRPR</string>
+    <string name="title_activity_splash">欢迎使用</string>
+</resources>
