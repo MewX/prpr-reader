@@ -36,4 +36,5 @@ dependencies {
 
     // third party
     compile 'com.github.mcxiaoke:android-volley:1.0.19'
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
 }

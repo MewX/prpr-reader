@@ -12,8 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.activity.template.AppCompatTemplateActivity;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatTemplateActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
