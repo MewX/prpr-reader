@@ -1,7 +1,10 @@
+---
+layout: nil
+---
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Project PRPR - 纯净的新一代安卓阅读器 | A MewX Work</title>
+	<title>{{ site.title }}</title>
 	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="js/jquery.min.js"></script>
@@ -27,15 +30,7 @@
 			</div>
 				<div class="top-nav">
 					<span class="menu"><img src="images/menu.png" alt=""> </span>
-					<ul>
-						<li class="active" ><a href="index.html" >主页</a></li>
-						<li><a href="devlog.html" >开发日志</a></li>
-						<li><a href="msg.html" >留言板</a></li>
-						<!--<li><a href="services.html" > SERVICES</a></li>-->
-						<!--<li><a href="404.html" >  SOLUTIONS  </a></li>-->
-						<!--<li><a href="prices.html" > PRICES </a></li>-->
-						<!--<li><a href="contact.html" >CONTACT</a></li>-->
-					</ul>
+					<ul>{% include nav_bar.html %}</ul>
 					<!--script-->
 				<script>
 					$("span.menu").click(function(){
@@ -110,26 +105,10 @@
 	<!---->
 	<div class="content">
 		<div class="container">
-			<div class="content-top">
-				<!--<div class="col-md-4 grid">-->
-					<!--<h3><i></i> Cool clear weahter</h3>-->
-					<!--<p>Blandit, in, augue at tincidunt ut augue elit amet feugiat laoreet. Autem nisl tincidunt aliquip eu minim veniam feugait accumsan dolore eros </p>-->
-					<!--<a href="#" class="just-do-in">Just do it </a>-->
-				<!--</div>-->
-				<!--<div class="col-md-4 grid">-->
-					<!--<h3><i class="mid"></i>This Weather sucks</h3>-->
-					<!--<p>Blandit, in, augue at tincidunt ut augue elit amet feugiat laoreet. Autem nisl tincidunt aliquip eu minim veniam feugait accumsan dolore eros </p>-->
-					<!--<a href="#" class="just-do-in">Just do it </a>-->
-				<!--</div>-->
-				<!--<div class="col-md-4 grid">-->
-					<!--<h3><i class="just"></i> Clouds All Around</h3>-->
-					<!--<p>Blandit, in, augue at tincidunt ut augue elit amet feugiat laoreet. Autem nisl tincidunt aliquip eu minim veniam feugait accumsan dolore eros</p>-->
-					<!--<a href="#" class="just-do-in">Just do it </a>-->
-				<!--</div>-->
-				<!--<div class="clearfix"> </div>-->
-			</div>
+			<!--<div class="content-top">
+			</div>-->
 			<div class="content-grid">
-				<h2>简介一下构想</h2>
+				<h2>简介一下构想</h2><hr>
 				<ul style="text-align: left;">
 					<li>主界面是阅读器的书架，本地书籍列表，也可以导入本地书籍，主打无广告、无书城的纯净阅读；</li>
 					<li>然后可以到一个“数据源插件库”（暂定名）下载感兴趣的数据源插件（几K大小，我开发的），数据源库我用github pages做的json或者html，中间环节采用了CloudFlare的CDN，我也会设置备用线路（俺会自掏腰包的 _(:3」∠)_）；</li>
@@ -156,24 +135,24 @@
 		<div class="container">
 			<div class="footer-top">
 				<div class="col-md-12">
-					<p style="color: snow"><b>希望增加插件的网站欢迎留言（最好加一下推荐理由），或者发邮件<img src="https://img.alicdn.com/imgextra/i1/393833486/TB2Moz3ipXXXXXyXpXXXXXXXXXX_!!393833486.png"/>，目前打算的网站有：linovel、sfacg、8kana、etc</b></p>
+					<p style="color: snow"><b>希望增加插件的网站欢迎留言（最好加一下推荐理由），或者发邮件【&#0000105;&#0109;&#0000101;&#0119;&#120;&#0064;&#x00071;&#0000113;&#46;&#099;&#0000111;&#0000109;】，目前打算的网站有：linovel、sfacg、8kana、etc</b></p>
 				</div>
 			</div>
-			<p class="footer-class">Copyright © 2016-  by  <a href="http://mewx.org/" target="_blank">MewX</a> </p>
+			{% include copyleft.html %}
 		</div>
+        <script language="javascript">document.getElementById("id_home").setAttribute("class","active");</script>
 		<script type="text/javascript">
-						$(document).ready(function() {
-							/*
-							var defaults = {
-					  			containerID: 'toTop', // fading element id
-								containerHoverID: 'toTopHover', // fading element hover id
-								scrollSpeed: 1200,
-								easingType: 'linear' 
-					 		};
-							*/
-							
-							$().UItoTop({ easingType: 'easeOutQuart' });
-						});
+			$(document).ready(function() {
+				/*
+				var defaults = {
+					containerID: 'toTop', // fading element id
+					containerHoverID: 'toTopHover', // fading element hover id
+					scrollSpeed: 1200,
+					easingType: 'linear' 
+				};
+				*/
+				$().UItoTop({ easingType: 'easeOutQuart' });
+			});
 		</script>
 		<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
 

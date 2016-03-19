@@ -1,0 +1,16 @@
+# General setting
+markdown: kramdown
+encoding: utf-8
+
+# Site info
+baseurl: http://prpr.mewx.org/
+#baseurl: /
+#paginate: 1000
+permalink: blog/:year:month/:title
+exclude: ["README.md", "changelog.md", "Gemfile.lock"]
+#gems: [jekyll-paginate]
+
+# site info
+title : Project PRPR - 纯净的新一代安卓阅读器 | A MewX Work
+author: MewX
+email : mewx(at)mewx(dot)org

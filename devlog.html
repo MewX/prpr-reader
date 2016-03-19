@@ -1,84 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>开发日志 | Project PRPR - 纯净的新一代安卓阅读器 | A MewX Work</title>
-	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="js/jquery.min.js"></script>
-	<!-- Custom Theme files -->
-	<!--theme-style-->
-	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-	<!--//theme-style-->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<script type="application/x-javascript">addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }</script>
-	<!--fonts-->
-	<link href='http://fonts.useso.com/css?family=Roboto:400,300,100,500,700,900' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="js/move-top.js"></script>
-	<script type="text/javascript" src="js/easing.js"></script>
-	<!-- slide -->
-</head>
-<body>
-<!--header-->
-	<div class="header">
-		<div class="container">	
-			<div class="logo">
-				<a href="index.html"><img src="images/log.png" alt=""></a>
-			</div>
-				<div class="top-nav">
-					<span class="menu"><img src="images/menu.png" alt=""> </span>
-					<ul >
-						<li><a href="index.html" >主页</a></li>
-						<li class="active" ><a href="devlog.html" >开发日志</a></li>
-						<li><a href="msg.html" >留言板</a></li>
-					</ul>
-					<!--script-->
-				<script>
-					$("span.menu").click(function(){
-						$(".top-nav ul").slideToggle(500, function(){
-						});
-					});
-			</script>
-				</div>
-				<div class="clearfix"> </div>
-			</div>
-		</div>
-<!---->
-	<div class="banner banner-in">
-		 <div class="container">
-			<div class="col-md-6 banner-matter-in">
-				<h1>开发日志</h1>
-			</div>
-				<div class="col-md-6 banner-side side-banner">
-					<div class="col-md-6 side">
-						<img class="img-responsive" src="images/se1.jpg" alt="">
-					</div>
-					<div class="col-md-6 side">
-						<img class="img-responsive" src="images/se.jpg" alt="">
-					</div>
-					<div class="clearfix"> </div>
-				</div>
-				<div class="clearfix"> </div>
-			</div>	
-	</div>
-	<!---->
-	<div class="content" style="min-height: 300px">
-		<div class="container">
-			<p>祝大家新年快乐~~</p>
-		</div>
-	</div>
-	<!---->
-	<div class="footer">
-		<div class="container">
-			<p class="footer-class">Copyright © 2016-  by  <a href="http://mewx.org/" target="_blank">MewX</a> </p>
-		</div>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$().UItoTop({ easingType: 'easeOutQuart' });
-			});
-		</script>
-		<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+---
+layout: sub
+title: "开发日志"
+---
 
-	</div>
-</body>
-</html>
+{% for post in site.posts %}
+<hr>
+<blockquote contenteditable="true">
+  <h3>{{ post.title }}&nbsp;&nbsp;-&nbsp;&nbsp;{{ post.subtitle }}</h3><hr>
+  {{ post.content }}
+  <small>Posted by <i>{{ post.author }}</i> on {{ post.date | date: "%b %d, %Y" }}</small>
+</blockquote>
+{% endfor %}
+
+<script language="javascript">document.getElementById("id_devlog").setAttribute("class","active");</script>
