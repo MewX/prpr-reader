@@ -1,21 +1,23 @@
 package org.mewx.projectprpr.activity;
 
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.activity.template.AppCompatTemplateActivity;
+import org.mewx.projectprpr.plugin.JavaCallLuaJava;
+import org.mewx.projectprpr.template.AppCompatTemplateActivity;
+import org.mewx.projectprpr.template.NavigationFitSystemView;
 
 public class MainActivity extends AppCompatTemplateActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationFitSystemView.OnNavigationItemSelectedListener {
+    private final static String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,10 @@ public class MainActivity extends AppCompatTemplateActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationFitSystemView navigationView = (NavigationFitSystemView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Toast.makeText(this, new JavaCallLuaJava().helloLuaJavaCallFromLuaWithReturn(), Toast.LENGTH_LONG).show();
     }
 
     @Override

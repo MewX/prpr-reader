@@ -1,4 +1,4 @@
-package org.mewx.projectprpr.activity.template;
+package org.mewx.projectprpr.template;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
+import org.mewx.projectprpr.toolkit.thirdparty.SystemBarTintManager;
 
 import org.mewx.projectprpr.R;
 
@@ -23,8 +23,6 @@ public class AppCompatTemplateActivity extends AppCompatActivity {
         // set StatusBar Color
         // TODO: should change when theme change? like dark mode?
         if(Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // final float STATUSBAR_ALPHA = 0.15f;
-
             SystemBarTintManager systemBarTintManager = new SystemBarTintManager(this);
             systemBarTintManager.setStatusBarTintEnabled(true);
             systemBarTintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.colorPrimary));

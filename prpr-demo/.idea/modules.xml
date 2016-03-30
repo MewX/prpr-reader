@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/andro-lua/andro-lua.iml" filepath="$PROJECT_DIR$/andro-lua/andro-lua.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/prpr-demo.iml" filepath="$PROJECT_DIR$/prpr-demo.iml" />
     </modules>
