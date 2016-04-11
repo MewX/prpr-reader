@@ -4,9 +4,13 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * This class packs the request infomation.
  * From "POST", "GET", etc.
+ * Format: arg=encodedArgument&arg=encodedArgument...
  */
 public class NetRequest {
     enum REQUEST_TYPE {
@@ -25,11 +29,17 @@ public class NetRequest {
         // make request args
         if(args != null) {
             StringBuilder params = new StringBuilder("");
-            for (String key : args.keySet())
-                params.append("&").append(key).append("=").append(args.get(key)); // now, like "&a=1&b=1&c=1"
-            this.args = params.toString();
-            if(this.args.length() > 1)
-                this.args = this.args.substring(1); // remove the first "&"
+            for (String key : args.keySet()) {
+                params.append("&").append(key).append("="); // now, like "&a=?&b=?&c=?"
+                try {
+                    params.append(URLEncoder.encode((String)args.get(key), "UTF-8")); // NEED URL ENCODING
+                } catch (UnsupportedEncodingException e) {
+                    // append empty string, nothing to do (user input error, so just ignore)
+                    e.printStackTrace();
+                }
+            }
+            if (params.length() > 1) params.deleteCharAt(0); // remove the leading "&"
+            this.args = params.toString(); // save value
         }
         else this.args = ""; // make default value
     }
