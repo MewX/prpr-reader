@@ -13,8 +13,11 @@ import java.net.URLEncoder;
  * Format: arg=encodedArgument&arg=encodedArgument...
  */
 public class NetRequest {
-    enum REQUEST_TYPE {
-        GET, POST
+    public enum REQUEST_TYPE {
+        GET,
+        POST,
+        SOCKET,
+        ULTRA_REQUEST // this should call the ultra functions in NovelDataSourceBasic, URL is TAG
     }
 
     private REQUEST_TYPE type;
@@ -30,9 +33,10 @@ public class NetRequest {
         if(args != null) {
             StringBuilder params = new StringBuilder("");
             for (String key : args.keySet()) {
+                if (key.length() == 0) continue; // for safe
                 params.append("&").append(key).append("="); // now, like "&a=?&b=?&c=?"
                 try {
-                    params.append(URLEncoder.encode((String)args.get(key), "UTF-8")); // NEED URL ENCODING
+                    params.append(URLEncoder.encode(args.get(key).toString(), "UTF-8")); // NEED URL ENCODING
                 } catch (UnsupportedEncodingException e) {
                     // append empty string, nothing to do (user input error, so just ignore)
                     e.printStackTrace();

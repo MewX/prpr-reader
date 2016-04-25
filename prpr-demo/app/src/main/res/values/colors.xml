@@ -7,4 +7,8 @@
     <color name="generalBackgroundGrey">#EEEEEE</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="plugin_center_card_background">#ffffff</color>
+    <color name="plugin_center_card_text">#ffffff</color>
+    <color name="plugin_center_card_text_background">#80000000</color>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="plugin_center_items">
+        <item>@string/plugin_center_items_data_source</item>
+        <item>@string/plugin_center_items_formats</item>
+    </string-array>
+</resources>

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Project PRPR DEMO</string>
+    <string name="app_developing">Under developing&#8230;</string>
+    <string name="app_press_again_to_exit">Press again to exit app~</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -7,7 +9,15 @@
     <string name="action_settings">General Settings</string>
 
     <string name="title_activity_main">Project PRPR</string>
-    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_settings">Settings</string>
 
     <string name="drawer_item_name_library_local">Local Library</string>
+    <string name="drawer_item_name_plug_in_center">Plug-in Center</string>
+    <string name="drawer_item_name_dictionary">Dictionary</string>
+    <string name="drawer_item_name_cloud">Cloud Service</string>
+    <string name="drawer_item_name_settings">Settings</string>
+
+    <string name="plugin_center_items_data_source">Data Source Plug-ins</string>
+    <string name="plugin_center_items_formats">Reading Formats Plug-ins</string>
+    <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
 </resources>

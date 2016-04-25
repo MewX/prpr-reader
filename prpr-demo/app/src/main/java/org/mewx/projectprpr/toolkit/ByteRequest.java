@@ -6,8 +6,10 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 /**
+ * TODO: this is not tested
  * A canned request for retrieving the response body at a given URL as a String.
  */
+@SuppressWarnings("unused")
 public class ByteRequest extends Request<byte[]> {
     private Response.Listener<byte[]> mListener;
 
@@ -34,12 +36,6 @@ public class ByteRequest extends Request<byte[]> {
      */
     public ByteRequest(String url, Response.Listener<byte[]> listener, Response.ErrorListener errorListener) {
         this(Method.GET, url, listener, errorListener);
-    }
-
-    @Override
-    protected void onFinish() {
-        super.onFinish();
-        mListener = null;
     }
 
     @Override

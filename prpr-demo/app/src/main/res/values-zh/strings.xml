@@ -6,5 +6,13 @@
     <string name="navigation_drawer_open">打开导航栏</string>
     <string name="drawer_item_name_library_local">本地书架</string>
     <string name="title_activity_main">Project PRPR</string>
-    <string name="title_activity_splash">欢迎使用</string>
+    <string name="drawer_item_name_cloud">云端服务</string>
+    <string name="drawer_item_name_dictionary">词典</string>
+    <string name="drawer_item_name_plug_in_center">插件中心</string>
+    <string name="drawer_item_name_settings">设置</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="plugin_center_items_data_source">数据源插件</string>
+    <string name="plugin_center_items_formats">阅读格式插件</string>
+    <string name="app_developing">正在开发中</string>
+    <string name="app_press_again_to_exit">再按一次即可退出应用~</string>
 </resources>

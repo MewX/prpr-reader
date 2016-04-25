@@ -1,7 +1,6 @@
 package org.mewx.projectprpr.global;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import org.mewx.projectprpr.plugin.component.PluginInfo;
 
 import java.io.File;
 
@@ -11,7 +10,14 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 public class YBL {
+    // enumerables
+    public enum VERSION_TYPE_ENUM {
+        TEST,
+        PUBLISH
+    }
+
     // global constant strings
+    public static final String PLUGIN_PACKAGE = "org.mewx.projectprpr.plugin.builtin";
     public static final String PROJECT_FOLDER = "prpr";
     public static final String PROJECT_FOLDER_CACHE = PROJECT_FOLDER + File.separator + "cache";
     public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + "downloads";
@@ -30,6 +36,18 @@ public class YBL {
         return PROJECT_FOLDER_NETNOVEL + File.separator + dataSourceTag;
     }
 
+    // global constants
+    public static final VERSION_TYPE_ENUM VERSION_TYPE = VERSION_TYPE_ENUM.TEST;
+    public static final PluginInfo[] BUILTIN_PLUGIN = {new PluginInfo("XsDmzj", PluginInfo.PluginType.BUILTIN, "")};
+
 
     // global common variables
+    private static boolean skipSplashScreen = false;
+    public static boolean getSkipSplashScreen() {
+        return skipSplashScreen;
+    }
+    public static void setSkipSplashScreen(boolean skip) {
+        skipSplashScreen = skip;
+    }
+
 }

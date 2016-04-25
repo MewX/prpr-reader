@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 @SuppressWarnings("unused")
 public class ChapterInfo {
     private @NonNull String title;
-    private @NonNull String chapterTag;
+    private @NonNull String chapterTag; // TODO: when save, need to translate string, e.g. '/' -> '_'
 
     /**
      * default construct

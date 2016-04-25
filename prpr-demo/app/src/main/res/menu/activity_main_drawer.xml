@@ -1,60 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_group_main"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_library_local"
             android:icon="@drawable/ic_menu_library_local"
             android:title="@string/drawer_item_name_library_local" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_plug_in_center"
+            android:icon="@drawable/ic_menu_plug_in_center"
+            android:title="@string/drawer_item_name_plug_in_center" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_dictionary"
+            android:icon="@drawable/ic_menu_dictionary"
+            android:title="@string/drawer_item_name_dictionary" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-            <!--<item-->
-                <!--android:id="@+id/nav_send2"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send3"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send4"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send5"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send6"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send7"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        </menu>
-    </item>
-
+    <group android:id="@+id/nav_group_addition"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_cloud"
+            android:icon="@drawable/ic_menu_cloud"
+            android:title="@string/drawer_item_name_cloud" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="@string/drawer_item_name_settings" />
+    </group>
 </menu>

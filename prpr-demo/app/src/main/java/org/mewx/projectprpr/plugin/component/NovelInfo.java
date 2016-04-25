@@ -2,6 +2,7 @@ package org.mewx.projectprpr.plugin.component;
 
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by MewX on 4/9/2016.
@@ -13,26 +14,30 @@ import android.support.annotation.NonNull;
  * 连载状态 已完成
  * 最后更新 2012-11-02
  */
+@SuppressWarnings("unused")
 public class NovelInfo {
-    public @NonNull String title;
-    public @NonNull String dataSource; // set by parent
+    public @NonNull String title; // may be id? hash?
+    public @NonNull String dataSource = ""; // TODO: set by parent
     public @NonNull String bookTag; // id in data source, just an identifier
-    public @NonNull String author;
-    private ContentValues infoPairs;
+    public @NonNull String author = "";
+    public @NonNull String coverUrl = ""; // if has none, set empty
+    private @NonNull ContentValues infoPairs = new ContentValues();
 
     public NovelInfo(@NonNull String bookTag, @NonNull String title) {
         this.bookTag = bookTag;
         this.title = title;
     }
 
-    public NovelInfo(@NonNull String bookTag, @NonNull String title, @NonNull  String author) {
+    public NovelInfo(@NonNull String bookTag, @NonNull String title, @NonNull String author, @NonNull String coverUrl) {
         this(bookTag, title);
         this.author = author;
+        this.coverUrl = coverUrl;
     }
 
-    public NovelInfo(@NonNull String bookTag, @NonNull String title, @NonNull  String author, ContentValues cv) {
-        this(bookTag, title, author);
-        this.infoPairs = cv;
+    public NovelInfo(@NonNull String bookTag, @NonNull String title, @NonNull  String author, @NonNull String coverUrl, @Nullable ContentValues cv) {
+        this(bookTag, title, author, coverUrl);
+        if (cv != null)
+            this.infoPairs = cv;
     }
 
     public @NonNull String getBookTag() {
@@ -69,5 +74,22 @@ public class NovelInfo {
      */
     public void setDataSource(@NonNull String dataSource) {
         this.dataSource = dataSource;
+    }
+
+    @NonNull
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(@NonNull String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
+
+    public ContentValues getInfoPairs() {
+        return infoPairs;
+    }
+
+    public void setInfoPairs(ContentValues infoPairs) {
+        this.infoPairs = infoPairs;
     }
 }

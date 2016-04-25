@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.global.YBL;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -25,18 +26,23 @@ public class SplashActivity extends Activity {
 
         findViewById(R.id.splash_image).setOnClickListener(new OnClickSkipSplashScreen());
 
-        activityDeadCounter = new CountDownTimer(AUTO_HIDE_DELAY_MILLIS, 100) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                // Animation can be here.
-            }
+        if(YBL.VERSION_TYPE == YBL.VERSION_TYPE_ENUM.TEST || YBL.getSkipSplashScreen()) {
+            endActivityInstantly();
+        }
+        else {
+            activityDeadCounter = new CountDownTimer(AUTO_HIDE_DELAY_MILLIS, 100) {
+                @Override
+                public void onTick ( long millisUntilFinished){
+                    // Animation can be here.
+                }
 
-            @Override
-            public void onFinish() {
-                // time-up, and jump
-                endActivity();
-            }
-        }.start();
+                @Override
+                public void onFinish () {
+                    // time-up, and jump
+                    endActivity();
+                }
+            }.start();
+        }
     }
 
     private void endActivity() {
@@ -45,6 +51,14 @@ public class SplashActivity extends Activity {
         intent.setClass(SplashActivity.this, MainActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
+        finish(); // destroy itself
+    }
+
+    private void endActivityInstantly() {
+        Intent intent = new Intent();
+        intent.setClass(SplashActivity.this, MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0); // no animation
         finish(); // destroy itself
     }
 
@@ -65,7 +79,7 @@ public class SplashActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            // time consuming task judgement
+            // TODO: time consuming task judgement
 
             // just end this activity
             endActivity();

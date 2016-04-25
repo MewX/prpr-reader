@@ -12,7 +12,13 @@ public class PageNumBetween {
     }
 
     public PageNumBetween(int beg, int end) {
-        this.beg = beg;
-        this.end = end;
+        if(beg < end) {
+            this.beg = beg;
+            this.end = end;
+        }
+        else {
+            this.end = beg;
+            this.beg = end;
+        }
     }
 }

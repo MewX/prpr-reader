@@ -6,8 +6,14 @@ import android.text.TextUtils;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.toolkit.FileTool;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by MewX on 4/11/2016.
@@ -18,32 +24,53 @@ import java.nio.charset.StandardCharsets;
 @SuppressWarnings("unused")
 public class NovelContent {
     private @NonNull String filePath = ""; // full path, and authorized
-    private StringBuilder content;
+    private @NonNull ArrayList<NovelContentLine> loadedContent = new ArrayList<>();
 
     public NovelContent() {
-        this("", "");
     }
 
-    public NovelContent(@NonNull String filePath, String content) {
-        setFileName(filePath);
-        this.content = new StringBuilder(content);
+    public NovelContent(@NonNull String filePath) {
+        this.filePath = filePath;
+        loadFile();
     }
 
     public void setFileName(@NonNull String filePath) {
         this.filePath = filePath;
 
         // intelligent decision
-        if(content.length() == 0) loadFile();
+        if(loadedContent.size() == 0) loadFile();
         else  saveFile();
     }
 
     private void loadFile() {
         // TODO: need to rewrite to support large file.
         if(!TextUtils.isEmpty(filePath)) {
+            String line;
             try {
-                content.append(new String(FileTool.loadFile(filePath), YBL.STANDARD_CHARSET));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(filePath), Charset.forName(YBL.STANDARD_CHARSET)));
+
+                while ((line = br.readLine()) != null) {
+                    if(line.length() == 0) continue;
+                    switch (line.charAt(0)) {
+                        case 'I':
+                            // transferred meaning: IMAGE_URL
+                            addToNovelContent(
+                                    new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL, line.substring(1)));
+                            break;
+                        case 'T':
+                        default:
+                            // transferred meaning: TEXT
+                            addToNovelContent(
+                                    new NovelContentLine(NovelContentLine.TYPE.TEXT, line.substring(1)));
+                            break;
+                    }
+                }
+
+                br.close();
+            } catch (Exception ok) {
+                // file not found an just skip (FileNotFoundException, IOException)
+                ok.printStackTrace();
             }
         }
     }
@@ -51,25 +78,59 @@ public class NovelContent {
     private void saveFile() {
         // TODO: need to rewrite to support large file.
         if(!TextUtils.isEmpty(filePath)) {
-            FileTool.saveFile(filePath, this.content.toString(), true);
+            // delete file first
+            FileTool.deleteFile(filePath);
+
+            String line;
+            try {
+                OutputStreamWriter osw = new OutputStreamWriter(
+                        new FileOutputStream(filePath), Charset.forName(YBL.STANDARD_CHARSET));
+
+                for (NovelContentLine ncl : loadedContent) {
+                    if (ncl.content.length() == 0) {
+                        osw.write("T");
+                    }
+                    else {
+                        switch (ncl.type) {
+                            case TEXT:
+                                osw.write("T" + ncl.content);
+                                break;
+                            case IMAGE_URL:
+                                osw.write("I");
+                        }
+                    }
+                }
+
+                osw.close();
+            } catch (Exception ok) {
+                // file not found an just skip (FileNotFoundException, IOException)
+                ok.printStackTrace();
+            }
         }
     }
 
-    public void saveToNovel(String content) {
-        this.content = new StringBuilder(content);
-        saveFile();
-    }
-
-    public void appendToNovel(String content) {
-        this.content.append(content);
+    public void addToNovelContent(NovelContentLine content) {
+        loadedContent.add(content);
         saveFile(); // TODO: delta file
     }
 
-    public String readNext() {
-        return content.toString();
+    public void addToNovelContent(List<NovelContentLine> content) {
+        loadedContent.addAll(content);
+        saveFile();
     }
 
-    public boolean hasNext() {
-        return false;
+    public void addToNovelContent(NovelContent nc) {
+        for(int i = 0; i < nc.getContentLineCount(); i ++) {
+            addToNovelContent(nc.getContentLine(i));
+        }
+        saveFile();
+    }
+
+    public int getContentLineCount() {
+        return loadedContent.size(); // TODO: this should handle the large file
+    }
+
+    public NovelContentLine getContentLine(int i) {
+        return loadedContent.get(i);
     }
 }

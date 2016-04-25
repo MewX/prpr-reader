@@ -2,28 +2,80 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.mewx.projectprpr">
 
+    <!--
+          ,rh9GG835s:.
+         .i5XM@@@@@@@#A81:
+        ,s&@@H31s153XB@@#A3r,
+       ,sG#@&1       :1G#@@B9r:.    ...
+       ,SB@Ah, .,,.    .hA@@MHHA&X88X&&X95hr:.
+      .;8##8i  .isi.    .sH@@#BBMMH&&ABMM##MH&G3hr;,.
+      .rX@#8; .;s1i.     .i151i:;;,,,;11hSGAM@@@#BAX9hi,        .;iiii;,
+       rG##Xr .,;;:.          ..,i153XXG93SS38GABHH&&A&X91:,;138XB@#MMB&3s,
+       ,SB@BS,            .. .,.r8X88XXG8895SSi;r58GXG39GX88XHMMHXG&AB#@@#Ah,
+        sX@@H5.           .  .;iSABX895h1shh8HA8h;:ih3835h59G8hi:.  .,i18M@M8i
+      .sGM@#Xs   ..         .i9XG999XAHH&91;;s3&BBG1;:rSXX31r;          .h&@BS
+      ,8#@BS;..           ..sGHH&9hsshS53X&X8S5113AHGh;.i9BHGh;.  .:rr:. .SBH1
+      hH@Hh, ..           .iS88G&&&&&X831i;;s539s.:sS3h; .i5XHA3;.:isr:. i&MGi
+     :A#H5.  ..           .::;h885srr1S889Ss: ,;:.  .:;,..  ,1&BGr.,:. .rG#H5,
+    i5#M9;                  ,ih3GG31i,  .;rr: .            ...sXH8r,..,h&##Xs.
+    XA#Gr.   .       ..  .:rh3331r59GX8h;                    ..iSGG99X&B#MX1,
+    M##8;            ...;1533S51i;rshS9XX9h:...              .. ,sS5h8#@#Xi
+    @@M5, ..          .sS3SShr;iss;,. .:s9AGs..              ..,;i,  ,8##&s.
+    MMHr            .;sSSS5r:,.,ish1r:. .;SHGi               ..:ii.  ;3B@B5, .
+    BMB5,  .       :s5S3S51;.   .iSHM&h;.,s&A5,                     .r8&&&3i
+    SG#&r  ..    ,ihSSSh1h1i,...   i3&&8339HHS,                     ,1S1hG8s .
+    ;h#@Gi     . ;33SS1:;5GXG889Shr. ,r1h59HB8s.                   .h&S;r99r..
+     ,8##8;      ;SS3h, ;3BX3559&HA81;,,. .r9X9i                   iGBs.i391,
+      ,9#@Xh,    ;SSSh. .s881,.,:;r1h1sh51i;r5X8s.                 i9A5is98s.
+        hB@#Gr   ,hS3h:. .1AMBAX8Ssi:,.,;irsssS&Xh:                ;3A9hh33i
+      :is9B#@HSs:.,sS35:  ,18&AHM@#BH&831i::sS3S8&Si.             ..1&A839h:
+    SS889511SXB#BG5rrsi. ..,::,,;rs58&B##MHG3S5ii3X91i,           ..:SHBHGs.
+    &&Xs,   ,i19&M#HGSs;,.,;ri;,.   .:r58G31i.  :198G9s,.          .:hA@@&r.
+    5s:.      ..:r159X&&X831rriiiii;;isi:.   .. ;hShSXX3s:,.         ,sGBAh,
+            ....  . .,;rh9&A&8Shh1s;.          ;s551rsSG3:.            ;SX9i
+                          ,ih9GGXA&8Shsi;:,,...ihSS5i :SG3;             ;3G5;
+                                .:sS988889933SS5S8XG35S8H&i              ;SGh
+    有句话怎么说的？No zuo, no die！自己选的题目，含着泪也做不完！-->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
+        android:name="org.mewx.projectprpr.MyApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_splash"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
+        </activity>
+        <activity
+            android:name=".activity.PluginCenterDataSourceActivity"
+            android:label="@string/title_activity_plugin_center_data_source"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
         </activity>
     </application>
 
