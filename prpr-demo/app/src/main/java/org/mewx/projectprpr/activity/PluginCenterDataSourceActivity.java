@@ -30,6 +30,7 @@ import java.util.List;
 
 public class PluginCenterDataSourceActivity extends AppCompatActivity {
     private static final String TAG = PluginCenterDataSourceActivity.class.getSimpleName();
+    public static final String DATA_SOURCE_TAG = "datasource";
 
     private List<PluginInfo> pluginList = Arrays.asList(YBL.BUILTIN_PLUGIN); // for operation
     private List<DataSourceItem> itemList = new ArrayList<>(); // for displaying
@@ -75,7 +76,14 @@ public class PluginCenterDataSourceActivity extends AppCompatActivity {
             adapter.setOnRecyclerViewListener(new DataSourceAdapter.OnRecyclerViewListener() {
                 @Override
                 public void onItemClick(int position) {
-                    Toast.makeText(PluginCenterDataSourceActivity.this, "position: " + position, Toast.LENGTH_SHORT).show();
+                    if (pluginList.get(position).getPath().contains("http")) {
+                        // TODO: when click, judge whether downloaded, if not, download, else jump to Activity
+
+                        // TODO: change pluginList, and run the following code
+                    }
+                    else {
+                        gotoPluginInitialActivity(position);
+                    }
                 }
 
                 @Override
@@ -93,5 +101,13 @@ public class PluginCenterDataSourceActivity extends AppCompatActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void gotoPluginInitialActivity(int index) {
+        if (0 <= index && index < pluginList.size()) {
+            Intent intent = new Intent(PluginCenterDataSourceActivity.this, DataSourceItemInitialActivity.class);
+            intent.putExtra(DATA_SOURCE_TAG, pluginList.get(index));
+            startActivity(intent);
+        }
     }
 }

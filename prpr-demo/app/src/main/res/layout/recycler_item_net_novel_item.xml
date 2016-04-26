@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card-view="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="2dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/novel_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card-view:cardBackgroundColor="@color/novel_item_white"
+        card-view:cardElevation="2dp"
+        card-view:cardPreventCornerOverlap="true"
+        card-view:cardUseCompatPadding="true"
+        card-view:cardMaxElevation="2dp">
+
+        <LinearLayout
+            android:id="@+id/item_card"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="horizontal">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/novel_cover"
+                android:layout_width="80dp"
+                android:layout_height="112dp"
+                android:layout_margin="8dp"
+                android:scaleType="fitXY"
+                fresco:fadeDuration="250"
+                fresco:placeholderImageScaleType="fitXY"
+                fresco:placeholderImage="@drawable/ic_empty_image" />
+
+            <RelativeLayout
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:adjustViewBounds="true"
+                android:minHeight="112dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- 112dp - 32dp - 1dp = 79dp-->
+                <TableLayout
+                    android:id="@+id/info_table"
+                    android:paddingTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/divider"
+                    android:adjustViewBounds="true"
+                    android:minHeight="80dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+
+                    <TableRow
+                        android:id="@+id/novel_data_source_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:paddingRight="16dp"
+                            android:text="@string/novel_item_data_source_with_colon"
+                            android:textColor="@color/novel_item_text"/>
+
+                        <TextView
+                            android:id="@+id/novel_data_source"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:textSize="12sp"
+                            android:text="@string/novel_item_loading"
+                            android:textColor="@color/novel_item_text"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/novel_item_text_author"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:paddingRight="16dp"
+                            android:text="@string/novel_item_author_with_colon"
+                            android:textColor="@color/novel_item_text"/>
+
+                        <TextView
+                            android:id="@+id/novel_author"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:textSize="12sp"
+                            android:text="@string/novel_item_loading"
+                            android:textColor="@color/novel_item_text"/>
+                    </TableRow>
+
+                    <!-- Add more content values here in code -->
+
+                </TableLayout>
+
+                <TextView
+                    android:id="@+id/novel_title"
+                    android:transitionName="novel_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:text="@string/novel_item_loading"
+                    android:textColor="@color/novel_item_title"
+                    android:singleLine="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_below="@+id/novel_title"
+                    android:background="@color/novel_item_divider"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

@@ -20,4 +20,11 @@
     <string name="plugin_center_items_data_source">Data Source Plug-ins</string>
     <string name="plugin_center_items_formats">Reading Formats Plug-ins</string>
     <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
+    <string name="title_activity_data_source_item_initial">DataSourceItemInitialActivity</string>
+
+    <string name="novel_item_loading">Loading&#8230;</string>
+    <string name="novel_item_title_with_colon">Title: </string>
+    <string name="novel_item_author_with_colon">Author: </string>
+    <string name="novel_item_data_source_with_colon">From: </string>
+    <string name="novel_item_category_with_colon">Category: </string>
 </resources>

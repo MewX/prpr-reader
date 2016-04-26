@@ -3,9 +3,20 @@ package org.mewx.projectprpr.plugin.component;
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 
+import org.mewx.projectprpr.global.YBL;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
 
 /**
  * This class packs the request infomation.
@@ -13,6 +24,8 @@ import java.net.URLEncoder;
  * Format: arg=encodedArgument&arg=encodedArgument...
  */
 public class NetRequest {
+    private static final String TAG = NetRequest.class.getSimpleName();
+
     public enum REQUEST_TYPE {
         GET,
         POST,
@@ -28,6 +41,8 @@ public class NetRequest {
         // save values
         this.type = requestType;
         this.url = url == null ? "" : url;
+        if(!this.url.contains("http"))
+            this.url = "http://" + this.url; // must start with "http://" or "https://"
 
         // make request args
         if(args != null) {
@@ -46,6 +61,40 @@ public class NetRequest {
             this.args = params.toString(); // save value
         }
         else this.args = ""; // make default value
+    }
+
+    public boolean isEmptyArg() {
+        return TextUtils.isEmpty(args);
+    }
+
+    public String getFullGetUrl() {
+        return isEmptyArg() ? url : url + "?" + args;
+    }
+
+    @Nullable
+    public Request getOkHttpRequest(String charset) throws IOException {
+        Request request;
+        
+        switch (type) {
+            case GET:
+                request = new Request.Builder()
+                        .url(getFullGetUrl())
+                        .addHeader("User-Agent", YBL.USER_AGENT)
+                        .build();
+                return request;
+
+            case POST:
+                request = new Request.Builder()
+                        .url(getFullGetUrl())
+                        .post(RequestBody.create(MediaType.parse("text/plain; charset=" + charset), args))
+                        .addHeader("User-Agent", YBL.USER_AGENT)
+                        .build();
+                return request; //YBL.globalOkHttpClient3.newCall(request).execute();
+
+            default:
+                Log.e(TAG, "Unsupported request type: " + type.toString() + "; " + url + "; " + args);
+                return null;
+        }
     }
 
     public REQUEST_TYPE getType() {

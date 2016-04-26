@@ -15,4 +15,10 @@
     <string name="plugin_center_items_formats">阅读格式插件</string>
     <string name="app_developing">正在开发中</string>
     <string name="app_press_again_to_exit">再按一次即可退出应用~</string>
+    <string name="novel_item_author_with_colon">作者：</string>
+    <string name="novel_item_category_with_colon">类型：</string>
+    <string name="novel_item_loading">载入中……</string>
+    <string name="novel_item_title_with_colon">书名：</string>
+    <string name="title_activity_data_source_item_initial">数据源插件初始页面</string>
+    <string name="title_activity_plugin_center_data_source">数据源插件页面</string>
 </resources>

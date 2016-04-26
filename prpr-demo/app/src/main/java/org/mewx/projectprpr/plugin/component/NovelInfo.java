@@ -16,11 +16,11 @@ import android.support.annotation.Nullable;
  */
 @SuppressWarnings("unused")
 public class NovelInfo {
-    public @NonNull String title; // may be id? hash?
-    public @NonNull String dataSource = ""; // TODO: set by parent
-    public @NonNull String bookTag; // id in data source, just an identifier
-    public @NonNull String author = "";
-    public @NonNull String coverUrl = ""; // if has none, set empty
+    private @NonNull String title; // may be id? hash?
+    private @NonNull String dataSource = ""; // TODO: set by parent
+    private @NonNull String bookTag; // id in data source, just an identifier
+    private @NonNull String author = "";
+    private @NonNull String coverUrl = ""; // if has none, set empty
     private @NonNull ContentValues infoPairs = new ContentValues();
 
     public NovelInfo(@NonNull String bookTag, @NonNull String title) {

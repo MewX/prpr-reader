@@ -35,7 +35,8 @@
             ....  . .,;rh9&A&8Shh1s;.          ;s551rsSG3:.            ;SX9i
                           ,ih9GGXA&8Shsi;:,,...ihSS5i :SG3;             ;3G5;
                                 .:sS988889933SS5S8XG35S8H&i              ;SGh
-    有句话怎么说的？No zuo, no die！自己选的题目，含着泪也做不完！-->
+            有句话怎么说的？No zuo, no die！自己选的题目，含着泪也做不完！
+    -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -44,7 +45,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="org.mewx.projectprpr.MyApp"
+        android:name=".MyApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -72,6 +73,15 @@
         <activity
             android:name=".activity.PluginCenterDataSourceActivity"
             android:label="@string/title_activity_plugin_center_data_source"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
+        </activity>
+        <activity
+            android:name=".activity.DataSourceItemInitialActivity"
+            android:label="@string/title_activity_data_source_item_initial"
+            android:parentActivityName=".template.AppCompatTemplateActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -1,20 +1,16 @@
 package org.mewx.projectprpr.activity.adapter;
 
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
+import com.facebook.drawee.view.SimpleDraweeView;
 
-import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.toolkit.VolleyController;
 
 import java.util.List;
 
@@ -23,7 +19,7 @@ import java.util.List;
  * This class adapt the data source list in plug-in list.
  */
 @SuppressWarnings("unused")
-public class DataSourceAdapter  extends RecyclerView.Adapter {
+public class DataSourceAdapter extends RecyclerView.Adapter {
     private static final String TAG = DataSourceAdapter.class.getSimpleName();
 
     public static interface OnRecyclerViewListener {
@@ -58,17 +54,7 @@ public class DataSourceAdapter  extends RecyclerView.Adapter {
         DataSourceItem item = list.get(i);
         holder.textMain.setText(item.getDisplayName() + " [ v" + item.getVersionCode() + " ]");
         holder.textSub.setText(item.getWebsiteDomain());
-        VolleyController.getInstance(MyApp.getContext()).getImageLoader().get(item.getLogoUrl(), new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                holder.image.setImageBitmap(response.getBitmap());
-            }
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, error.getMessage());
-            }
-        });
+        holder.image.setImageURI(Uri.parse(item.getLogoUrl()));
     }
 
     @Override
@@ -81,14 +67,14 @@ public class DataSourceAdapter  extends RecyclerView.Adapter {
         public View rootView;
         public TextView textMain;
         public TextView textSub;
-        public ImageView image;
+        public SimpleDraweeView image;
         public int position;
 
         public DataSourceViewHolder(View itemView) {
             super(itemView);
             textMain = (TextView) itemView.findViewById(R.id.site_info);
             textSub = (TextView) itemView.findViewById(R.id.site_meta);
-            image = (ImageView) itemView.findViewById(R.id.domain_logo);
+            image = (SimpleDraweeView) itemView.findViewById(R.id.domain_logo);
             rootView = itemView.findViewById(R.id.cardview);
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);
@@ -103,7 +89,7 @@ public class DataSourceAdapter  extends RecyclerView.Adapter {
 
         @Override
         public boolean onLongClick(View v) {
-            return null != onRecyclerViewListener &&onRecyclerViewListener.onItemLongClick(position);
+            return null != onRecyclerViewListener && onRecyclerViewListener.onItemLongClick(position);
         }
     }
 

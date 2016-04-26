@@ -98,4 +98,14 @@ public class Wenku8 extends NovelDataSourceBasic {
     public NovelContent parseNovelContent(String content) {
         return null;
     }
+
+    @Override
+    public NetRequest[] getSearchRequest(String query) {
+        return new NetRequest[0];
+    }
+
+    @Override
+    public List<NovelInfo> parseSearchResults(String[] contents) {
+        return null;
+    }
 }

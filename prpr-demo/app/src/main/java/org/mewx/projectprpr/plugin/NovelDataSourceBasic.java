@@ -127,6 +127,9 @@ public abstract class NovelDataSourceBasic {
     public abstract NetRequest getNovelContentRequest(String tag); // may too large
     public abstract NovelContent parseNovelContent(String content); // parse html novel, images
 
+    public abstract NetRequest[] getSearchRequest(String query); // should request all types of search
+    public abstract List<NovelInfo> parseSearchResults(String[] contents);
+
     protected void Logv(String msg) {
         Log.v(TAG, msg);
     }

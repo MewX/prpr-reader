@@ -11,4 +11,10 @@
     <color name="plugin_center_card_background">#ffffff</color>
     <color name="plugin_center_card_text">#ffffff</color>
     <color name="plugin_center_card_text_background">#80000000</color>
+
+    <color name="novel_item_white">#FFFFFF</color>
+    <color name="novel_item_grey">#EAEAEA</color>
+    <color name="novel_item_title">#F44336</color>
+    <color name="novel_item_text">#444444</color>
+    <color name="novel_item_divider">#DADADA</color>
 </resources>

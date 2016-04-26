@@ -106,7 +106,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     @Override
     public NetRequest getMainListRequest(int pageNum) {
-        return new NetRequest(NetRequest.REQUEST_TYPE.GET, "q.dmzj.com/update_" + pageNum + ".shtml", null);
+        return new NetRequest(NetRequest.REQUEST_TYPE.GET, url + "/update_" + pageNum + ".shtml", null);
     }
 
     @Override
@@ -143,10 +143,10 @@ public class XsDmzj extends NovelDataSourceBasic {
         Matcher matcher = pattern.matcher(pageContent);
         while (matcher.find()) {
             ContentValues cv = new ContentValues();
-            cv.put("type", matcher.group(5));
-            cv.put("status", matcher.group(6));
-            cv.put("update", matcher.group(7));
-            list.add(new NovelInfo(matcher.group(1), matcher.group(3), matcher.group(4), matcher.group(2), cv));
+            cv.put("type", matcher.group(5).trim());
+            cv.put("status", matcher.group(6).trim());
+            cv.put("update", matcher.group(7).trim());
+            list.add(new NovelInfo(matcher.group(1).trim(), matcher.group(3).trim(), matcher.group(4).trim(), matcher.group(2).trim(), cv));
         }
         return list;
     }
@@ -170,7 +170,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     @Override
     public NetRequest getSpecificListRequest(String categoryName, int pageNum) {
-        return new NetRequest(NetRequest.REQUEST_TYPE.GET, "http://q.dmzj.com/tags/js/"
+        return new NetRequest(NetRequest.REQUEST_TYPE.GET, url + "/tags/js/"
                 + categoriesRefId[getCategoryIdByName(categoryName, "getSpecificListRequest")] + ".js", null);
     }
 
@@ -250,7 +250,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     @Override
     public NetRequest getNovelInfoRequest(String tag) {
-        return new NetRequest(NetRequest.REQUEST_TYPE.GET, "http://q.dmzj.com/" + tag + "/index.shtml", null);
+        return new NetRequest(NetRequest.REQUEST_TYPE.GET, url + "/" + tag + "/index.shtml", null);
     }
 
     @Override
@@ -260,13 +260,13 @@ public class XsDmzj extends NovelDataSourceBasic {
         Matcher infoMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(content);
 
         ContentValues cv = new ContentValues();
-        cv.put("category", infoMatcher.group(5));
-        cv.put("status", infoMatcher.group(6));
-        cv.put("last_update", infoMatcher.group(7));
-        cv.put("full_intro", infoMatcher.group(8));
+        cv.put("category", infoMatcher.group(5).trim());
+        cv.put("status", infoMatcher.group(6).trim());
+        cv.put("last_update", infoMatcher.group(7).trim());
+        cv.put("full_intro", infoMatcher.group(8).trim());
 
-        return new NovelInfo(infoMatcher.group(1), infoMatcher.group(3), infoMatcher.group(4),
-                infoMatcher.group(2), cv);
+        return new NovelInfo(infoMatcher.group(1).trim(), infoMatcher.group(3).trim(), infoMatcher.group(4).trim(),
+                infoMatcher.group(2).trim(), cv);
     }
 
     @Override
@@ -326,28 +326,6 @@ public class XsDmzj extends NovelDataSourceBasic {
         第一个难关是&ldquo;产道&rdquo;。</p><p>
         &mdash;&mdash;小心谨慎，小心谨慎&hellip;&hellip;</p><p>
         */
-//        // content, pages_mata
-//        String contentRegex = "chapter_contents_first\">.+?<p>(.+?)</div>.+?jump_select(.+?)</select>";
-//        String pagerRegex = "option value=\"(.*?)\""; // start from 2. (1 is "跳转到")
-//
-//        Matcher contentMatcher = Pattern.compile(contentRegex, Pattern.DOTALL).matcher(preRequestContent);
-//        novelContentSaveTemp = purifyNovelContent(contentMatcher.group(1));
-//
-//        List<NetRequest> requestList = new ArrayList<>();
-//        String pager = contentMatcher.group(2);
-//        Matcher pagerMatcher = Pattern.compile(pagerRegex, Pattern.DOTALL).matcher(pager);
-//        int count = 0;
-//        while (pagerMatcher.find()) {
-//            count += 1;
-//            if(count > 2) {
-//                // skip: <option value="">跳转到</option>
-//                // skip: <option value="1">第1页</option>
-//                // start from page 2
-//                requestList.add(new NetRequest(NetRequest.REQUEST_TYPE.GET, tag.replace("\\.shtml", "_" + pagerMatcher.group(1) + ".shtml"), null));
-//            }
-//        }
-//
-//        return (NetRequest[]) requestList.toArray();
 
         // title, pageCount, content
         final String contentRegex = "tit\">(.+?)</.+?/共(\\d+?)页.+?\">(.+?)</div>";
@@ -409,5 +387,66 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     private String purifyHtmlToDisplayable(String text) {
         return Html.fromHtml(text).toString();
+    }
+
+    @Override
+    public NetRequest[] getSearchRequest(String query) {
+        NetRequest[] requests = new NetRequest[1];
+        ContentValues cv = new ContentValues();
+        cv.put("s", query);
+        requests[0] = new NetRequest(NetRequest.REQUEST_TYPE.GET, "http://s.acg.178.com/lnovelsum/search.php", cv);
+        return requests;
+    }
+
+    @Override
+    public List<NovelInfo> parseSearchResults(String[] contents) {
+        List<NovelInfo> list = new ArrayList<>();
+        if (contents.length > 0) {
+            /*
+            var g_search_data =
+            [{"author":"\u7530\u4e2d\u7f57\u5bc6\u6b27","image_url":"http:\/\/xs.dmzj.com\/img\/webpic\/16\/0007Y.jpg","lnovel_name":"AURA\u3000\u9b54\u9f99\u9662...","last_chapter_name":"\u5168\u4e00\u5377","lnovel_url":"..\/6\/index.shtml","last_chapter_url":"..\/6\/37\/201.shtml","full_name":"AURA\u3000\u9b54\u9f99\u9662\u5149\u7259\u6700\u540e\u7684\u6218\u6597","fullc_name":"\u5168\u4e00\u5377","types":"\u6821\u56ed","status":"\u5df2\u5b8c\u7ed3","description":"\u5185\u5bb9\u7b80\u4ecb\uff1a\u90a3\u4e00\u5929\u3002\u5fd8\u8bb0\u5e26\u8bfe\u672c\u56de\u5bb6\u7684\u6211\uff0c\u5728\u534a\u591c\u6e9c\u8fdb\u5b66\u6821\uff0c\u7136\u540e\u9047\u89c1\u4e86\u5979\u3002\u90a3\u91cc\u662f\u901a\u5f80\u6559\u5ba4\u7684\u9636\u68af\u8f6c\u89d2\u5904\u3002\n\u5728\u51b0\u51b7\u6708\u5149\u5f62\u6210\u7684\u805a\u5149\u706f\u4e4b\u4e0b\uff0c\u6709\u4e00\u540d\u5c4f\u6c14\u51dd\u795e\u6ce8\u89c6\u7740\u9ed1\u6697\u7684\u5c11\u5973\u3002\u597d\u7f8e\u4e3d\u2014\u2014\u3002\n\u7ad9\u5728\u90a3\u91cc\u7684\u84dd\u8272\u9b54\u5973\uff0c\u91ca\u653e\u7740\u4ee4\u4eba\u4e3a\u4e4b\u503e\u5012\u7684\u6c14\u606f\u3002\u2026\u2026\u4e0d\uff0c\u6162\u7740\uff0c\u8fd9\u53ef\u4e0d\u662f\u5f00\u73a9\u7b11\u7684\u3002\u6211\u505c\u6b62\u4e86\u8fd9\u6837\u7684\u5984\u60f3\u3002\u6211\u6210\u529f\u5728\u5347\u4e0a\u9ad8\u4e2d\u4e4b\u540e\u6539\u5934\u6362\u9762\u4e86\uff01\n\u539f\u672c\u5e94\u8be5\u662f\u8fd9\u6837\u624d\u5bf9\uff0c\u53ef\u662f\u8fd9\u4e2a\u5984\u60f3\u5c11\u5973\u662f\u600e\u4e48\u56de\u4e8b\uff01\n\u201c\u6ca1\u6709\u4efb\u4f55\u9632\u536b\u673a\u5236\u7684\u73b0\u8c61\u754c\u4eba\uff0c\u65e0\u6cd5\u62b5\u79a6\u60c5\u62a5\u4f53\u7684\u5f3a\u5236\u5e72\u6d89\u3002\u201d\n\u201c\u6211\u5b8c\u5168\u542c\u4e0d\u61c2\u4f60\u5728\u8bf4\u4ec0\u4e48\u3002\u201d\u5176\u5b9e\u6211\u5927\u81f4\u80fd\u7406\u89e3\u8fd9\u756a\u8bdd\u7684\u542b\u610f\u3002\n\n\u8f6c\u81ea \u8f7b\u4e4b\u56fd\u5ea6"},
+            {"author":"\u7530\u4e2d\u82b3\u6811","image_url":"http:\/\/xs.dmzj.com\/img\/webpic\/13\/mhds.jpg","lnovel_name":"\u6ce2\u7f57\u7684\u6d77\u590d\u4ec7\u8bb0","last_chapter_name":"\u300a\u6ce2\u7f57\u7684\u6d77\u590d\u4ec7...","lnovel_url":"..\/19\/index.shtml","last_chapter_url":"..\/19\/67\/417.shtml","full_name":"\u6ce2\u7f57\u7684\u6d77\u590d\u4ec7\u8bb0","fullc_name":"\u300a\u6ce2\u7f57\u7684\u6d77\u590d\u4ec7\u8bb0\u300b\u53d6\u6750\u540c\u884c\u8bb0","types":"\u5192\u9669","status":"\u5df2\u5b8c\u7ed3","description":"\u4ee5\u4e8c\u5341\u4e8c\u5c81\u7684\u5c0f\u5c0f\u5e74\u7eaa\u5c31\u88ab\u6c49\u8428\u540c\u76df\u7684\u5bcc\u5546\u59d4\u4efb\u4e3a\u8239\u957f\u7684\u5e74\u8f7b\u4eba\u827e\u529b\u514b\u5728\u8d2d\u4e70\u4e86\u6602\u8d35\u7684\u7425\u73c0\u56de\u7a0b\u7684\u8def\u4e0a\uff0c\u906d\u5230\u8239\u5458\u4eec\u7684\u80cc\u53db\uff0c\u88ab\u4e22\u5230\u6d77\u91cc\u53bb\u3002\n\u88ab\u4e00\u4e2a\u81ea\u79f0\u662f\u9b54\u5973\u7684\u8001\u5a46\u5a46\u6551\u52a9\u800c\u6361\u56de\u4e00\u6761\u547d\u7684\u4ed6\u4e3a\u4e86\u89e3\u5f00\u4e8b\u4ef6\u80cc\u540e\u7684\u9634\u8c0b\uff0c\u548c\u6b66\u6280\u9ad8\u8d85\u7684\u9a91\u58eb\u53ca\u9ed1\u732b\u300c\u5c0f\u767d\u300d\u5e76\u80a9\u4f5c\u6218\uff0c\u4e3a\u6d17\u5237\u81ea\u5df1\u7684\u6e05\u767d\u800c\u52c7\u5f80\u76f4\u524d\u3002\n\u827e\u529b\u514b\u548c\u9634\u8c0b\u7684\u9ed1\u5e55\u4e4b\u95f4\u7684\u5bf9\u51b3\u4f1a\u6709\u4ec0\u4e48\u6837\u7684\u7ed3\u679c\uff1f\uff01\n\n\u8f6c\u81ea \u8f7b\u4e4b\u56fd\u5ea6"},
+             */
+            /*
+            {
+                "author": "田中罗密欧",
+                "image_url": "http://xs.dmzj.com/img/webpic/16/0007Y.jpg",
+                "lnovel_name": "AURA　魔龙院...",
+                "last_chapter_name": "全一卷",
+                "lnovel_url": "../6/index.shtml",
+                "last_chapter_url": "../6/37/201.shtml",
+                "full_name": "AURA　魔龙院光牙最后的战斗",
+                "fullc_name": "全一卷",
+                "types": "校园",
+                "status": "已完结",
+                "description": "内容简介：那一天。忘记带课本回家的我，在半夜溜进学校，然后遇见了她。那里是通往教室的阶梯转角处。
+            在冰冷月光形成的聚光灯之下，有一名屏气凝神注视着黑暗的少女。好美丽——。
+            站在那里的蓝色魔女，释放着令人为之倾倒的气息。……不，慢着，这可不是开玩笑的。我停止了这样的妄想。我成功在升上高中之后改头换面了！
+            原本应该是这样才对，可是这个妄想少女是怎么回事！
+            “没有任何防卫机制的现象界人，无法抵禦情报体的强制干涉。”
+            “我完全听不懂你在说什么。”其实我大致能理解这番话的含意。
+
+            转自 轻之国度"
+            }
+             */
+            try {
+                JSONArray jsonArray = new JSONArray(contents[0].substring(contents[0].indexOf('['), contents[0].lastIndexOf(']') + 1));
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
+                    String TAG = Pattern.compile("/(\\d*?)/", Pattern.DOTALL).matcher(jsonObject.getString("lnovel_url")).group(1);
+                    ContentValues cv = new ContentValues();
+                    cv.put("latest_chapter", jsonObject.getString("last_chapter_name").trim());
+                    cv.put("short_intro", jsonObject.getString("description").trim());
+                    if(!TextUtils.isEmpty(jsonObject.getString("status").trim()))
+                        cv.put("status", jsonObject.getString("status").trim());
+
+                    list.add(new NovelInfo(TAG, jsonObject.getString("full_name").trim(),
+                            jsonObject.getString("author").trim(), jsonObject.getString("image_url").trim(), cv));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
     }
 }
