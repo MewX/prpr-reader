@@ -28,8 +28,7 @@ public class SplashActivity extends Activity {
 
         if(YBL.VERSION_TYPE == YBL.VERSION_TYPE_ENUM.TEST || YBL.getSkipSplashScreen()) {
             endActivityInstantly();
-        }
-        else {
+        } else {
             activityDeadCounter = new CountDownTimer(AUTO_HIDE_DELAY_MILLIS, 100) {
                 @Override
                 public void onTick ( long millisUntilFinished){

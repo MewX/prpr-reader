@@ -16,12 +16,12 @@ import android.support.annotation.Nullable;
  */
 @SuppressWarnings("unused")
 public class NovelInfo {
-    private @NonNull String title; // may be id? hash?
-    private @NonNull String dataSource = ""; // TODO: set by parent
-    private @NonNull String bookTag; // id in data source, just an identifier
-    private @NonNull String author = "";
-    private @NonNull String coverUrl = ""; // if has none, set empty
-    private @NonNull ContentValues infoPairs = new ContentValues();
+    @NonNull private String title; // may be id? hash?
+    @NonNull private String dataSource = ""; // TODO: set by parent
+    @NonNull private String bookTag; // id in data source, just an identifier
+    @NonNull private String author = "";
+    @NonNull private String coverUrl = ""; // if has none, set empty
+    @NonNull private ContentValues infoPairs = new ContentValues();
 
     public NovelInfo(@NonNull String bookTag, @NonNull String title) {
         this.bookTag = bookTag;
@@ -40,7 +40,8 @@ public class NovelInfo {
             this.infoPairs = cv;
     }
 
-    public @NonNull String getBookTag() {
+    @NonNull
+    public String getBookTag() {
         return bookTag;
     }
 
@@ -48,7 +49,8 @@ public class NovelInfo {
         this.bookTag = bookTag;
     }
 
-    public @NonNull String getTitle() {
+    @NonNull
+    public String getTitle() {
         return title;
     }
 
@@ -56,11 +58,13 @@ public class NovelInfo {
         this.title = title;
     }
 
-    public @NonNull String getDataSource() {
+    @NonNull
+    public String getDataSource() {
         return dataSource;
     }
 
-    public @NonNull String getAuthor() {
+    @NonNull
+    public String getAuthor() {
         return author;
     }
 

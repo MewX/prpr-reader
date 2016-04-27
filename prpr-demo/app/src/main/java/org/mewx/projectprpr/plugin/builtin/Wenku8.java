@@ -3,7 +3,6 @@ package org.mewx.projectprpr.plugin.builtin;
 import android.support.annotation.NonNull;
 
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
-import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.NovelInfo;

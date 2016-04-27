@@ -1,31 +1,22 @@
 package org.mewx.projectprpr.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.res.TypedArrayUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.DataSourceAdapter;
 import org.mewx.projectprpr.activity.adapter.DataSourceItem;
-import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
-import org.mewx.projectprpr.activity.adapter.PluginCenterItem;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class PluginCenterDataSourceActivity extends AppCompatActivity {
@@ -52,10 +43,10 @@ public class PluginCenterDataSourceActivity extends AppCompatActivity {
             try {
                 Class<?> aClass = Class.forName(YBL.PLUGIN_PACKAGE + "." + info.getClassName());
                 NovelDataSourceBasic obj = (NovelDataSourceBasic) aClass.newInstance();
-                itemList.add(new DataSourceItem(obj.getName(), obj.getUrl(), obj.getVersionCode(), obj.getLogoUrl()));
+                itemList.add(new DataSourceItem(obj.getName(), obj.getUrl(), obj.getVersionCode(), obj.getLogoUrl(), obj.getAuthor()));
             } catch (Exception e) {
                 e.printStackTrace();
-                itemList.add(new DataSourceItem(info.getClassName(), info.getPath(), 0, ""));
+                itemList.add(new DataSourceItem(info.getClassName(), info.getPath(), 0, "", "unknown"));
             }
 
         }
@@ -80,8 +71,7 @@ public class PluginCenterDataSourceActivity extends AppCompatActivity {
                         // TODO: when click, judge whether downloaded, if not, download, else jump to Activity
 
                         // TODO: change pluginList, and run the following code
-                    }
-                    else {
+                    } else {
                         gotoPluginInitialActivity(position);
                     }
                 }

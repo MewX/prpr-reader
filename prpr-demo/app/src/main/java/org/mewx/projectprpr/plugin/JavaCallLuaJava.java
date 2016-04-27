@@ -16,7 +16,7 @@ import org.keplerproject.luajava.LuaStateFactory;
  */
 @SuppressWarnings("unused")
 public class JavaCallLuaJava {
-    private final static String TAG = JavaCallJavaClass.class.getSimpleName();
+    private static final String TAG = JavaCallJavaClass.class.getSimpleName();
 
     static {
         final String libLuaJavaName = "luajava";

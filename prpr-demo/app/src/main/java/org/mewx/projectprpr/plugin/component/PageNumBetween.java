@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 @SuppressWarnings("unused")
 public class PageNumBetween {
     private int beg, end; // just set and get directly
-    private @Nullable Integer current;
+    @Nullable private Integer current;
 
     public PageNumBetween(int beg) {
         this(beg, beg);
@@ -19,8 +19,7 @@ public class PageNumBetween {
         if(beg < end) {
             this.beg = beg;
             this.end = end;
-        }
-        else {
+        } else {
             this.end = beg;
             this.beg = end;
         }
@@ -37,8 +36,7 @@ public class PageNumBetween {
         } else if (current < end) {
             current += 1;
             return current;
-        }
-        else {
+        } else {
             current = end;
             return end;
         }

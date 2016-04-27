@@ -1,11 +1,9 @@
 package org.mewx.projectprpr.activity.adapter;
 
-import android.content.ContentValues;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,8 +118,7 @@ public class NetNovelListAdapter  extends RecyclerView.Adapter {
         return list.size();
     }
 
-    class DataSourceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
-    {
+    class DataSourceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View rootView;
         public SimpleDraweeView cover;
         public TextView title;

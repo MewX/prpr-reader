@@ -9,12 +9,14 @@ public class DataSourceItem {
     private String websiteDomain;
     private int versionCode;
     private String logoUrl;
+    private String pluginAuthor;
 
-    public DataSourceItem(String name, String domain, int versionCode, String logoUrl) {
+    public DataSourceItem(String name, String domain, int versionCode, String logoUrl, String pluginAuthor) {
         this.displayName = name;
         this.websiteDomain = domain;
         this.versionCode = versionCode;
         this.logoUrl = logoUrl;
+        this.pluginAuthor = pluginAuthor;
     }
 
     public String getDisplayName() {
@@ -31,5 +33,9 @@ public class DataSourceItem {
 
     public String getLogoUrl() {
         return logoUrl;
+    }
+
+    public String getPluginAuthor() {
+        return pluginAuthor;
     }
 }

@@ -22,9 +22,16 @@
     <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
     <string name="title_activity_data_source_item_initial">DataSourceItemInitialActivity</string>
 
-    <string name="novel_item_loading">Loading&#8230;</string>
-    <string name="novel_item_title_with_colon">Title: </string>
-    <string name="novel_item_author_with_colon">Author: </string>
-    <string name="novel_item_data_source_with_colon">From: </string>
-    <string name="novel_item_category_with_colon">Category: </string>
+    <!-- This part should not be contained in string-array, because it's hard to access item name;
+         And all of these strings are beginning with "novel_info_", so it's easy to access. -->
+    <string name="novel_info_loading">Loading&#8230;</string>
+    <string name="novel_info_title">Title</string>
+    <string name="novel_info_author">Author</string>
+    <string name="novel_info_data_source">From</string>
+    <string name="novel_info_category">Category</string>
+    <string name="novel_info_status">Status</string>
+    <string name="novel_info_last_update">Last Update</string>
+    <string name="novel_info_latest_chapter">Latest Chapter</string>
+    <string name="novel_info_short_intro">Short Intro</string>
+    <string name="novel_info_full_intro">Full Intro</string>
 </resources>

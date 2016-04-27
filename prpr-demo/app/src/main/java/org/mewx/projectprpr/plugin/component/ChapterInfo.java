@@ -8,8 +8,8 @@ import android.support.annotation.NonNull;
  */
 @SuppressWarnings("unused")
 public class ChapterInfo {
-    private @NonNull String title;
-    private @NonNull String chapterTag; // TODO: when save, need to translate string, e.g. '/' -> '_'
+    @NonNull private String title;
+    @NonNull private String chapterTag; // TODO: when save, need to translate string, e.g. '/' -> '_'
 
     /**
      * default construct
@@ -24,7 +24,8 @@ public class ChapterInfo {
         this.chapterTag = chapterTag;
     }
 
-    public @NonNull String getTitle() {
+    @NonNull
+    public String getTitle() {
         return title;
     }
 
@@ -32,7 +33,8 @@ public class ChapterInfo {
         this.title = title;
     }
 
-    public @NonNull String getChapterTag() {
+    @NonNull
+    public String getChapterTag() {
         return chapterTag;
     }
 

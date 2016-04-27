@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
@@ -46,6 +47,7 @@ import java.util.regex.Pattern;
  * 完结 yiwanjie
  *
  */
+@SuppressWarnings("unused")
 public class XsDmzj extends NovelDataSourceBasic {
     private static final String imgBaseUrl = "http://xs.dmzj.com";
 
@@ -143,9 +145,9 @@ public class XsDmzj extends NovelDataSourceBasic {
         Matcher matcher = pattern.matcher(pageContent);
         while (matcher.find()) {
             ContentValues cv = new ContentValues();
-            cv.put("type", matcher.group(5).trim());
-            cv.put("status", matcher.group(6).trim());
-            cv.put("update", matcher.group(7).trim());
+            cv.put(getNovelInfoElementName(R.string.novel_info_category), matcher.group(5).trim());
+            cv.put(getNovelInfoElementName(R.string.novel_info_status), matcher.group(6).trim());
+            cv.put(getNovelInfoElementName(R.string.novel_info_last_update), matcher.group(7).trim());
             list.add(new NovelInfo(matcher.group(1).trim(), matcher.group(3).trim(), matcher.group(4).trim(), matcher.group(2).trim(), cv));
         }
         return list;
@@ -225,14 +227,14 @@ public class XsDmzj extends NovelDataSourceBasic {
             JSONArray jsonArray = new JSONArray(pageContent.substring(pageContent.indexOf('['), pageContent.lastIndexOf(']') + 1));
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
-                String TAG = Pattern.compile("/(\\d*?)/", Pattern.DOTALL).matcher(jsonObject.getString("lnovel_url")).group(1);
+                String novelTag = Pattern.compile("/(\\d*?)/", Pattern.DOTALL).matcher(jsonObject.getString("lnovel_url")).group(1);
                 ContentValues cv = new ContentValues();
-                cv.put("latest_chapter", jsonObject.getString("last_chapter_name").trim());
-                cv.put("short_intro", jsonObject.getString("m_intro").trim());
+                cv.put(getNovelInfoElementName(R.string.novel_info_latest_chapter), jsonObject.getString("last_chapter_name").trim());
+                cv.put(getNovelInfoElementName(R.string.novel_info_short_intro), jsonObject.getString("m_intro").trim());
                 if(!TextUtils.isEmpty(jsonObject.getString("status").trim()))
-                    cv.put("status", jsonObject.getString("status").trim());
+                    cv.put(getNovelInfoElementName(R.string.novel_info_status), jsonObject.getString("status").trim());
 
-                list.add(new NovelInfo(TAG, jsonObject.getString("full_name").trim(),
+                list.add(new NovelInfo(novelTag, jsonObject.getString("full_name").trim(),
                         jsonObject.getString("author").trim(), jsonObject.getString("m_image_url").trim(), cv));
             }
         } catch (JSONException e) {
@@ -260,10 +262,10 @@ public class XsDmzj extends NovelDataSourceBasic {
         Matcher infoMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(content);
 
         ContentValues cv = new ContentValues();
-        cv.put("category", infoMatcher.group(5).trim());
-        cv.put("status", infoMatcher.group(6).trim());
-        cv.put("last_update", infoMatcher.group(7).trim());
-        cv.put("full_intro", infoMatcher.group(8).trim());
+        cv.put(getNovelInfoElementName(R.string.novel_info_category), infoMatcher.group(5).trim());
+        cv.put(getNovelInfoElementName(R.string.novel_info_status), infoMatcher.group(6).trim());
+        cv.put(getNovelInfoElementName(R.string.novel_info_last_update), infoMatcher.group(7).trim());
+        cv.put(getNovelInfoElementName(R.string.novel_info_full_intro), infoMatcher.group(8).trim());
 
         return new NovelInfo(infoMatcher.group(1).trim(), infoMatcher.group(3).trim(), infoMatcher.group(4).trim(),
                 infoMatcher.group(2).trim(), cv);
@@ -375,8 +377,7 @@ public class XsDmzj extends NovelDataSourceBasic {
                 // this is an image
                 nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
                         imgBaseUrl + Pattern.compile(imageRegex, Pattern.DOTALL).matcher(temp).group(1)));
-            }
-            else {
+            } else {
                 // process as text
                 nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.TEXT, purifyHtmlToDisplayable(temp)));
             }
@@ -435,10 +436,10 @@ public class XsDmzj extends NovelDataSourceBasic {
                     JSONObject jsonObject = (JSONObject) jsonArray.opt(i);
                     String TAG = Pattern.compile("/(\\d*?)/", Pattern.DOTALL).matcher(jsonObject.getString("lnovel_url")).group(1);
                     ContentValues cv = new ContentValues();
-                    cv.put("latest_chapter", jsonObject.getString("last_chapter_name").trim());
-                    cv.put("short_intro", jsonObject.getString("description").trim());
+                    cv.put(getNovelInfoElementName(R.string.novel_info_latest_chapter), jsonObject.getString("last_chapter_name").trim());
+                    cv.put(getNovelInfoElementName(R.string.novel_info_short_intro), jsonObject.getString("description").trim());
                     if(!TextUtils.isEmpty(jsonObject.getString("status").trim()))
-                        cv.put("status", jsonObject.getString("status").trim());
+                        cv.put(getNovelInfoElementName(R.string.novel_info_status), jsonObject.getString("status").trim());
 
                     list.add(new NovelInfo(TAG, jsonObject.getString("full_name").trim(),
                             jsonObject.getString("author").trim(), jsonObject.getString("image_url").trim(), cv));

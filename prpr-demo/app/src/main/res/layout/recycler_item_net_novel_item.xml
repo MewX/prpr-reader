@@ -71,7 +71,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:paddingRight="16dp"
-                            android:text="@string/novel_item_data_source_with_colon"
+                            android:text="@string/novel_info_data_source"
                             android:textColor="@color/novel_item_text"/>
 
                         <TextView
@@ -80,7 +80,7 @@
                             android:layout_height="wrap_content"
                             android:singleLine="true"
                             android:textSize="12sp"
-                            android:text="@string/novel_item_loading"
+                            android:text="@string/novel_info_loading"
                             android:textColor="@color/novel_item_text"/>
                     </TableRow>
 
@@ -94,7 +94,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:paddingRight="16dp"
-                            android:text="@string/novel_item_author_with_colon"
+                            android:text="@string/novel_info_author"
                             android:textColor="@color/novel_item_text"/>
 
                         <TextView
@@ -103,7 +103,7 @@
                             android:layout_height="wrap_content"
                             android:singleLine="true"
                             android:textSize="12sp"
-                            android:text="@string/novel_item_loading"
+                            android:text="@string/novel_info_loading"
                             android:textColor="@color/novel_item_text"/>
                     </TableRow>
 
@@ -117,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:text="@string/novel_item_loading"
+                    android:text="@string/novel_info_loading"
                     android:textColor="@color/novel_item_title"
                     android:singleLine="true"
                     android:layout_alignParentTop="true"

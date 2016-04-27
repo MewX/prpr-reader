@@ -52,7 +52,7 @@ public class DataSourceAdapter extends RecyclerView.Adapter {
         final DataSourceViewHolder holder = (DataSourceViewHolder) viewHolder;
         holder.position = i;
         DataSourceItem item = list.get(i);
-        holder.textMain.setText(item.getDisplayName() + " [ v" + item.getVersionCode() + " ]");
+        holder.textMain.setText(item.getDisplayName() + " [ v" + item.getVersionCode() + " ], by: " + item.getPluginAuthor());
         holder.textSub.setText(item.getWebsiteDomain());
         holder.image.setImageURI(Uri.parse(item.getLogoUrl()));
     }
@@ -62,8 +62,7 @@ public class DataSourceAdapter extends RecyclerView.Adapter {
         return list.size();
     }
 
-    class DataSourceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
-    {
+    class DataSourceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View rootView;
         public TextView textMain;
         public TextView textSub;

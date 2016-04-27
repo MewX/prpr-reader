@@ -1,8 +1,12 @@
 package org.mewx.projectprpr.plugin;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
+import android.support.annotation.StringRes;
 import android.util.Log;
 
+import org.mewx.projectprpr.MyApp;
+import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
@@ -52,14 +56,14 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public abstract class NovelDataSourceBasic {
-    private final static String TAG = NovelDataSourceBasic.class.getSimpleName();
+    private static final String TAG = NovelDataSourceBasic.class.getSimpleName();
 
-    protected @NonNull String name;
-    protected @NonNull String author;
-    protected @NonNull String url;
-    protected @NonNull Integer versionCode;
-    protected @NonNull String releaseTime;
-    protected @NonNull String logoUrl; // can be empty string ""
+    @NonNull protected String name;
+    @NonNull protected String author;
+    @NonNull protected String url;
+    @NonNull protected Integer versionCode;
+    @NonNull protected String releaseTime;
+    @NonNull protected String logoUrl; // can be empty string ""
 
     public NovelDataSourceBasic() {
         // init values
@@ -69,6 +73,10 @@ public abstract class NovelDataSourceBasic {
         versionCode = 1;
         releaseTime = "2016/04/12";
         logoUrl = "";
+    }
+
+    protected static String getNovelInfoElementName(@StringRes int id) {
+        return MyApp.getContext().getResources().getString(id);
     }
 
     @NonNull
@@ -106,7 +114,8 @@ public abstract class NovelDataSourceBasic {
     public abstract void ultraReturn(String tag, byte[][] requestResult); // left empty is okay, after this call parse function
 
     // get novel categories
-    public abstract @NonNull String[] getCategories();
+    @NonNull
+    public abstract String[] getCategories();
 
     // get novel list & page
     public abstract boolean judgeIs404(String pageContent); // parent class calls this function

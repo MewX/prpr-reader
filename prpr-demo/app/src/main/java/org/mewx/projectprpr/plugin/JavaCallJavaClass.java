@@ -1,14 +1,12 @@
 package org.mewx.projectprpr.plugin;
 
-import android.support.annotation.Nullable;
-
 /**
  * This class is a loader! Contains the functions that load dex-plugins.
  * The class in dex should extend from this class.
  * Created by MewX on 1/19/2016.
  */
 public abstract class JavaCallJavaClass {
-    private final static String TAG = JavaCallJavaClass.class.getSimpleName();
+    private static final String TAG = JavaCallJavaClass.class.getSimpleName();
 
     JavaCallJavaClass(String path) {
 

@@ -4,7 +4,6 @@ import android.os.Environment;
 
 import okhttp3.OkHttpClient;
 
-import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 
 import java.io.File;

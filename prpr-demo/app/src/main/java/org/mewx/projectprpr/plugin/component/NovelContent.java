@@ -23,8 +23,8 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class NovelContent {
-    private @NonNull String filePath = ""; // full path, and authorized
-    private @NonNull ArrayList<NovelContentLine> loadedContent = new ArrayList<>();
+    @NonNull private String filePath = ""; // full path, and authorized
+    @NonNull private ArrayList<NovelContentLine> loadedContent = new ArrayList<>();
 
     public NovelContent() {
     }
@@ -89,8 +89,7 @@ public class NovelContent {
                 for (NovelContentLine ncl : loadedContent) {
                     if (ncl.content.length() == 0) {
                         osw.write("T");
-                    }
-                    else {
+                    } else {
                         switch (ncl.type) {
                             case TEXT:
                                 osw.write("T" + ncl.content);

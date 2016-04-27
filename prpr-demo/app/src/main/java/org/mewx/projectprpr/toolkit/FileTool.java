@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("unused")
 public class FileTool {
-    private final static String TAG = FileTool.class.getSimpleName();
+    private static final String TAG = FileTool.class.getSimpleName();
 
     public static boolean deleteFile(@NonNull String filepath) {
         Log.v(TAG, "Path: " + filepath);
@@ -65,7 +65,7 @@ public class FileTool {
             FileInputStream fosfrom = new FileInputStream(fromFile);
             FileOutputStream fosto = new FileOutputStream(toFile);
 
-            byte bt[] = new byte[1024];
+            byte[] bt = new byte[1024];
             int c;
             while ((c = fosfrom.read(bt)) > 0) fosto.write(bt, 0, c);
             fosfrom.close();

@@ -6,6 +6,6 @@ package org.mewx.projectprpr.reader.format.generator;
  * Created by MewX on 3/31/2016.
  */
 public class FormatGeneratorPrpr {
-    private final static String TAG = FormatGeneratorPrpr.class.getSimpleName();
+    private static final String TAG = FormatGeneratorPrpr.class.getSimpleName();
 
 }

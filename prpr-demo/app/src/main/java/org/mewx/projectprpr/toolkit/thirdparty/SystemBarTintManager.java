@@ -54,7 +54,7 @@ public class SystemBarTintManager {
                 Method m = c.getDeclaredMethod("get", String.class);
                 m.setAccessible(true);
                 sNavBarOverride = (String) m.invoke(null, "qemu.hw.mainkeys");
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 sNavBarOverride = null;
             }
         }

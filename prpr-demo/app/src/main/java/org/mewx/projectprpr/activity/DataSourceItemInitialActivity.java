@@ -1,20 +1,15 @@
 package org.mewx.projectprpr.activity;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.activity.adapter.DataSourceAdapter;
-import org.mewx.projectprpr.activity.adapter.DataSourceItem;
 import org.mewx.projectprpr.activity.adapter.NetNovelListAdapter;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
@@ -28,9 +23,6 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class DataSourceItemInitialActivity extends AppCompatActivity {
@@ -63,6 +55,7 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(dataSourceBasic.getName());
 
         // set recycler view
         initRecyclerView();
@@ -109,8 +102,7 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
                             isLoading = false;
                         }
                     });
-        }
-        catch (Exception expected) {
+        } catch (Exception expected) {
             isLoading = false;
             expected.printStackTrace();
         }
@@ -172,7 +164,7 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
                 // loading when there are 2 items left
                 if (visibleItemCount + pastVisibleItems + 2 >= totalItemCount && pageRange.hasNext()) {
                     // load more toast
-                    Snackbar.make(recyclerView, getResources().getString(R.string.novel_item_loading)
+                    Snackbar.make(recyclerView, getResources().getString(R.string.novel_info_loading)
                                     + "(" + (pageRange.getCurrent() + 1) + "/" + pageRange.getEnd() + ")",
                             Snackbar.LENGTH_SHORT).show();
 

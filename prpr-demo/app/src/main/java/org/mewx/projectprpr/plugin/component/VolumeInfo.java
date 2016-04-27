@@ -12,9 +12,9 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class VolumeInfo {
-    private @NonNull String title;
-    private @NonNull String volumeTag;
-    private @NonNull ArrayList<ChapterInfo> chapterList = new ArrayList<>();
+     @NonNull private String title;
+     @NonNull private String volumeTag;
+     @NonNull private ArrayList<ChapterInfo> chapterList = new ArrayList<>();
 
     public VolumeInfo(@NonNull String volumeTag) {
         this("", volumeTag);
@@ -49,7 +49,8 @@ public class VolumeInfo {
         chapterList.clear();
     }
 
-    public @NonNull String getTitle() {
+    @NonNull
+    public String getTitle() {
         return title;
     }
 
@@ -57,7 +58,8 @@ public class VolumeInfo {
         this.title = title;
     }
 
-    public @NonNull String getVolumeTag() {
+    @NonNull
+    public String getVolumeTag() {
         return volumeTag;
     }
 

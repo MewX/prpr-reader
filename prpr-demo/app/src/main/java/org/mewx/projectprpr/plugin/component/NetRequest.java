@@ -15,8 +15,6 @@ import java.net.URLEncoder;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okio.BufferedSink;
 
 /**
  * This class packs the request infomation.
@@ -34,8 +32,8 @@ public class NetRequest {
     }
 
     private REQUEST_TYPE type;
-    private @NonNull String url;
-    private @NonNull String args;
+    @NonNull private String url;
+    @NonNull private String args;
 
     public NetRequest(REQUEST_TYPE requestType, @Nullable String url, @Nullable ContentValues args) {
         // save values
@@ -59,8 +57,9 @@ public class NetRequest {
             }
             if (params.length() > 1) params.deleteCharAt(0); // remove the leading "&"
             this.args = params.toString(); // save value
+        } else {
+            this.args = ""; // make default value
         }
-        else this.args = ""; // make default value
     }
 
     public boolean isEmptyArg() {

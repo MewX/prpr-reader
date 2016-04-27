@@ -54,8 +54,7 @@ public class PluginCenterAdapter extends RecyclerView.Adapter {
         return list.size();
     }
 
-    class PluginCenterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
-    {
+    class PluginCenterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View rootView;
         public TextView text;
         public ImageView image;

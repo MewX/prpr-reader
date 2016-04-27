@@ -15,11 +15,7 @@ import android.widget.Toast;
 
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import okhttp3.Cache;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
 
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
@@ -38,9 +34,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.Cache;
+import okhttp3.JavaNetCookieJar;
+import okhttp3.OkHttpClient;
+
 public class MainActivity extends AppCompatTemplateActivity
         implements NavigationFitSystemView.OnNavigationItemSelectedListener {
-    private final static String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private static Boolean isExit = false; // used for exit by exitBy2Click()
     private int currentFragmentId = R.id.nav_library_local;
@@ -264,8 +264,6 @@ public class MainActivity extends AppCompatTemplateActivity
 
         } else {
             finish();
-            // call fragments and end streams and services
-            System.exit(0);
         }
     }
 }

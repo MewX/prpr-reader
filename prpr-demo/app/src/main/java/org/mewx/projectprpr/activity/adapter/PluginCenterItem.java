@@ -5,15 +5,16 @@ import android.support.annotation.NonNull;
 
 @SuppressWarnings("unused")
 public class PluginCenterItem {
-    private @NonNull String centerName;
-    private @DrawableRes int backgroundId;
+    @NonNull private String centerName;
+    @DrawableRes private int backgroundId;
 
     public PluginCenterItem(@NonNull String name, @DrawableRes int backgroundId) {
         this.centerName = name;
         this.backgroundId = backgroundId;
     }
 
-    public @NonNull String getCenterName() {
+    @NonNull
+    public String getCenterName() {
         return centerName;
     }
 

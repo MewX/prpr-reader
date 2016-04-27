@@ -13,8 +13,8 @@ public class NovelContentLine {
         IMAGE_URL
     }
 
-    public @NonNull TYPE type = TYPE.TEXT;
-    public @NonNull String content = "";
+    @NonNull public TYPE type = TYPE.TEXT;
+    @NonNull public String content = "";
 
     public NovelContentLine() {
 
