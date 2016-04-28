@@ -3,7 +3,6 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
-    card_view:cardCornerRadius="8dp"
     card_view:cardElevation="4dp"
     card_view:cardBackgroundColor="@color/plugin_center_card_background"
     card_view:cardUseCompatPadding="true"

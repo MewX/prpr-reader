@@ -41,4 +41,5 @@
     <string name="novel_info_short_intro">Short Intro</string>
     <string name="novel_info_full_intro">Full Intro</string>
     <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
+    <string name="title_activity_data_source_item_chapter">DataSourceItemChapterActivity</string>
 </resources>

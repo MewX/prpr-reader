@@ -2,12 +2,14 @@ package org.mewx.projectprpr.plugin.component;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Created by MewX on 4/9/2016.
  * Store chapter info only.
  */
 @SuppressWarnings("unused")
-public class ChapterInfo {
+public class ChapterInfo implements Serializable {
     @NonNull private String title;
     @NonNull private String chapterTag; // TODO: when save, need to translate string, e.g. '/' -> '_'
 

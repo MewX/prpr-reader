@@ -95,6 +95,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
         </activity>
+        <activity
+            android:name=".activity.DataSourceItemChapterActivity"
+            android:label="@string/title_activity_data_source_item_chapter"
+            android:parentActivityName=".template.AppCompatTemplateActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
+        </activity>
     </application>
 
 </manifest>

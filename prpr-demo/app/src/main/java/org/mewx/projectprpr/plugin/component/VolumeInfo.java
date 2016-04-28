@@ -2,6 +2,7 @@ package org.mewx.projectprpr.plugin.component;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Contain chapters.
  */
 @SuppressWarnings("unused")
-public class VolumeInfo {
+public class VolumeInfo implements Serializable {
      @NonNull private String title;
      @NonNull private String volumeTag;
      @NonNull private ArrayList<ChapterInfo> chapterList = new ArrayList<>();

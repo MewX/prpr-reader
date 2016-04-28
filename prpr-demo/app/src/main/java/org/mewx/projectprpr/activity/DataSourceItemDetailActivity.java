@@ -1,7 +1,9 @@
 package org.mewx.projectprpr.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -42,6 +44,7 @@ import okhttp3.Response;
 
 public class DataSourceItemDetailActivity extends AppCompatActivity {
     private static final String TAG = DataSourceItemDetailActivity.class.getSimpleName();
+    public static final String VOLUME_TAG = "volume";
 
     // views
     private LinearLayout linearLayout;
@@ -313,11 +316,9 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     // todo: jump to chapter select activity
-//                    Intent intent = new Intent(NovelInfoActivity.this, NovelChapterActivity.class);
-//                    intent.putExtra("aid", aid);
-//                    intent.putExtra("volume", vl);
-//                    intent.putExtra("from", from);
-//                    startActivity(intent);
+                    Intent intent = new Intent(DataSourceItemDetailActivity.this, DataSourceItemChapterActivity.class);
+                    intent.putExtra(VOLUME_TAG, vl);
+                    startActivity(intent);
                 }
             });
 
