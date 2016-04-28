@@ -3,6 +3,7 @@ package org.mewx.projectprpr.plugin.builtin;
 import android.support.annotation.NonNull;
 
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
+import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
@@ -85,6 +86,16 @@ public class Wenku8 extends NovelDataSourceBasic {
 
     @Override
     public List<VolumeInfo> parseNovelVolume(String content) {
+        return null;
+    }
+
+    @Override
+    public NetRequest getNovelChapterRequest(String tag) {
+        return null;
+    }
+
+    @Override
+    public List<ChapterInfo> parseNovelChapter(String content) {
         return null;
     }
 

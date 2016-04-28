@@ -2,11 +2,11 @@ package org.mewx.projectprpr.global;
 
 import android.os.Environment;
 
-import okhttp3.OkHttpClient;
-
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 
 import java.io.File;
+
+import okhttp3.OkHttpClient;
 
 /**
  * This class stores all the global values.
@@ -45,7 +45,7 @@ public class YBL {
                 folder + fileName : folder + File.separator + fileName;
     }
 
-    public static String getProjectFolderNetnovel(String dataSourceTag) {
+    public static String getProjectFolderNetNovel(String dataSourceTag) {
         // get folder path, without back-leading separator.
         return PROJECT_FOLDER_NETNOVEL + File.separator + dataSourceTag;
     }
@@ -57,7 +57,7 @@ public class YBL {
 
     // global common variables
     public static OkHttpClient globalOkHttpClient3;
-
+//    private static NovelDataSourceBasic novelDataSourceBasic;
     private static boolean skipSplashScreen = false;
     public static boolean getSkipSplashScreen() {
         return skipSplashScreen;
@@ -66,4 +66,13 @@ public class YBL {
         skipSplashScreen = skip;
     }
 
+//    public static void setNovelDataSourceBasic(NovelDataSourceBasic ds) {
+//        novelDataSourceBasic = ds;
+//    }
+//
+//    public static NovelDataSourceBasic getNovelDataSourceBasic() {
+//        return novelDataSourceBasic;
+//    }
+//
+//    public static isNovelDataSourceBasicSaved
 }

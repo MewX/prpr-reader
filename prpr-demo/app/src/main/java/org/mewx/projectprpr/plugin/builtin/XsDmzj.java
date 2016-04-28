@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -258,14 +259,16 @@ public class XsDmzj extends NovelDataSourceBasic {
     @Override
     public NovelInfo parseNovelInfo(String content) {
         // id(tag), coverUrl, title, author, category, status, lastUpdate
+        // "page_url = '/(.+?)/index.+?class="main".+?src="(.+?)".*?<h3>(.+?)</.+?作者：(.+?)</.+?类型：(.+?)</.+?状态：(.+?)</.+?更新：(.+?)</p>.+?小说介绍：.+?<p>(.+?)</p>";
         final String regex = "page_url = '/(.+?)/index.+?class=\"main\".+?src=\"(.+?)\".*?<h3>(.+?)</.+?作者：(.+?)</.+?类型：(.+?)</.+?状态：(.+?)</.+?更新：(.+?)</p>.+?小说介绍：.+?<p>(.+?)</p>";
         Matcher infoMatcher = Pattern.compile(regex, Pattern.DOTALL).matcher(content);
+        infoMatcher.find(); // need do this!
 
         ContentValues cv = new ContentValues();
         cv.put(getNovelInfoElementName(R.string.novel_info_category), infoMatcher.group(5).trim());
         cv.put(getNovelInfoElementName(R.string.novel_info_status), infoMatcher.group(6).trim());
         cv.put(getNovelInfoElementName(R.string.novel_info_last_update), infoMatcher.group(7).trim());
-        cv.put(getNovelInfoElementName(R.string.novel_info_full_intro), infoMatcher.group(8).trim());
+        cv.put(getNovelInfoElementName(R.string.novel_info_full_intro), Html.fromHtml(infoMatcher.group(8).trim()).toString()); // remove </br>
 
         return new NovelInfo(infoMatcher.group(1).trim(), infoMatcher.group(3).trim(), infoMatcher.group(4).trim(),
                 infoMatcher.group(2).trim(), cv);
@@ -279,13 +282,11 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     @Override
     public List<VolumeInfo> parseNovelVolume(String content) {
-        final String fullIntroRegex = "detail_block.*?<p>(.+?)</p>";
         final String volumeRegex = "chapnamesub\">(.+?)<.+?(volume_list|</script>)"; // get group(1)
         final String chapterRegex = "chapter_list\\[\\d\\]\\[.+?href=\"(.+?)\".+?>(.+?)<";
 
         // parse volumes and chapters
         List<VolumeInfo> list = new ArrayList<>();
-        content = Pattern.compile(fullIntroRegex, Pattern.DOTALL).matcher(content).group(1); // get volumes
         Matcher volumeMatcher = Pattern.compile(volumeRegex, Pattern.DOTALL).matcher(content);
         while (volumeMatcher.find()) {
             String tempVolume = volumeMatcher.group(); // get whole matched string
@@ -299,6 +300,16 @@ public class XsDmzj extends NovelDataSourceBasic {
             list.add(vi);
         }
         return list;
+    }
+
+    @Override
+    public NetRequest getNovelChapterRequest(String tag) {
+        return null;
+    }
+
+    @Override
+    public List<ChapterInfo> parseNovelChapter(String content) {
+        return null;
     }
 
     @Override
@@ -332,6 +343,7 @@ public class XsDmzj extends NovelDataSourceBasic {
         // title, pageCount, content
         final String contentRegex = "tit\">(.+?)</.+?/共(\\d+?)页.+?\">(.+?)</div>";
         Matcher contentMatcher = Pattern.compile(contentRegex, Pattern.DOTALL).matcher(preRequestContent);
+        contentMatcher.find();
         novelContentSaveTemp = purifyNovelContent(contentMatcher.group(3));
         novelContentTagTemp = Html.fromHtml(contentMatcher.group(1)).toString();
 

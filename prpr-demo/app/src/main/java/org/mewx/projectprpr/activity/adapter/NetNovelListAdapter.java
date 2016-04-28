@@ -23,7 +23,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class NetNovelListAdapter  extends RecyclerView.Adapter {
     private static final String TAG = NetNovelListAdapter.class.getSimpleName();
-    private static final int ORIGIN_TABLE_ITEM_COUNT = 2;
+    public static final int ORIGIN_TABLE_ITEM_COUNT = 2;
 
     public static interface OnRecyclerViewListener {
         void onItemClick(int position);

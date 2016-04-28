@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_bar_account"
+        android:icon="@drawable/ic_menu_data_source_account"
+        android:orderInCategory="1"
+        android:title="@string/action_account"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_bar_category"
+        android:icon="@drawable/ic_menu_data_source_category"
+        android:orderInCategory="2"
+        android:title="@string/action_category"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_bar_search"
+        android:icon="@drawable/ic_menu_data_source_search"
+        android:orderInCategory="3"
+        android:title="@string/action_search"
+        app:showAsAction="ifRoom" />
+</menu>

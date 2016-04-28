@@ -81,7 +81,15 @@
         <activity
             android:name=".activity.DataSourceItemInitialActivity"
             android:label="@string/title_activity_data_source_item_initial"
-            android:parentActivityName=".template.AppCompatTemplateActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
+        </activity>
+        <activity
+            android:name=".activity.DataSourceItemDetailActivity"
+            android:label="@string/title_activity_data_source_item_detail"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

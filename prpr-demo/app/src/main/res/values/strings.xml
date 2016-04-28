@@ -7,6 +7,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">General Settings</string>
+    <string name="action_account">Account</string>
+    <string name="action_category">Categories</string>
+    <string name="action_search">Search</string>
+    <string name="action_net_book_add">Add to favorite</string>
+    <string name="action_net_book_download">Download this book</string>
 
     <string name="title_activity_main">Project PRPR</string>
     <string name="title_activity_settings">Settings</string>
@@ -25,6 +30,7 @@
     <!-- This part should not be contained in string-array, because it's hard to access item name;
          And all of these strings are beginning with "novel_info_", so it's easy to access. -->
     <string name="novel_info_loading">Loading&#8230;</string>
+    <string name="novel_info_no_intro">No introduction.</string>
     <string name="novel_info_title">Title</string>
     <string name="novel_info_author">Author</string>
     <string name="novel_info_data_source">From</string>
@@ -34,4 +40,5 @@
     <string name="novel_info_latest_chapter">Latest Chapter</string>
     <string name="novel_info_short_intro">Short Intro</string>
     <string name="novel_info_full_intro">Full Intro</string>
+    <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
 </resources>

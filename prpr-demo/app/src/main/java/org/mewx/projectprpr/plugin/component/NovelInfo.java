@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
+
 /**
  * Created by MewX on 4/9/2016.
  * General info, and additional info stored in ContentValues.
@@ -15,7 +17,7 @@ import android.support.annotation.Nullable;
  * 最后更新 2012-11-02
  */
 @SuppressWarnings("unused")
-public class NovelInfo {
+public class NovelInfo implements Serializable {
     @NonNull private String title; // may be id? hash?
     @NonNull private String dataSource = ""; // TODO: set by parent
     @NonNull private String bookTag; // id in data source, just an identifier

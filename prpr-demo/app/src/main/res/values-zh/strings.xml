@@ -27,4 +27,11 @@
     <string name="novel_info_latest_chapter">最新章节</string>
     <string name="novel_info_short_intro">内容提要</string>
     <string name="novel_info_full_intro">完整简介</string>
+    <string name="action_account">账号</string>
+    <string name="action_category">分类</string>
+    <string name="action_search">搜索</string>
+    <string name="action_net_book_add">添加收藏</string>
+    <string name="action_net_book_download">缓存本书</string>
+    <string name="novel_info_no_intro">没有小说简介 :(</string>
+    <string name="title_activity_data_source_item_detail">小说详情页面</string>
 </resources>

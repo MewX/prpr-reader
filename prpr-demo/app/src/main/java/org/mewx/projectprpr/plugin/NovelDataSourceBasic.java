@@ -7,12 +7,14 @@ import android.util.Log;
 
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.PageNumBetween;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -132,6 +134,8 @@ public abstract class NovelDataSourceBasic {
     public abstract NovelInfo parseNovelInfo(String content);
     public abstract NetRequest getNovelVolumeRequest(String tag); // TODO: if return null, use request above
     public abstract List<VolumeInfo> parseNovelVolume(String content);
+    public abstract NetRequest getNovelChapterRequest(String tag);
+    public abstract List<ChapterInfo> parseNovelChapter(String content);
 
     public abstract NetRequest getNovelContentRequest(String tag); // may too large
     public abstract NovelContent parseNovelContent(String content); // parse html novel, images

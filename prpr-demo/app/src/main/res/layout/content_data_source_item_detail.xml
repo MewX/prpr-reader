@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card-view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.mewx.projectprpr.activity.DataSourceItemDetailActivity"
+    tools:showIn="@layout/activity_data_source_item_detail">
+
+    <LinearLayout
+        android:id="@+id/novel_info_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- use @layout/recycler_item_net_novel_item directly-->
+        <include layout="@layout/recycler_item_net_novel_item" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="2dp">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                card-view:cardBackgroundColor="@color/novel_item_white"
+                card-view:cardElevation="2dp"
+                card-view:cardUseCompatPadding="true"
+                card-view:cardMaxElevation="2dp">
+
+                <TextView
+                    android:id="@+id/novel_intro_full"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="@string/novel_info_loading"
+                    android:textColor="@color/novel_item_text" />
+
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
+
+        <!-- Here add all chapter icons -->
+
+    </LinearLayout>
+</ScrollView>

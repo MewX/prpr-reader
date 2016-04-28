@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatTemplateActivity
                 .setBaseDirectoryName(YBL.FOLDER_NAME_IMAGE)
                 .setMaxCacheSize(YBL.IMAGE_CACHE_DISK_SIZE)
                 .build();
-
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setNetworkFetcher(new OkHttp3NetworkFetcher(YBL.globalOkHttpClient3))
                 .setMainDiskCacheConfig(diskCacheConfig)
