@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by MewX on 4/12/2016.
@@ -134,5 +135,22 @@ public class FileTool {
 
     public static boolean saveFile(@NonNull String filepath, @NonNull String str, boolean forceUpdate) {
         return FileTool.saveFile(filepath, str.getBytes(), forceUpdate);
+    }
+
+    @NonNull
+    public static String loadFullFileContent(@NonNull String FileFullPath) {
+        String h = "";
+        try {
+            byte[] b = loadFile(FileFullPath);
+            if(b.length == 0) return "";
+            h = new String(b, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return h;
+    }
+
+    public static boolean writeFullFileContent(@NonNull String FileFullPath,@NonNull String s) {
+        return saveFile(FileFullPath, s, true);
     }
 }

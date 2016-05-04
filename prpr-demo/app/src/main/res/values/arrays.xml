@@ -5,13 +5,13 @@
         <item>@string/plugin_center_items_formats</item>
     </string-array>
 
-    <!--<string-array name="novel_info_elements" >-->
-        <!--<item name="title">@string/novel_info_title</item>-->
-        <!--<item name="author">@string/novel_info_author</item>-->
-        <!--<item name="data_source">@string/novel_info_data_source</item>-->
-        <!--<item name="category">@string/novel_info_category</item>-->
-        <!--<item name="status">@string/novel_info_status</item>-->
-        <!--<item name="last_update">@string/novel_info_last_update</item>-->
-        <!--<item name="type">@string/novel_info_type</item>-->
-    <!--</string-array>-->
+    <string-array name="reader_font_option">
+        <item>@string/reader_font_system</item>
+        <item>@string/reader_font_custom</item>
+    </string-array>
+
+    <string-array name="reader_background_option">
+        <item>@string/reader_background_system</item>
+        <item>@string/reader_background_custom</item>
+    </string-array>
 </resources>

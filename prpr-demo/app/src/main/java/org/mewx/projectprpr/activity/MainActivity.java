@@ -35,6 +35,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 

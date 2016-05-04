@@ -44,6 +44,7 @@ import okhttp3.Response;
 
 public class DataSourceItemDetailActivity extends AppCompatActivity {
     private static final String TAG = DataSourceItemDetailActivity.class.getSimpleName();
+    public static final String NOVEL_TAG = "novel";
     public static final String VOLUME_TAG = "volume";
 
     // views
@@ -318,6 +319,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                     // todo: jump to chapter select activity
                     Intent intent = new Intent(DataSourceItemDetailActivity.this, DataSourceItemChapterActivity.class);
                     intent.putExtra(VOLUME_TAG, vl);
+                    intent.putExtra(NOVEL_TAG, novelInfo.getBookTag());
                     startActivity(intent);
                 }
             });

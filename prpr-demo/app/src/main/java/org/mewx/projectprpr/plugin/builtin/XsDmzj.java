@@ -315,7 +315,7 @@ public class XsDmzj extends NovelDataSourceBasic {
     @Override
     public NetRequest getNovelContentRequest(String tag) {
         // url is tag, this is a pre-request
-        return new NetRequest(NetRequest.REQUEST_TYPE.ULTRA_REQUEST, this.url + tag, null);
+        return new NetRequest(NetRequest.REQUEST_TYPE.GET, this.url + tag, null);
     }
 
     @Override
@@ -350,9 +350,10 @@ public class XsDmzj extends NovelDataSourceBasic {
         int pageCount = Integer.valueOf(contentMatcher.group(2));
         if(pageCount < 2) return new NetRequest[0];
         else {
-            NetRequest[] temp = new NetRequest[pageCount - 2];
+            NetRequest[] temp = new NetRequest[pageCount - 1];
             for(int i = 2; i <= pageCount; i ++) {
-                temp[i - 1] = new NetRequest(NetRequest.REQUEST_TYPE.GET, tag.replace("\\.shtml", "_" + i + ".shtml"), null);
+                temp[i - 2] = new NetRequest(NetRequest.REQUEST_TYPE.GET, url + tag.replaceAll("\\.shtml", "_" + i + ".shtml"), null);
+                Loge(temp[i-2].getFullGetUrl());
             }
             return temp;
         }
@@ -385,16 +386,19 @@ public class XsDmzj extends NovelDataSourceBasic {
 
         while (paraMatcher.find()) {
             String temp = paraMatcher.group(1).trim();
+            if (TextUtils.isEmpty(temp)) continue;
+
             if (temp.contains(imageSearch)) {
                 // this is an image
+                Matcher matcher = Pattern.compile(imageRegex, Pattern.DOTALL).matcher(temp);
+                matcher.find();
                 nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
-                        imgBaseUrl + Pattern.compile(imageRegex, Pattern.DOTALL).matcher(temp).group(1)));
+                        imgBaseUrl + matcher.group(1)));
             } else {
                 // process as text
                 nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.TEXT, purifyHtmlToDisplayable(temp)));
             }
         }
-
         return nc;
     }
 

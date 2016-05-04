@@ -12,9 +12,15 @@
     <string name="action_search">Search</string>
     <string name="action_net_book_add">Add to favorite</string>
     <string name="action_net_book_download">Download this book</string>
+    <string name="action_watch_image">View image</string>
 
     <string name="title_activity_main">Project PRPR</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
+    <string name="title_activity_data_source_item_initial">DataSourceItemInitialActivity</string>
+    <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
+    <string name="title_activity_data_source_item_chapter">DataSourceItemChapterActivity</string>
+    <string name="title_activity_reader">ReaderActivity</string>
 
     <string name="drawer_item_name_library_local">Local Library</string>
     <string name="drawer_item_name_plug_in_center">Plug-in Center</string>
@@ -24,8 +30,6 @@
 
     <string name="plugin_center_items_data_source">Data Source Plug-ins</string>
     <string name="plugin_center_items_formats">Reading Formats Plug-ins</string>
-    <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
-    <string name="title_activity_data_source_item_initial">DataSourceItemInitialActivity</string>
 
     <!-- This part should not be contained in string-array, because it's hard to access item name;
          And all of these strings are beginning with "novel_info_", so it's easy to access. -->
@@ -40,6 +44,31 @@
     <string name="novel_info_latest_chapter">Latest Chapter</string>
     <string name="novel_info_short_intro">Short Intro</string>
     <string name="novel_info_full_intro">Full Intro</string>
-    <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
-    <string name="title_activity_data_source_item_chapter">DataSourceItemChapterActivity</string>
+
+    <!-- Reader strings-->
+    <string name="reader_please_wait">Please wait&#8230;&#8230;</string>
+    <string name="reader_engine_v1_parsing">V1 engine is parsing content</string>
+    <string name="reader_already_first_chapter">Already the begin</string>
+    <string name="reader_already_last_chapter">Already the end</string>
+    <string name="reader_previous_chapter">Go previous chapter</string>
+    <string name="reader_next_chapter">Go next chapter</string>
+    <string name="reader_daynight">Switch day/night mode</string>
+    <string name="reader_jump">Jump page</string>
+    <string name="reader_find">Find content</string>
+    <string name="reader_config">Reader settings</string>
+    <string name="reader_v1_notice">V1 engine notice</string>
+    <string name="reader_jump_last">Jump to where you left?</string>
+    <string name="reader_rotate">Rotate for 90 degrees in clockwise</string>
+    <string name="reader_download">Save image</string>
+    <string name="reader_custom_background">Custom reading BG</string>
+    <string name="reader_custom_font">Custom reading font</string>
+    <string name="reader_font_size">Font size</string>
+    <string name="reader_line_distance">Distance between lines</string>
+    <string name="reader_paragraph_distance">Distance between paragraphes</string>
+    <string name="reader_paragraph_edge_distance">Distance between paragraph and edge</string>
+    <string name="reader_view_image_no_image">Please press this button on a page containing a image</string>
+    <string name="reader_font_system">Use system default</string>
+    <string name="reader_font_custom">Use custom ttf/otf font file</string>
+    <string name="reader_background_system">Use default emulated paper</string>
+    <string name="reader_background_custom">Use custom image</string>
 </resources>

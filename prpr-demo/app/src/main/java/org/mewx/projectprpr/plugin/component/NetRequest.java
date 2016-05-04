@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import okhttp3.CacheControl;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -78,6 +79,7 @@ public class NetRequest {
             case GET:
                 request = new Request.Builder()
                         .url(getFullGetUrl())
+                        .cacheControl(CacheControl.FORCE_NETWORK)
                         .addHeader("User-Agent", YBL.USER_AGENT)
                         .build();
                 return request;
@@ -85,6 +87,7 @@ public class NetRequest {
             case POST:
                 request = new Request.Builder()
                         .url(getFullGetUrl())
+                        .cacheControl(CacheControl.FORCE_NETWORK)
                         .post(RequestBody.create(MediaType.parse("text/plain; charset=" + charset), args))
                         .addHeader("User-Agent", YBL.USER_AGENT)
                         .build();
