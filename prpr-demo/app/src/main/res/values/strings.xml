@@ -71,4 +71,7 @@
     <string name="reader_font_custom">Use custom ttf/otf font file</string>
     <string name="reader_background_system">Use default emulated paper</string>
     <string name="reader_background_custom">Use custom image</string>
+
+    <string name="dialog_positive_yes">Yes</string>
+    <string name="dialog_negative_no">No</string>
 </resources>

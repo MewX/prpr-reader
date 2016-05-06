@@ -183,27 +183,31 @@ public class YBL {
         readSaves = new ArrayList<>();
 
         // read history from file, if not exist, create.
-        String h = FileTool.loadFullFileContent(PROJECT_FOLDER_CACHE + File.separator + FOLDER_NAME_IMAGE_READER + File.separator + FILE_NAME_READER_SAVES);
+        if(!FileTool.existFile(getStoragePath(PROJECT_FOLDER + File.separator + FILE_NAME_READER_SAVES))) {
+            FileTool.saveFile(getStoragePath(PROJECT_FOLDER + File.separator + FILE_NAME_READER_SAVES), "", true);
+        }
+        String h = FileTool.loadFullFileContent(getStoragePath(PROJECT_FOLDER + File.separator + FILE_NAME_READER_SAVES));
 
         // split string h
         String[] p = h.split("\\|\\|"); // regular expression
-        OutLoop:
         for (String temp : p) {
             Log.v("MewX", temp);
             String[] parts = temp.split(":"); // \\:
             if (parts.length != 5)
                 continue;
 
-            // judge legal
-            for(String str : parts) if(!FigureTool.isInteger(str)) continue OutLoop;
-
             // add to list
             ReaderSaveBasic rs = new ReaderSaveBasic();
             rs.aid = parts[0];
             rs.vid = parts[1];
             rs.cid = parts[2];
-            rs.lineId = Integer.valueOf(parts[3]);
-            rs.wordId = Integer.valueOf(parts[4]);
+            try {
+                rs.lineId = Integer.valueOf(parts[3]);
+                rs.wordId = Integer.valueOf(parts[4]);
+            } catch (Exception expected) {
+                expected.printStackTrace();
+                continue;
+            }
             readSaves.add(rs);
         }
     }
@@ -219,7 +223,7 @@ public class YBL {
             t += readSaves.get(i).aid + ":" + readSaves.get(i).vid + ":" + readSaves.get(i).cid + ":"
                     + readSaves.get(i).lineId + ":" + readSaves.get(i).wordId;
         }
-        FileTool.saveFile(PROJECT_FOLDER_CACHE + File.separator + FOLDER_NAME_IMAGE_READER + File.separator + FILE_NAME_READER_SAVES, t, true);
+        FileTool.saveFile(getStoragePath(PROJECT_FOLDER + File.separator + FILE_NAME_READER_SAVES), t, true);
     }
 
     public static void addReadSavesRecordV1(String aid, String vid, String cid, int lineId, int wordId) {

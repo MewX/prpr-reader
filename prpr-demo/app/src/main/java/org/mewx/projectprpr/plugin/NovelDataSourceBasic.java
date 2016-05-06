@@ -60,6 +60,7 @@ import java.util.List;
 public abstract class NovelDataSourceBasic {
     private static final String TAG = NovelDataSourceBasic.class.getSimpleName();
 
+    @NonNull protected String tag; // unchangeable
     @NonNull protected String name;
     @NonNull protected String author;
     @NonNull protected String url;
@@ -69,6 +70,7 @@ public abstract class NovelDataSourceBasic {
 
     public NovelDataSourceBasic() {
         // init values
+        tag = "Default";
         name = "Default";
         author = "MewX";
         url = "http://mewx.org";
@@ -79,6 +81,11 @@ public abstract class NovelDataSourceBasic {
 
     protected static String getNovelInfoElementName(@StringRes int id) {
         return MyApp.getContext().getResources().getString(id);
+    }
+
+    @NonNull
+    public String getTag() {
+        return tag;
     }
 
     @NonNull

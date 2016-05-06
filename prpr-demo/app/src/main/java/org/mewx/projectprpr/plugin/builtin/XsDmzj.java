@@ -88,6 +88,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
     public XsDmzj() {
         // init values
+        tag = "dmzjqxs";
         name = "动漫之家·轻小说";
         author = "MewX";
         url = "http://q.dmzj.com";
@@ -283,7 +284,7 @@ public class XsDmzj extends NovelDataSourceBasic {
     @Override
     public List<VolumeInfo> parseNovelVolume(String content) {
         final String volumeRegex = "chapnamesub\">(.+?)<.+?(volume_list|</script>)"; // get group(1)
-        final String chapterRegex = "chapter_list\\[\\d\\]\\[.+?href=\"(.+?)\".+?>(.+?)<";
+        final String chapterRegex = "chapter_list\\[\\d+?\\]\\[.+?href=\"(.+?)\".+?>(.+?)<";
 
         // parse volumes and chapters
         List<VolumeInfo> list = new ArrayList<>();

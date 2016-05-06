@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/slider_holder"
     android:background="@color/reader_default_bg_black"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="org.mewx.projectprpr.reader.activity.ReaderActivityV1">
 
     <RelativeLayout
         android:id="@+id/reader_top"
@@ -20,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/reader_default_bg_toolbar"
+            app:theme="@style/AppTheme.AppBarOverlay"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <LinearLayout
@@ -30,7 +33,6 @@
             android:background="@color/reader_default_bg_toolbar"
             android:orientation="horizontal"
             android:visibility="invisible"
-            android:clickable="true"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -47,8 +49,8 @@
 
                 <ImageButton
                     android:id="@+id/ic_daylight"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:clickable="false"
                     android:background="@android:color/transparent"
@@ -66,8 +68,8 @@
 
                 <ImageButton
                     android:id="@+id/ic_jump"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:clickable="false"
                     android:background="@android:color/transparent"
@@ -85,8 +87,8 @@
 
                 <ImageButton
                     android:id="@+id/ic_find"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:clickable="false"
                     android:background="@android:color/transparent"
@@ -104,8 +106,8 @@
 
                 <ImageButton
                     android:id="@+id/ic_config"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:scaleType="fitCenter"
                     android:clickable="false"
                     android:background="@android:color/transparent"
@@ -120,7 +122,6 @@
             android:fitsSystemWindows="true"
             android:background="@color/reader_default_bg_toolbar"
             android:visibility="invisible"
-            android:clickable="true"
             android:layout_above="@+id/reader_bot"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -175,7 +176,6 @@
             android:fitsSystemWindows="true"
             android:background="@color/reader_default_bg_toolbar"
             android:visibility="invisible"
-            android:clickable="true"
             android:layout_above="@+id/reader_bot"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -251,6 +251,7 @@
                 android:id="@+id/layout_paragraph_distance"
                 android:layout_below="@+id/layout_line_distance"
                 android:layout_width="match_parent"
+                android:clickable="true"
                 android:layout_height="48dp">
 
                 <TextView
@@ -319,6 +320,7 @@
                 android:id="@+id/layout_more_buttons"
                 android:layout_below="@+id/layout_paragraph_edge_distance"
                 android:layout_width="match_parent"
+                android:clickable="true"
                 android:layout_height="48dp">
 
                 <TextView
@@ -347,9 +349,4 @@
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
-
-    <!--<org.mewx.wenku8.reader.slider.SlidingLayout-->
-        <!--android:id="@+id/sliding_layout"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_width="match_parent" />-->
 </RelativeLayout>

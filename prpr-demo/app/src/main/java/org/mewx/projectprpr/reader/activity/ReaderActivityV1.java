@@ -34,6 +34,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.DataSourceItemInitialActivity;
 import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
@@ -63,19 +64,25 @@ public class ReaderActivityV1 extends AppCompatActivity {
     private static final String FromLocal = "fav";
 
     // vars
-    private String from = "";
     private String novelTag, currentChapterTag;
     private VolumeInfo volumeInfo = null;
     private NovelContent nc;
     private RelativeLayout mSliderHolder;
     private SlidingLayout sl;
-//    private int tempNavBarHeight;
 
     // components
     private SystemBarTintManager tintManager;
     private SlidingPageAdapter mSlidingPageAdapter;
     private ReaderFormatLoaderBasic loader;
     private ReaderSettingBasic setting;
+    private NovelDataSourceBasic dataSourceBasic;
+
+    // views
+    private View readerTop, readerBot;
+    private View botSetting, botSeeker;
+    private View btnDayNight, btnJump, btnFind, btnConfig;
+    private View btnCustomFont, btnCustomBG;
+    private View btnNextChapter, btnPreviewChapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,11 +123,24 @@ public class ReaderActivityV1 extends AppCompatActivity {
 
         // find views
         mSliderHolder = (RelativeLayout) findViewById(R.id.slider_holder);
+        readerTop = findViewById(R.id.reader_top);
+        readerBot = findViewById(R.id.reader_bot);
+        botSetting = findViewById(R.id.reader_bot_settings);
+        botSeeker = findViewById(R.id.reader_bot_seeker);
+        btnDayNight = findViewById(R.id.btn_daylight);
+        btnJump = findViewById(R.id.btn_jump);
+        btnFind = findViewById(R.id.btn_find);
+        btnConfig = findViewById(R.id.btn_config);
+        btnCustomFont = findViewById(R.id.btn_custom_font);
+        btnCustomBG = findViewById(R.id.btn_custom_background);
+        btnNextChapter = findViewById(R.id.text_next);
+        btnPreviewChapter = findViewById(R.id.text_previous);
 
         // fetch novel content
-        if (DataSourceItemInitialActivity.dataSourceBasic != null) {
+        dataSourceBasic = DataSourceItemInitialActivity.dataSourceBasic; // get a backup
+        if (dataSourceBasic != null) {
             try {
-                YBL.globalOkHttpClient3.newCall(DataSourceItemInitialActivity.dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
+                YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
                         .enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -130,14 +150,14 @@ public class ReaderActivityV1 extends AppCompatActivity {
 
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
-                                NetRequest[] netRequests = DataSourceItemInitialActivity.dataSourceBasic.getUltraRequests(currentChapterTag, response.body().string());
+                                NetRequest[] netRequests = dataSourceBasic.getUltraRequests(currentChapterTag, response.body().string());
                                 byte[][] returnBytes = new byte[netRequests.length][];
                                 for (int i = 0; i < netRequests.length; i ++) {
                                     Log.e(TAG, netRequests[i].getFullGetUrl());
                                     returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
                                 }
-                                DataSourceItemInitialActivity.dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
-                                nc = DataSourceItemInitialActivity.dataSourceBasic.parseNovelContent(response.body().string());
+                                dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
+                                nc = dataSourceBasic.parseNovelContent(response.body().string());
                                 requestNovelContent("SYSTEM_1_SUCCEEDED");
                             }
                         });
@@ -152,7 +172,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(findViewById(R.id.reader_bot).getVisibility() != View.VISIBLE)
+        if(readerBot.getVisibility() != View.VISIBLE)
             hideNavigationBar();
         else
             showNavigationBar();
@@ -226,14 +246,14 @@ public class ReaderActivityV1 extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        // todo: save record
-//        if(mSlidingPageAdapter != null && loader != null) {
-//            loader.setCurrentIndex(mSlidingPageAdapter.getCurrentLastLineIndex());
-//            if (volumeInfo.getChapterListSize() > 1 && volumeInfo.getChapterByListIndex(volumeInfo.getChapterListSize() - 1).getChapterTag() == currentChapterTag && mSlidingPageAdapter.getCurrentLastWordIndex() == loader.getCurrentAsString().length() - 1)
-//                GlobalConfig.removeReadSavesRecordV1(novelTag);
-//            else
-//                GlobalConfig.addReadSavesRecordV1(novelTag, volumeInfo.vid, currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
-//        }
+        // save record
+        if(mSlidingPageAdapter != null && loader != null) {
+            loader.setCurrentIndex(mSlidingPageAdapter.getCurrentLastLineIndex());
+            if (volumeInfo.getChapterListSize() > 1 && volumeInfo.getChapterByListIndex(volumeInfo.getChapterListSize() - 1).getChapterTag().equals(currentChapterTag) && mSlidingPageAdapter.getCurrentLastWordIndex() == loader.getCurrentAsString().length() - 1)
+                YBL.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
+            else
+                YBL.addReadSavesRecordV1(dataSourceBasic.getTag() + novelTag, volumeInfo.getVolumeTag(), currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
+        }
     }
 
     @Override
@@ -446,8 +466,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                     // first init
                     if (!barStatus) {
                         showNavigationBar();
-                        findViewById(R.id.reader_top).setVisibility(View.VISIBLE);
-                        findViewById(R.id.reader_bot).setVisibility(View.VISIBLE);
+                        readerTop.setVisibility(View.VISIBLE);
+                        readerBot.setVisibility(View.VISIBLE);
 
                         if (Build.VERSION.SDK_INT >= 16) {
                             tintManager.setStatusBarAlpha(0.90f);
@@ -457,7 +477,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
 
                         if (!isSet) {
                             // add action to each
-                            findViewById(R.id.btn_daylight).setOnClickListener(new View.OnClickListener() {
+                            btnDayNight.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     // switch day/night mode
@@ -467,7 +487,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     mSlidingPageAdapter.notifyDataSetChanged();
                                 }
                             });
-                            findViewById(R.id.btn_daylight).setOnLongClickListener(new View.OnLongClickListener() {
+                            btnDayNight.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
                                     Toast.makeText(ReaderActivityV1.this, getResources().getString(R.string.reader_daynight), Toast.LENGTH_SHORT).show();
@@ -475,21 +495,20 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 }
                             });
 
-                            findViewById(R.id.btn_jump).setOnClickListener(new View.OnClickListener() {
+                            btnJump.setOnClickListener(new View.OnClickListener() {
                                 boolean isOpen = false;
 
                                 @Override
                                 public void onClick(View v) {
                                     // show jump dialog
-                                    if (findViewById(R.id.reader_bot_settings).getVisibility() == View.VISIBLE
-                                            || findViewById(R.id.reader_bot_seeker).getVisibility() == View.INVISIBLE) {
+                                    if (botSetting.getVisibility() == View.VISIBLE || botSeeker.getVisibility() == View.INVISIBLE) {
                                         isOpen = false;
-                                        findViewById(R.id.reader_bot_settings).setVisibility(View.INVISIBLE);
+                                        botSetting.setVisibility(View.INVISIBLE);
                                     }
                                     if (!isOpen)
-                                        findViewById(R.id.reader_bot_seeker).setVisibility(View.VISIBLE);
+                                        botSeeker.setVisibility(View.VISIBLE);
                                     else
-                                        findViewById(R.id.reader_bot_seeker).setVisibility(View.INVISIBLE);
+                                        botSeeker.setVisibility(View.INVISIBLE);
                                     isOpen = !isOpen;
 
                                     DiscreteSeekBar seeker = (DiscreteSeekBar) findViewById(R.id.reader_seekbar);
@@ -514,7 +533,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     });
                                 }
                             });
-                            findViewById(R.id.btn_jump).setOnLongClickListener(new View.OnLongClickListener() {
+                            btnJump.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
                                     Toast.makeText(ReaderActivityV1.this, getResources().getString(R.string.reader_jump), Toast.LENGTH_SHORT).show();
@@ -522,14 +541,14 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 }
                             });
 
-                            findViewById(R.id.btn_find).setOnClickListener(new View.OnClickListener() {
+                            btnFind.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     // show label page
                                     Toast.makeText(ReaderActivityV1.this, "查找功能尚未就绪", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            findViewById(R.id.btn_find).setOnLongClickListener(new View.OnLongClickListener() {
+                            btnFind.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
                                     Toast.makeText(ReaderActivityV1.this, getResources().getString(R.string.reader_find), Toast.LENGTH_SHORT).show();
@@ -537,21 +556,20 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 }
                             });
 
-                            findViewById(R.id.btn_config).setOnClickListener(new View.OnClickListener() {
+                            btnConfig.setOnClickListener(new View.OnClickListener() {
                                 private boolean isOpen = false;
 
                                 @Override
                                 public void onClick(View v) {
                                     // show jump dialog
-                                    if (findViewById(R.id.reader_bot_seeker).getVisibility() == View.VISIBLE
-                                            || findViewById(R.id.reader_bot_settings).getVisibility() == View.INVISIBLE) {
+                                    if (botSeeker.getVisibility() == View.VISIBLE || botSetting.getVisibility() == View.INVISIBLE) {
                                         isOpen = false;
-                                        findViewById(R.id.reader_bot_seeker).setVisibility(View.INVISIBLE);
+                                        botSeeker.setVisibility(View.INVISIBLE);
                                     }
                                     if (!isOpen)
-                                        findViewById(R.id.reader_bot_settings).setVisibility(View.VISIBLE);
+                                        botSetting.setVisibility(View.VISIBLE);
                                     else
-                                        findViewById(R.id.reader_bot_settings).setVisibility(View.INVISIBLE);
+                                        botSetting.setVisibility(View.INVISIBLE);
                                     isOpen = !isOpen;
 
                                     // set all listeners
@@ -636,7 +654,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                         }
                                     });
 
-                                    findViewById(R.id.btn_custom_font).setOnClickListener(new View.OnClickListener() {
+                                    btnCustomFont.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             new MaterialDialog.Builder(ReaderActivityV1.this)
@@ -672,7 +690,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                         }
                                     });
 
-                                    findViewById(R.id.btn_custom_background).setOnClickListener(new View.OnClickListener() {
+                                    btnCustomBG.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             new MaterialDialog.Builder(ReaderActivityV1.this)
@@ -709,7 +727,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     });
                                 }
                             });
-                            findViewById(R.id.btn_config).setOnLongClickListener(new View.OnLongClickListener() {
+                            btnConfig.setOnLongClickListener(new View.OnLongClickListener() {
                                 @Override
                                 public boolean onLongClick(View v) {
                                     Toast.makeText(ReaderActivityV1.this, getResources().getString(R.string.reader_config), Toast.LENGTH_SHORT).show();
@@ -717,12 +735,12 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 }
                             });
 
-                            findViewById(R.id.text_previous).setOnClickListener(new View.OnClickListener() {
+                            btnPreviewChapter.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     // goto previous chapter
                                     for (int i = 0; i < volumeInfo.getChapterListSize(); i++) {
-                                        if (currentChapterTag == volumeInfo.getChapterByListIndex(i).getChapterTag()) {
+                                        if (currentChapterTag.equals(volumeInfo.getChapterByListIndex(i).getChapterTag())) {
                                             // found self
                                             if (i == 0) {
                                                 // no more previous
@@ -737,9 +755,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                 super.onPositive(dialog);
                                                                 Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
                                                                 intent.putExtra("novelTag", novelTag);
-                                                                intent.putExtra("volume", volumeInfo);
+                                                                intent.putExtra("volumeInfo", volumeInfo);
                                                                 intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
-                                                                intent.putExtra("from", from); // from cloud
                                                                 startActivity(intent);
                                                                 overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                                                 ReaderActivityV1.this.finish();
@@ -747,6 +764,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                         })
                                                         .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
                                                         .title(R.string.reader_jump_last)
+                                                        .positiveText(R.string.dialog_positive_yes)
+                                                        .negativeText(R.string.dialog_negative_no)
                                                         .content(volumeInfo.getChapterByListIndex(i_bak - 1).getTitle())
                                                         .contentGravity(GravityEnum.CENTER)
                                                         .show();
@@ -757,12 +776,12 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 }
                             });
 
-                            findViewById(R.id.text_next).setOnClickListener(new View.OnClickListener() {
+                            btnNextChapter.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     // goto next chapter
                                     for (int i = 0; i < volumeInfo.getChapterListSize(); i++) {
-                                        if (currentChapterTag == volumeInfo.getChapterByListIndex(i).getChapterTag()) {
+                                        if (currentChapterTag.equals(volumeInfo.getChapterByListIndex(i).getChapterTag())) {
                                             // found self
                                             if (i + 1 >= volumeInfo.getChapterListSize()) {
                                                 // no more previous
@@ -777,9 +796,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                 super.onPositive(dialog);
                                                                 Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
                                                                 intent.putExtra("novelTag", novelTag);
-                                                                intent.putExtra("volume", volumeInfo);
+                                                                intent.putExtra("volumeInfo", volumeInfo);
                                                                 intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
-                                                                intent.putExtra("from", from); // from cloud
                                                                 startActivity(intent);
                                                                 overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                                                 ReaderActivityV1.this.finish();
@@ -787,6 +805,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                         })
                                                         .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
                                                         .title(R.string.reader_jump_last)
+                                                        .positiveText(R.string.dialog_positive_yes)
+                                                        .negativeText(R.string.dialog_negative_no)
                                                         .content(volumeInfo.getChapterByListIndex(i_bak + 1).getTitle())
                                                         .contentGravity(GravityEnum.CENTER)
                                                         .show();
@@ -800,10 +820,10 @@ public class ReaderActivityV1 extends AppCompatActivity {
                     } else {
                         // show menu
                         hideNavigationBar();
-                        findViewById(R.id.reader_top).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.reader_bot).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.reader_bot_seeker).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.reader_bot_settings).setVisibility(View.INVISIBLE);
+                        readerTop.setVisibility(View.INVISIBLE);
+                        readerBot.setVisibility(View.INVISIBLE);
+                        botSeeker.setVisibility(View.INVISIBLE);
+                        botSetting.setVisibility(View.INVISIBLE);
                         if (Build.VERSION.SDK_INT >= 16) {
                             tintManager.setStatusBarAlpha(0.0f);
                             tintManager.setNavigationBarAlpha(0.0f);
@@ -829,14 +849,12 @@ public class ReaderActivityV1 extends AppCompatActivity {
                 // todo: end loading dialog
 
                 // show dialog, jump to last read position
-                if (YBL.getReadSavesRecordV1(novelTag) != null) {
-                    ReaderSaveBasic rs = YBL.getReadSavesRecordV1(novelTag);
-                    if (rs.vid.equals(volumeInfo.getVolumeTag()) && rs.cid.equals(currentChapterTag)) {
-                        mSlidingPageAdapter.setCurrentIndex(rs.lineId, rs.wordId);
-                        mSlidingPageAdapter.restoreState(null, null);
-                        mSlidingPageAdapter.notifyDataSetChanged();
-
-                    }
+                ReaderSaveBasic rs = YBL.getReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
+                Log.e(TAG, rs.vid + ":" + volumeInfo.getVolumeTag());
+                if (rs != null && rs.vid.equals(volumeInfo.getVolumeTag()) && rs.cid.equals(currentChapterTag)) {
+                    mSlidingPageAdapter.setCurrentIndex(rs.lineId, rs.wordId);
+                    mSlidingPageAdapter.restoreState(null, null);
+                    mSlidingPageAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -861,9 +879,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                         super.onPositive(dialog);
                                         Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
                                         intent.putExtra("novelTag", novelTag);
-                                        intent.putExtra("volume", volumeInfo);
+                                        intent.putExtra("volumeInfo", volumeInfo);
                                         intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
-                                        intent.putExtra("from", from); // from cloud
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                         ReaderActivityV1.this.finish();
@@ -871,6 +888,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 })
                                 .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
                                 .title(R.string.reader_jump_last)
+                                .positiveText(R.string.dialog_positive_yes)
+                                .negativeText(R.string.dialog_negative_no)
                                 .content(volumeInfo.getChapterByListIndex(i_bak + 1).getTitle())
                                 .contentGravity(GravityEnum.CENTER)
                                 .show();
@@ -904,9 +923,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                         super.onPositive(dialog);
                                         Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
                                         intent.putExtra("novelTag", novelTag);
-                                        intent.putExtra("volume", volumeInfo);
+                                        intent.putExtra("volumeInfo", volumeInfo);
                                         intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
-                                        intent.putExtra("from", from); // from cloud
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                         ReaderActivityV1.this.finish();
@@ -914,6 +932,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                 })
                                 .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
                                 .title(R.string.reader_jump_last)
+                                .positiveText(R.string.dialog_positive_yes)
+                                .negativeText(R.string.dialog_negative_no)
                                 .content(volumeInfo.getChapterByListIndex(i_bak - 1).getTitle())
                                 .contentGravity(GravityEnum.CENTER)
                                 .show();

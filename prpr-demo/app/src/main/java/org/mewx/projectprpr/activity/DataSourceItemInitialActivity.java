@@ -92,7 +92,12 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
                     .enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            Toast.makeText(DataSourceItemInitialActivity.this, "Loading failed", Toast.LENGTH_SHORT).show();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(DataSourceItemInitialActivity.this, "Loading failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                             e.printStackTrace();
                             isLoading = false;
                         }
