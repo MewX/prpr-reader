@@ -41,14 +41,20 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.activity.ViewImageDetailActivity;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.component.NovelContentLine;
+import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
 import org.mewx.projectprpr.reader.loader.ReaderFormatLoaderBasic;
 import org.mewx.projectprpr.reader.setting.ReaderSettingBasic;
 import org.mewx.projectprpr.toolkit.FigureTool;
 import org.mewx.projectprpr.toolkit.FileTool;
 import org.mewx.projectprpr.toolkit.thirdparty.SingletonThreadPool;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -68,6 +74,8 @@ import java.util.concurrent.ExecutorService;
  *  - Bot: ToolBar
  */
 public class ReaderPageViewBasic extends View {
+    private static final String TAG = ReaderPageViewBasic.class.getSimpleName();
+
     // enum
     public enum LOADING_DIRECTION {
         FORWARDS, // go to next page
@@ -582,7 +590,8 @@ public class ReaderPageViewBasic extends View {
 
                     if (foundIndex == -1) {
                         // not found, new load task
-                        canvas.drawText("正在加载图片：" + li.content.substring(21, li.content.length()), (float) (pxPageEdgeDistance + pxParagraphEdgeDistance), (float) heightSum, textPaint);
+
+                        canvas.drawText("正在加载图片：" + li.content.split("/")[li.content.split("/").length-1], (float) (pxPageEdgeDistance + pxParagraphEdgeDistance), (float) heightSum, textPaint);
                         BitmapInfo bitmapInfo = new BitmapInfo();
                         bitmapInfo.idxLineInfo = i;
                         bitmapInfo.x_beg = pxPageEdgeDistance + pxParagraphEdgeDistance;
@@ -629,12 +638,14 @@ public class ReaderPageViewBasic extends View {
     }
 
     private void AsyncLoadBitmap(final BitmapInfo bitmapInfo) {
+        final String imagePath = YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfo.idxLineInfo).content, YBL.STANDARD_IMAGE_FORMAT);
         ImageRequest imageRequest;
-        if(!FileTool.existFile(YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfo.idxLineInfo).content))) {
+        if(!FileTool.existFile(imagePath)) {
             imageRequest = ImageRequest.fromUri(lineInfoList.get(bitmapInfo.idxLineInfo).content);
         } else {
-            // load from storage
-            imageRequest = ImageRequest.fromUri("file:/" + YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfo.idxLineInfo).content));
+            // load from storage, the image is saved when downloading
+            imageRequest = ImageRequest.fromUri("file://" + imagePath);
+            Log.e("TAG", "file://" + imagePath);
         }
 
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
@@ -643,6 +654,24 @@ public class ReaderPageViewBasic extends View {
         dataSource.subscribe(new BaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
+                // save file first for next time usage
+                if(!FileTool.existFile(imagePath)) {
+                    FileOutputStream out = null;
+                    try {
+                        out = new FileOutputStream(imagePath);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 89, out); // bmp is your Bitmap instance
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (out != null)
+                                out.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
                 int width = bitmap.getWidth(), height = bitmap.getHeight();
                 if (bitmapInfo.height / (float) bitmapInfo.width > height / (float) width) {
                     // fit width
@@ -660,78 +689,28 @@ public class ReaderPageViewBasic extends View {
 
             @Override
             protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                Log.d("Bitmap ","after callback failure");
-                Toast.makeText(MyApp.getContext(),"Failure", Toast.LENGTH_SHORT).show();
+                Log.e(TAG ,"onFailureImpl");
+                // todo: not available in non-UI thread
+                // Toast.makeText(MyApp.getContext(),"Failure", Toast.LENGTH_SHORT).show();
             }
         }, CallerThreadExecutor.getInstance());
 
-    }
-
-    private class AsyncLoadImage extends AsyncTask<BitmapInfo, Integer, String> {
-
-        @Override
-        protected String doInBackground(BitmapInfo... params) {
-            ImageRequest imageRequest;
-            if(!FileTool.existFile(YBL.generateImageFileFullPathByURL(lineInfoList.get(params[0].idxLineInfo).content))) {
-                imageRequest = ImageRequest.fromUri(lineInfoList.get(params[0].idxLineInfo).content);
-            } else {
-                // load from storage
-                imageRequest = ImageRequest.fromUri("file:/" + YBL.generateImageFileFullPathByURL(lineInfoList.get(params[0].idxLineInfo).content));
-            }
-
-            ImagePipeline imagePipeline = Fresco.getImagePipeline();
-            DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, this);
-            CloseableReference<CloseableImage> imageReference = null;
-            try {
-                imageReference = dataSource.getResult();
-                if (imageReference != null) {
-                    CloseableImage image = imageReference.get();
-                    params[0].bm = ((CloseableStaticBitmap) image).getUnderlyingBitmap(); // load bitmap
-                }
-            } catch (Exception ok) {
-                ok.printStackTrace();
-            } finally {
-                dataSource.close();
-                CloseableReference.closeSafely(imageReference);
-            }
-
-            if (params[0].bm == null) {
-                return "Fresco's getUnderlyingBitmap() returns a null object.";
-            }
-
-            int width = params[0].bm.getWidth(), height = params[0].bm.getHeight();
-            if (params[0].height / (float) params[0].width > height / (float) width) {
-                // fit width
-                float percentage = (float) height / width;
-                params[0].height = (int) (params[0].width * percentage);
-            } else {
-                // fit height
-                float percentage = (float) width / height;
-                params[0].width = (int) (params[0].height * percentage);
-            }
-            params[0].bm = Bitmap.createScaledBitmap(params[0].bm, params[0].width, params[0].height, true);
-            return "SYSTEM_1_SUCCEEDED";
-        }
-
-        @Override
-        protected void onPostExecute(String errorCode) {
-            super.onPostExecute(errorCode);
-
-            if (errorCode.equals("SYSTEM_1_SUCCEEDED"))
-                ReaderPageViewBasic.this.postInvalidate();
-            else
-                Toast.makeText(getContext(), errorCode, Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void watchImageDetailed(Activity activity) {
         if (bitmapInfoList == null || bitmapInfoList.size() == 0 || bitmapInfoList.get(0).bm == null) {
             Toast.makeText(getContext(), getResources().getString(R.string.reader_view_image_no_image), Toast.LENGTH_SHORT).show();
         } else {
-//            Intent intent = new Intent(activity, ViewImageDetailActivity.class);
-//            intent.putExtra("path", GlobalConfig.getAvailableNovolContentImagePath(GlobalConfig.generateImageFileNameByURL(lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).text)));
-//            activity.startActivity(intent);
-//            activity.overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
+            String imagePath = "";
+            if (lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.contains("http")) {
+                imagePath = YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content, YBL.STANDARD_IMAGE_FORMAT);
+            } else if (lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.contains("file")) {
+                imagePath = lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.replace("file://", "");
+            }
+            Intent intent = new Intent(activity, ViewImageDetailActivity.class);
+            intent.putExtra(ViewImageDetailActivity.PATH_TAG, imagePath);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
         }
     }
 }

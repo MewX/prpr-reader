@@ -55,12 +55,14 @@ public class YBL {
     public static final String PROJECT_FOLDER = "prpr";
     public static final String PROJECT_FOLDER_CACHE = PROJECT_FOLDER + File.separator + FOLDER_NAME_CACHE;
     public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + FOLDER_NAME_DOWNLOAD;
+    public static final String PROJECT_FOLDER_READER_IMAGES = PROJECT_FOLDER + File.separator + FOLDER_NAME_IMAGE_READER;
     private static final String PROJECT_FOLDER_NETNOVEL = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_NETNOVEL;
     public static final String FILE_NAME_READER_SETTINGS = "reader_settings.prpr";
     public static final String FILE_NAME_READER_SAVES = "reader_saves.prpr";
     public static final String PROJECT_FILE_READER_SETTINGS = PROJECT_FOLDER + File.separator + FILE_NAME_READER_SETTINGS;
 
     public static final String STANDARD_CHARSET = "UTF-8";
+    public static final String STANDARD_IMAGE_FORMAT = "jpg";
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/14.14295 ProjectPRPR/1.00";
 
     public static String getStoragePath(String folder) {
@@ -68,14 +70,14 @@ public class YBL {
         return Environment.getExternalStorageDirectory() + File.separator + folder;
     }
 
-    public static String generateImageFileFullPathByURL(String url) {
+    public static String generateImageFileFullPathByURL(String url, String extensionName) {
         final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
         MessageDigest messageDigest = null;
         try {
             messageDigest = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException expected) {
             expected.printStackTrace();
-            return null;
+            return getStoragePath(PROJECT_FOLDER_READER_IMAGES + File.separator + "DEFAULT." + extensionName);
         }
         messageDigest.update(url.getBytes());
 
@@ -86,7 +88,8 @@ public class YBL {
             buf.append(HEX_DIGITS[(hash[j] << 4) & 0x0f]);
             buf.append(HEX_DIGITS[hash[j] & 0x0f]);
         }
-        return PROJECT_FOLDER_CACHE + File.separator + FOLDER_NAME_IMAGE_READER + File.separator + buf.toString();
+        Log.e("ImageName", buf.toString());
+        return getStoragePath(PROJECT_FOLDER_READER_IMAGES + File.separator + buf.toString() + "." + extensionName);
     }
 
     public static String getFileFullPath(String folder, String fileName) {

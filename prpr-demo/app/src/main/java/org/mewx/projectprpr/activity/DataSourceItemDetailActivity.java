@@ -125,7 +125,12 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                         .enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
-                                Toast.makeText(DataSourceItemDetailActivity.this, "Loading failed", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(DataSourceItemDetailActivity.this, "Loading failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 e.printStackTrace();
                                 isLoading = false;
                                 requestNovelInfoDetail(false); // retry

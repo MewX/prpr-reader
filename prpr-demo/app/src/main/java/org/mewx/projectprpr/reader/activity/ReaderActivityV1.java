@@ -850,7 +850,6 @@ public class ReaderActivityV1 extends AppCompatActivity {
 
                 // show dialog, jump to last read position
                 ReaderSaveBasic rs = YBL.getReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
-                Log.e(TAG, rs.vid + ":" + volumeInfo.getVolumeTag());
                 if (rs != null && rs.vid.equals(volumeInfo.getVolumeTag()) && rs.cid.equals(currentChapterTag)) {
                     mSlidingPageAdapter.setCurrentIndex(rs.lineId, rs.wordId);
                     mSlidingPageAdapter.restoreState(null, null);

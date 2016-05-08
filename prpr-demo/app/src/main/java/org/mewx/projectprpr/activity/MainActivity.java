@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatTemplateActivity
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
+        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
 
         // initial okHttp & Fresco, share the same chache size! I am so clever!!!
         CookieManager cookieManager = new CookieManager(); // enable cookies

@@ -21,6 +21,7 @@
     <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
     <string name="title_activity_data_source_item_chapter">DataSourceItemChapterActivity</string>
     <string name="title_activity_reader">ReaderActivity</string>
+    <string name="title_activity_view_image">ViewImageActivity</string>
 
     <string name="drawer_item_name_library_local">Local Library</string>
     <string name="drawer_item_name_plug_in_center">Plug-in Center</string>
@@ -74,4 +75,8 @@
 
     <string name="dialog_positive_yes">Yes</string>
     <string name="dialog_negative_no">No</string>
+    <string name="dialog_title_save_file_name">输入保存的文件名（不要加.jpg）</string>
+    <string name="dialog_title_found_file">目标文件已存在</string>
+    <string name="dialog_content_saved_path">已选择的路径：\n</string>
+    <string name="dialog_content_force_write_file">确定要覆盖文件吗？</string>
 </resources>

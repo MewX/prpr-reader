@@ -110,6 +110,10 @@
             android:label="@string/title_activity_reader"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".activity.ViewImageDetailActivity"
+            android:label="@string/title_activity_view_image"
+            android:screenOrientation="portrait">
+        </activity>
 
         <!-- Directory Picker Activity-->
         <activity

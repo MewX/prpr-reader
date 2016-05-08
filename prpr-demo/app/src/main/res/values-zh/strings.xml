@@ -64,4 +64,5 @@
     <string name="title_activity_reader">阅读页面</string>
     <string name="dialog_negative_no">否</string>
     <string name="dialog_positive_yes">是</string>
+    <string name="title_activity_view_image">查看大图页面</string>
 </resources>
