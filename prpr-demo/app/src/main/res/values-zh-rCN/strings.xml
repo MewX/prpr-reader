@@ -65,4 +65,22 @@
     <string name="dialog_negative_no">否</string>
     <string name="dialog_positive_yes">是</string>
     <string name="title_activity_view_image">查看大图页面</string>
+    <string name="setting_language_english">英语</string>
+    <string name="setting_language_sc">简体中文</string>
+    <string name="setting_language_tc">繁体中文</string>
+    <string name="dialog_content_force_write_file">确定要覆盖文件吗？</string>
+    <string name="dialog_content_saved_path">已选择的路径：\n</string>
+    <string name="dialog_title_found_file">目标文件已存在</string>
+    <string name="dialog_title_save_file_name">输入保存的文件名（不要加.jpg）</string>
+    <string name="setting_language">显示语言</string>
+    <string name="setting_language_system">跟随系统</string>
+    <string name="setting_clear_cache">清理缓存</string>
+    <string name="setting_clear_cache_advanced">慢速（清理较大容量）</string>
+    <string name="setting_clear_cache_simple">快速（粗略清理）</string>
+    <string name="setting_clear_cache_explanation">两种清理策略~</string>
+    <string name="setting_about">关于</string>
+    <string name="dialog_positive_known">知道了</string>
+    <string name="setting_clear_cache_succeeded">完成！</string>
+    <string name="setting_clear_cache_clearing">正在清理……</string>
+    <string name="setting_clear_cache_cancelled">已取消</string>
 </resources>

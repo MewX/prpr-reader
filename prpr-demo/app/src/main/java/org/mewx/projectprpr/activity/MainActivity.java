@@ -157,7 +157,9 @@ public class MainActivity extends AppCompatTemplateActivity
             } else if (id == R.id.nav_cloud) {
 
             } else if (id == R.id.nav_settings) {
-
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                intent.putExtra(SettingsActivity.EXTRA_SHOW_FRAGMENT, "org.mewx.projectprpr.activity.SettingsActivity$GeneralPreferenceFragment");
+                startActivity(intent);
             }
         }
 

@@ -65,7 +65,7 @@
     <string name="reader_custom_font">Custom reading font</string>
     <string name="reader_font_size">Font size</string>
     <string name="reader_line_distance">Distance between lines</string>
-    <string name="reader_paragraph_distance">Distance between paragraphes</string>
+    <string name="reader_paragraph_distance">Distance between paragraphs</string>
     <string name="reader_paragraph_edge_distance">Distance between paragraph and edge</string>
     <string name="reader_view_image_no_image">Please press this button on a page containing a image</string>
     <string name="reader_font_system">Use system default</string>
@@ -73,10 +73,26 @@
     <string name="reader_background_system">Use default emulated paper</string>
     <string name="reader_background_custom">Use custom image</string>
 
+    <string name="dialog_positive_known">GOT IT</string>
     <string name="dialog_positive_yes">Yes</string>
     <string name="dialog_negative_no">No</string>
-    <string name="dialog_title_save_file_name">输入保存的文件名（不要加.jpg）</string>
-    <string name="dialog_title_found_file">目标文件已存在</string>
-    <string name="dialog_content_saved_path">已选择的路径：\n</string>
-    <string name="dialog_content_force_write_file">确定要覆盖文件吗？</string>
+    <string name="dialog_content_force_write_file">Sure to force write file?</string>
+    <string name="dialog_content_saved_path">Chosen path:\n</string>
+    <string name="dialog_title_found_file">Target file exists.</string>
+    <string name="dialog_title_save_file_name">Type file name to save (NO .JPG)</string>
+
+    <string name="setting_language">Language</string>
+    <string name="setting_language_system">Same as system</string>
+    <string name="setting_language_english">English</string>
+    <string name="setting_language_sc">Simplified Chinese</string>
+    <string name="setting_language_tc">Traditional Chinese</string>
+    <string name="setting_clear_cache">Clear cache</string>
+    <string name="setting_clear_cache_explanation">Two algorithms for clearing cache~</string>
+    <string name="setting_clear_cache_simple">Fast and general</string>
+    <string name="setting_clear_cache_advanced">Slow but effective</string>
+    <string name="setting_clear_cache_clearing">Clearing&#8230;</string>
+    <string name="setting_clear_cache_cancelled">Cancelled</string>
+    <string name="setting_clear_cache_succeeded">Done!</string>
+    <string name="setting_about">About</string>
+
 </resources>

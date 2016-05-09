@@ -14,4 +14,22 @@
         <item>@string/reader_background_system</item>
         <item>@string/reader_background_custom</item>
     </string-array>
+
+    <string-array name="setting_language_list">
+        <item>@string/setting_language_system</item>
+        <item>@string/setting_language_english</item>
+        <item>@string/setting_language_sc</item>
+        <item>@string/setting_language_tc</item>
+    </string-array>
+    <string-array name="setting_language_list_return">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="setting_clear_cache_option">
+        <item>@string/setting_clear_cache_simple</item>
+        <item>@string/setting_clear_cache_advanced</item>
+    </string-array>
 </resources>

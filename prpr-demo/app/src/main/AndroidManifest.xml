@@ -104,24 +104,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
         </activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".template.AppCompatTemplateActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.mewx.projectprpr.template.AppCompatTemplateActivity" />
+        </activity>
 
         <!-- Novel Content Activity (Horizontal Ver 1) allow multiple instance -->
-        <activity android:name=".reader.activity.ReaderActivityV1"
+        <activity
+            android:name=".reader.activity.ReaderActivityV1"
             android:label="@string/title_activity_reader"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".activity.ViewImageDetailActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".activity.ViewImageDetailActivity"
             android:label="@string/title_activity_view_image"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
-        <!-- Directory Picker Activity-->
+        <!-- Directory Picker Activity -->
         <activity
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"
             android:label="@string/app_name"
             android:theme="@style/FilePickerTheme">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

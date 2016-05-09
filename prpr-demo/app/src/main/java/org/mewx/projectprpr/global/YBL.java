@@ -33,9 +33,6 @@ public class YBL {
 
     public enum SettingItemsBasic {
         version, // (int) 1
-        language,
-        menu_bg_id, // (int) 1-5 by system, 0 for user
-        menu_bg_path, // (String) for user custom
         reader_font_path, // (String) path to ttf, "0" means default
         reader_font_size, // (int) sp (8 - 32)
         reader_line_distance, // (int) dp (0 - 32)
@@ -112,7 +109,6 @@ public class YBL {
 
     // global common variables
     public static OkHttpClient globalOkHttpClient3;
-    private static ContentValues allSetting;
     private static ArrayList<ReaderSaveBasic> readSaves = null; // deprecated
 //    private static NovelDataSourceBasic novelDataSourceBasic;
     private static boolean skipSplashScreen = false;
@@ -133,49 +129,6 @@ public class YBL {
 //    }
 //
 //    public static isNovelDataSourceBasicSaved
-
-
-    /* All settings */
-    public static void loadAllSetting() {
-        allSetting = new ContentValues();
-        String h = FileTool.loadFullFileContent(getStoragePath(PROJECT_FILE_READER_SETTINGS));
-        String[] sets = h.split("\\|\\|\\|\\|");
-        for(String set : sets) {
-            String[] temp = set.split("::::");
-            if(temp.length != 2 || temp[0] == null || temp[0].length() == 0 || temp[1] == null || temp[1].length() == 0) continue;
-
-            allSetting.put(temp[0], temp[1]);
-        }
-
-        if(TextUtils.isEmpty(getFromAllSetting(SettingItemsBasic.version)))
-            setToAllSetting(SettingItemsBasic.version, "1");
-    }
-
-    public static void saveAllSetting() {
-        if(allSetting == null) loadAllSetting();
-        String result = "";
-        for( String key : allSetting.keySet() ) {
-            if(!result.equals("")) result = result + "||||";
-            result = result + key + "::::" + allSetting.getAsString(key);
-        }
-
-        FileTool.writeFullFileContent(getStoragePath(PROJECT_FILE_READER_SETTINGS), result);
-    }
-
-    @Nullable
-    public static String getFromAllSetting(SettingItemsBasic name) {
-        if(allSetting == null) loadAllSetting();
-        return allSetting.getAsString(name.toString());
-    }
-
-    public static void setToAllSetting(SettingItemsBasic name, String value) {
-        if(allSetting == null) loadAllSetting();
-        if(name != null && value != null) {
-            allSetting.remove(name.toString());
-            allSetting.put(name.toString(), value);
-            saveAllSetting();
-        }
-    }
 
 
     /** Read Saves (V1) */
