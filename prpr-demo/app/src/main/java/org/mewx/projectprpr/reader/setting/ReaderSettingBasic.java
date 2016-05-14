@@ -57,7 +57,7 @@ public class ReaderSettingBasic {
         String str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_font_size);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
-            if(8 <= temp && temp <= 32)
+            if(4 <= temp && temp <= 48)
                 fontSize = temp;
         }
 
@@ -81,7 +81,7 @@ public class ReaderSettingBasic {
         str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_paragraph_edge_distance);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
-            if(0 <= temp && temp <= 16)
+            if(0 <= temp && temp <= 32)
                 paragraghEdgeDistance = temp;
         }
 

@@ -1,4 +1,4 @@
-package org.mewx.projectprpr.activity;
+package org.mewx.projectprpr.template;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

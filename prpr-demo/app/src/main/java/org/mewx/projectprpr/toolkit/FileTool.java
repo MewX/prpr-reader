@@ -7,10 +7,13 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -152,5 +155,86 @@ public class FileTool {
 
     public static boolean writeFullFileContent(@NonNull String FileFullPath,@NonNull String s) {
         return saveFile(FileFullPath, s, true);
+    }
+
+    public static String getFileNameFromFullPath(@NonNull String fullPath) {
+        char separator = fullPath.contains("/") ? '/' : '\\';
+        int start = fullPath.lastIndexOf(separator);
+        return start == -1 ? fullPath : fullPath.substring(start + 1);
+    }
+
+    public static String[] getFileList(String fullPath) {
+        File myDirectory = new File(fullPath);
+        File[] directories = myDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isFile();
+            }
+        });
+
+        // convert to file list
+        String[] list = new String[directories.length];
+        for (int i = 0; i < directories.length; i++) {
+            list[i] = getFileNameFromFullPath(directories[i].getName());
+        }
+        return list;
+    }
+
+    public static String[] getFolderList(String fullPath) {
+        File myDirectory = new File(fullPath);
+        File[] directories = myDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
+
+        // convert to file list
+        String[] list = new String[directories.length];
+        for (int i = 0; i < directories.length; i++) {
+            list[i] = getFileNameFromFullPath(directories[i].getName());
+        }
+        return list;
+    }
+
+    public static void writeFullSerializable(@NonNull String FileFullPath, @NonNull Serializable serializable) {
+        ObjectOutputStream oos = null;
+        FileOutputStream fout = null;
+        try{
+            fout = new FileOutputStream(FileFullPath, true);
+            oos = new ObjectOutputStream(fout);
+            oos.writeObject(serializable);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if(oos != null) oos.close();
+                if(fout != null) fout.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    @Nullable
+    public static Serializable loadFullSerializable(@NonNull String FileFullPath) {
+        FileInputStream streamIn = null;
+        ObjectInputStream objectinputstream = null;
+        Serializable result = null;
+        try {
+            streamIn = new FileInputStream(FileFullPath);
+            objectinputstream = new ObjectInputStream(streamIn);
+            result = (Serializable) objectinputstream.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(objectinputstream != null) objectinputstream.close();
+                if(streamIn != null) streamIn.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return result;
     }
 }

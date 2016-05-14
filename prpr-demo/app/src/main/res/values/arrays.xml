@@ -5,6 +5,13 @@
         <item>@string/plugin_center_items_formats</item>
     </string-array>
 
+    <string-array name="netnovel_download_option">
+        <item>@string/netnovel_download_option_check_for_update</item>
+        <item>@string/netnovel_download_option_update_uncached_volumes</item>
+        <item>@string/netnovel_download_option_force_update_all</item>
+        <item>@string/netnovel_download_option_select_and_update</item>
+    </string-array>
+
     <string-array name="reader_font_option">
         <item>@string/reader_font_system</item>
         <item>@string/reader_font_custom</item>

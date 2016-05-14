@@ -83,4 +83,20 @@
     <string name="setting_clear_cache_succeeded">完成！</string>
     <string name="setting_clear_cache_clearing">正在清理……</string>
     <string name="setting_clear_cache_cancelled">已取消</string>
+    <string name="netnovel_download_option_check_for_update">檢查更新</string>
+    <string name="netnovel_download_option_update_uncached_volumes">更新下載</string>
+    <string name="netnovel_download_option_force_update_all">覆蓋下載</string>
+    <string name="netnovel_download_option_select_and_update">分卷下載</string>
+    <string name="app_done">完成！</string><string name="dialog_content_remove_from_bookshelf">妳確定要從書架刪除嗎？
+如果這本書是基於網絡的，那麽本地文件也會刪除；
+否則妳的原文件會保留，但是書架記錄會被刪除。</string>
+    <string name="dialog_negative_cancel">取消</string>
+    <string name="dialog_title_choose_download_option">選擇下載方式</string>
+    <string name="dialog_title_remove_from_bookshelf">移出書架？</string>
+    <string name="netnovel_download_not_added">請先把書添加到書架！</string>
+    <string name="app_please_wait">請稍候……</string>
+    <string name="app_proceeding">執行中……</string>
+    <string name="dialog_content_downloading">下載中……</string>
+    <string name="dialog_positive_confirm">確認</string>
+    <string name="app_network_error">網絡連接錯誤</string>
 </resources>

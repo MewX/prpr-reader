@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatTemplateActivity
                     navigationView.getMenu().findItem(currentFragmentId).setChecked(true);
                 }
             } else if (id == R.id.nav_cloud) {
-
+                Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_settings) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 intent.putExtra(SettingsActivity.EXTRA_SHOW_FRAGMENT, "org.mewx.projectprpr.activity.SettingsActivity$GeneralPreferenceFragment");

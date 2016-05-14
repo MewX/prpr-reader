@@ -29,6 +29,10 @@ public class NovelContent {
     public NovelContent() {
     }
 
+    public NovelContent(@NonNull List<NovelContentLine> content) {
+        addToNovelContent(content);
+    }
+
     public NovelContent(@NonNull String filePath) {
         this.filePath = filePath;
         loadFile();
@@ -44,7 +48,7 @@ public class NovelContent {
 
     private void loadFile() {
         // TODO: need to rewrite to support large file.
-        if(!TextUtils.isEmpty(filePath)) {
+        if(!TextUtils.isEmpty(filePath) && FileTool.existFile(filePath)) {
             String line;
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -108,6 +112,11 @@ public class NovelContent {
         }
     }
 
+    public void setNovelContent(List<NovelContentLine> content) {
+        removeAllContent();
+        addToNovelContent(content);
+    }
+
     public void addToNovelContent(NovelContentLine content) {
         loadedContent.add(content);
         saveFile(); // TODO: delta file
@@ -127,6 +136,16 @@ public class NovelContent {
 
     public int getContentLineCount() {
         return loadedContent.size(); // TODO: this should handle the large file
+    }
+
+    public void removeContentAt(int idx) {
+        if (0 <= idx && idx < loadedContent.size()) {
+            loadedContent.remove(idx);
+        }
+    }
+
+    public void removeAllContent() {
+        loadedContent.clear();
     }
 
     public NovelContentLine getContentLine(int i) {

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 import org.mewx.projectprpr.reader.setting.ReaderSaveBasic;
+import org.mewx.projectprpr.toolkit.CryptoTool;
 import org.mewx.projectprpr.toolkit.FigureTool;
 import org.mewx.projectprpr.toolkit.FileTool;
 import org.w3c.dom.Text;
@@ -51,14 +52,15 @@ public class YBL {
     public static final String FOLDER_NAME_NETNOVEL = "netnovel";
     public static final String PROJECT_FOLDER = "prpr";
     public static final String PROJECT_FOLDER_CACHE = PROJECT_FOLDER + File.separator + FOLDER_NAME_CACHE;
-    public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + FOLDER_NAME_DOWNLOAD;
+    public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + FOLDER_NAME_DOWNLOAD; // download plugins
     public static final String PROJECT_FOLDER_READER_IMAGES = PROJECT_FOLDER + File.separator + FOLDER_NAME_IMAGE_READER;
-    private static final String PROJECT_FOLDER_NETNOVEL = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_NETNOVEL;
+    public static final String PROJECT_FOLDER_NETNOVEL = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_NETNOVEL; // download novels
     public static final String FILE_NAME_READER_SETTINGS = "reader_settings.prpr";
     public static final String FILE_NAME_READER_SAVES = "reader_saves.prpr";
     public static final String PROJECT_FILE_READER_SETTINGS = PROJECT_FOLDER + File.separator + FILE_NAME_READER_SETTINGS;
 
     public static final String STANDARD_CHARSET = "UTF-8";
+    public static final int MAX_NET_RETRY_TIME = 5;
     public static final String STANDARD_IMAGE_FORMAT = "jpg";
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/14.14295 ProjectPRPR/1.00";
 
@@ -68,25 +70,15 @@ public class YBL {
     }
 
     public static String generateImageFileFullPathByURL(String url, String extensionName) {
-        final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-        MessageDigest messageDigest = null;
+        String fileName;
         try {
-            messageDigest = MessageDigest.getInstance("SHA-1");
+            fileName = CryptoTool.hashMessageDigest(url);
         } catch (NoSuchAlgorithmException expected) {
             expected.printStackTrace();
             return getStoragePath(PROJECT_FOLDER_READER_IMAGES + File.separator + "DEFAULT." + extensionName);
         }
-        messageDigest.update(url.getBytes());
-
-        // convert to
-        byte[] hash = messageDigest.digest();
-        StringBuilder buf = new StringBuilder(hash.length * 2);
-        for (int j = 0; j < hash.length; j++) {
-            buf.append(HEX_DIGITS[(hash[j] << 4) & 0x0f]);
-            buf.append(HEX_DIGITS[hash[j] & 0x0f]);
-        }
-        Log.e("ImageName", buf.toString());
-        return getStoragePath(PROJECT_FOLDER_READER_IMAGES + File.separator + buf.toString() + "." + extensionName);
+        Log.e("ImageName", fileName);
+        return getStoragePath(PROJECT_FOLDER_READER_IMAGES + File.separator + fileName + "." + extensionName);
     }
 
     public static String getFileFullPath(String folder, String fileName) {
@@ -95,9 +87,19 @@ public class YBL {
                 folder + fileName : folder + File.separator + fileName;
     }
 
-    public static String getProjectFolderNetNovel(String dataSourceTag) {
+    public static String getProjectFolderDataSource(String dataSourceTag) {
         // get folder path, without back-leading separator.
-        return PROJECT_FOLDER_NETNOVEL + File.separator + dataSourceTag;
+        String path = getStoragePath(PROJECT_FOLDER_NETNOVEL + File.separator + dataSourceTag);
+        new File(path).mkdirs();
+        return path;
+    }
+
+
+    public static String getProjectFolderNetNovel(String dataSourceTag, String novelTag) {
+        // get folder path, without back-leading separator.
+        String path = getStoragePath(PROJECT_FOLDER_NETNOVEL + File.separator + dataSourceTag + File.separator + novelTag);
+        new File(path).mkdirs();
+        return path;
     }
 
 

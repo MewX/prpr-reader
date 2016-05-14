@@ -1,7 +1,9 @@
 package org.mewx.projectprpr.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
@@ -20,22 +22,35 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.NetNovelListAdapter;
+import org.mewx.projectprpr.global.BookShelfManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
+import org.mewx.projectprpr.plugin.component.BookshelfSaver;
+import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
+import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
+import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
+import org.mewx.projectprpr.toolkit.CryptoTool;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -223,6 +238,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                                         public void run() {
                                             updateChapterInfo();
                                             isLoading = false;
+                                            Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_done), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -349,13 +365,238 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_bar_add:
-                // todo: add to bookshelf
+                // todo: add to bookshelf, if not loaded, not proceed
+                // dataSourceClassName(Automatically search from built-in folder), contentValues, chapters, novels
+                if (isLoading) {
+                    Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_please_wait), Toast.LENGTH_SHORT).show();
+                } else if (BookShelfManager.inBookshelf(dataSourceBasic.getTag(), novelInfo.getBookTag())) {
+                    new MaterialDialog.Builder(this)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    BookShelfManager.removeBook(dataSourceBasic.getTag(), novelInfo.getBookTag());
+                                    Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_done), Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
+                            .title(R.string.dialog_title_remove_from_bookshelf)
+                            .positiveText(R.string.dialog_positive_yes)
+                            .negativeText(R.string.dialog_negative_no)
+                            .content(R.string.dialog_content_remove_from_bookshelf)
+                            .contentGravity(GravityEnum.START)
+                            .show();
+                } else {
+                    // add to bookshelf
+                    BookShelfManager.addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.NETNOVEL, dataSourceBasic.getTag(), novelInfo, volumeInfoList));
+                    Toast.makeText(this, getResources().getString(R.string.app_done), Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.action_bar_download:
                 // todo: make an dialog to select download options
+                if (isLoading) {
+                    Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_please_wait), Toast.LENGTH_SHORT).show();
+                } else if (!BookShelfManager.inBookshelf(dataSourceBasic.getTag(), novelInfo.getBookTag())) {
+                    Toast.makeText(this, getResources().getString(R.string.netnovel_download_not_added), Toast.LENGTH_SHORT).show();
+                } else {
+                    // show download options
+                    new MaterialDialog.Builder(DataSourceItemDetailActivity.this)
+                            .theme(Theme.LIGHT)
+                            .title(R.string.dialog_title_choose_download_option)
+                            .negativeText(R.string.dialog_negative_cancel)
+                            .itemsGravity(GravityEnum.CENTER)
+                            .items(R.array.netnovel_download_option)
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                    switch (which) {
+                                        case 0: dlUpdateInfo(); break;
+                                        case 1: dlUpdateAll(); break;
+                                        case 2: dlForceOverwrite(); break;
+                                        case 3: dlChooseVolume(); break; // select volumes
+                                    }
+                                }
+                            })
+                            .show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
+
+    private void dlUpdateInfo() {
+        // use indeterminate progress dialog
+//        MaterialDialog dialog = new MaterialDialog.Builder(this)
+//                .theme(Theme.LIGHT)
+//                .title(R.string.netnovel_download_option_check_for_update)
+//                .content(R.string.app_proceeding)
+//                .progress(true, 0)
+//                .show();
+        Toast.makeText(this, getResources().getString(R.string.novel_info_loading), Toast.LENGTH_SHORT).show();
+        requestNovelInfoDetail(true);
+    }
+
+    private void dlUpdateAll() {
+        // task params: 1
+        isLoading = true;
+        AsyncDownloadNovel adn = new AsyncDownloadNovel();
+        adn.execute(1);
+    }
+
+    private void dlForceOverwrite() {
+        // task params: 2
+        isLoading = true;
+        AsyncDownloadNovel adn = new AsyncDownloadNovel();
+        adn.execute(2);
+    }
+
+    private void dlChooseVolume() {
+        // task params: 3, volume indexes
+        String[] strings = new String[volumeInfoList.size()];
+        for(int i = 0; i < volumeInfoList.size(); i ++)
+            strings[i] = volumeInfoList.get(i).getTitle();
+
+        new MaterialDialog.Builder(DataSourceItemDetailActivity.this)
+                .theme(Theme.LIGHT)
+                .title(R.string.netnovel_download_option_select_and_update)
+                .items(strings)
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, final Integer[] which, CharSequence[] text) {
+                        if(which == null || which.length == 0) return true;
+
+                        // merge option into array
+                        Integer[] arrayWithOption = Arrays.copyOf(which, which.length + 1);
+                        for(int j = arrayWithOption.length - 1; j > 0; j --) {
+                            arrayWithOption[j] = arrayWithOption[j - 1];
+                        }
+                        arrayWithOption[0] = 3;
+
+                        // run async task
+                        AsyncDownloadNovel adn = new AsyncDownloadNovel();
+                        adn.execute(arrayWithOption);
+                        return true;
+                    }
+                })
+                .positiveText(R.string.dialog_positive_confirm)
+                .show();
+    }
+
+    // todo
+    class AsyncDownloadNovel extends AsyncTask<Integer, Integer, Integer> {
+        private boolean isLoading = false;
+        private MaterialDialog md;
+
+        private int preCountProgress(Integer[] idList) {
+            int sum = 0;
+            for (Integer id : idList) {
+                sum += volumeInfoList.get(id).getChapterListSize();
+            }
+            return sum;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (isLoading) cancel(true); // prevent multiple instance
+
+            md = new MaterialDialog.Builder(DataSourceItemDetailActivity.this)
+                    .theme(Theme.LIGHT)
+                    .content(R.string.dialog_content_downloading)
+                    .progress(false, 1, true)
+                    .cancelable(true)
+                    .cancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            AsyncDownloadNovel.this.cancel(true);
+                            md.dismiss();
+                            isLoading = false;
+                        }
+                    })
+                    .show();
+
+            md.setProgress(0);
+            md.setMaxProgress(preCountProgress(getAllVolumeList()));
+            md.show();
+        }
+
+        private Integer[] getAllVolumeList() {
+            Integer[] list = new Integer[volumeInfoList.size()];
+            for(int i = 0; i < list.length; i ++) {
+                list[i] = i;
+            }
+            return list;
+        }
+
+        @Override
+        protected Integer doInBackground(Integer... params) {
+            int currentProgress = 0, maxProgress = 0;
+            Integer[] dlVolumeList;
+            if (params[0] == 3) {
+                dlVolumeList = Arrays.copyOfRange(params, 1, params.length);
+            } else {
+                dlVolumeList = getAllVolumeList();
+            }
+            maxProgress = preCountProgress(dlVolumeList);
+            md.setMaxProgress(preCountProgress(dlVolumeList)); // update progress
+
+            // load volumes one by one
+            for (Integer id : dlVolumeList) {
+                VolumeInfo vi = volumeInfoList.get(id);
+
+                // load chapters one by one
+                for (int c = 0; c < vi.getChapterListSize(); c++) {
+                    ChapterInfo ci = vi.getChapterByListIndex(c);
+                    try {
+                        Response response;
+                        int time = YBL.MAX_NET_RETRY_TIME;
+                        while (true) {
+                            response = YBL.globalOkHttpClient3.newCall(
+                                    dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(YBL.STANDARD_CHARSET)).execute();
+
+                            time -= 1;
+                            if(response.isSuccessful()) {
+                                break;
+                            } else if (time <= 0) {
+                                throw new Exception("MEET MAX RETRY TIME!");
+                            }
+                        }
+                        NovelContent nc = new NovelContent(YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
+                                + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag()));
+                        nc.addToNovelContent(dataSourceBasic.parseNovelContent(response.body().string()));
+
+                        // update progress
+                        currentProgress += 1;
+                        publishProgress(currentProgress, maxProgress);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 1;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            // [0]: cureent; [1]: max;
+            md.setMaxProgress(values[1]);
+            md.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            // dismiss dialog
+            md.dismiss();
+
+            if (integer != 0) {
+                // show error dialog
+                Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_network_error), Toast.LENGTH_SHORT).show();
+            } else {
+                // show suc dialog
+                Toast.makeText(DataSourceItemDetailActivity.this, getResources().getString(R.string.app_done), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }

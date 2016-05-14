@@ -18,9 +18,15 @@ import java.io.Serializable;
  */
 @SuppressWarnings("unused")
 public class NovelInfo implements Serializable {
-    @NonNull private String title; // may be id? hash?
-    @NonNull private String dataSource = ""; // TODO: set by parent
-    @NonNull private String bookTag; // id in data source, just an identifier
+    public static final String TAG_TITLE = "title";
+    public static final String TAG_DATASOURCE = "datasource";
+    public static final String TAG_BOOKTAG = "booktag";
+    public static final String TAG_AUTHOR = "author";
+    public static final String TAG_COVERURL = "coverurl";
+
+    @NonNull private String title;
+    @NonNull private String dataSource = ""; // TODO: set by parent, or file path (URI: file://)
+    @NonNull private String bookTag; // id in data source, just an identifier (may be id? hash?)
     @NonNull private String author = "";
     @NonNull private String coverUrl = ""; // if has none, set empty
     @NonNull private ContentValues infoPairs = new ContentValues();
@@ -38,8 +44,11 @@ public class NovelInfo implements Serializable {
 
     public NovelInfo(@NonNull String bookTag, @NonNull String title, @NonNull  String author, @NonNull String coverUrl, @Nullable ContentValues cv) {
         this(bookTag, title, author, coverUrl);
-        if (cv != null)
-            this.infoPairs = cv;
+        setInfoPairs(cv);
+    }
+
+    public boolean isLocal() {
+        return dataSource.contains("file://");
     }
 
     @NonNull
@@ -91,11 +100,18 @@ public class NovelInfo implements Serializable {
         this.coverUrl = coverUrl;
     }
 
+    @NonNull
     public ContentValues getInfoPairs() {
         return infoPairs;
     }
 
-    public void setInfoPairs(ContentValues infoPairs) {
-        this.infoPairs = infoPairs;
+    public void setInfoPairs(@Nullable ContentValues infoPairs) {
+        this.infoPairs.clear();
+        if(infoPairs != null)
+            this.infoPairs = infoPairs;
+    }
+
+    public void addToInfoPairs(@NonNull String key, @NonNull String value) {
+        this.infoPairs.put(key, value);
     }
 }

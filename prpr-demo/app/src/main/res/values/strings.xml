@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Project PRPR DEMO</string>
     <string name="app_developing">Under developing&#8230;</string>
+    <string name="app_please_wait">Please wait&#8230;</string>
+    <string name="app_proceeding">Proceeding&#8230;</string>
+    <string name="app_done">Done!</string>
     <string name="app_press_again_to_exit">Press again to exit app~</string>
+    <string name="app_network_error">Network error!</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -46,6 +50,12 @@
     <string name="novel_info_short_intro">Short Intro</string>
     <string name="novel_info_full_intro">Full Intro</string>
 
+    <string name="netnovel_download_not_added">Please add book to bookshelf first!</string>
+    <string name="netnovel_download_option_check_for_update">Check Updates</string>
+    <string name="netnovel_download_option_update_uncached_volumes">Download New</string>
+    <string name="netnovel_download_option_force_update_all">ReDownload All</string>
+    <string name="netnovel_download_option_select_and_update">Choose to download</string>
+
     <!-- Reader strings-->
     <string name="reader_please_wait">Please wait&#8230;&#8230;</string>
     <string name="reader_engine_v1_parsing">V1 engine is parsing content</string>
@@ -74,12 +84,18 @@
     <string name="reader_background_custom">Use custom image</string>
 
     <string name="dialog_positive_known">GOT IT</string>
+    <string name="dialog_positive_confirm">Confirm</string>
     <string name="dialog_positive_yes">Yes</string>
     <string name="dialog_negative_no">No</string>
+    <string name="dialog_negative_cancel">Cancel</string>
     <string name="dialog_content_force_write_file">Sure to force write file?</string>
     <string name="dialog_content_saved_path">Chosen path:\n</string>
+    <string name="dialog_content_remove_from_bookshelf">Are you sure to remove this book from bookshelf?&#x000A;If this book is a netbook, all the novel content will be wiped;&#x000A;Else you book source file will be kept, but bookshelf record will be removed.</string>
+    <string name="dialog_content_downloading">Downloading&#8230;</string>
     <string name="dialog_title_found_file">Target file exists.</string>
     <string name="dialog_title_save_file_name">Type file name to save (NO .JPG)</string>
+    <string name="dialog_title_remove_from_bookshelf">Remove book?</string>
+    <string name="dialog_title_choose_download_option">Choose download option</string>
 
     <string name="setting_language">Language</string>
     <string name="setting_language_system">Same as system</string>
