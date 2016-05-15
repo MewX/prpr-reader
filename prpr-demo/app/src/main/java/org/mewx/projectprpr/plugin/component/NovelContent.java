@@ -23,10 +23,19 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class NovelContent {
+    private static final String TAG_TEXT = "T";
+    private static final char TAG_TEXT_CHAR = 'T';
+    private static final String TAG_IMAGE_URL = "I";
+    private static final char TAG_IMAGE_URL_CHAR = 'I';
+
     @NonNull private String filePath = ""; // full path, and authorized
     @NonNull private ArrayList<NovelContentLine> loadedContent = new ArrayList<>();
 
     public NovelContent() {
+    }
+
+    public NovelContent(@NonNull NovelContent nc) {
+        addToNovelContent(nc);
     }
 
     public NovelContent(@NonNull List<NovelContentLine> content) {
@@ -57,12 +66,12 @@ public class NovelContent {
                 while ((line = br.readLine()) != null) {
                     if(line.length() == 0) continue;
                     switch (line.charAt(0)) {
-                        case 'I':
+                        case TAG_IMAGE_URL_CHAR:
                             // transferred meaning: IMAGE_URL
                             addToNovelContent(
                                     new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL, line.substring(1)));
                             break;
-                        case 'T':
+                        case TAG_TEXT_CHAR:
                         default:
                             // transferred meaning: TEXT
                             addToNovelContent(
@@ -92,16 +101,18 @@ public class NovelContent {
 
                 for (NovelContentLine ncl : loadedContent) {
                     if (ncl.content.length() == 0) {
-                        osw.write("T");
+                        osw.write(TAG_TEXT); // empty line
                     } else {
                         switch (ncl.type) {
                             case TEXT:
-                                osw.write("T" + ncl.content);
+                                osw.write(TAG_TEXT + ncl.content);
                                 break;
                             case IMAGE_URL:
-                                osw.write("I");
+                                osw.write(TAG_IMAGE_URL + ncl.content);
+                                break;
                         }
                     }
+                    osw.write("\n"); // line break
                 }
 
                 osw.close();

@@ -24,10 +24,10 @@ public class BookshelfSaver {
     private String dataSourceTag; // if local, null
     @NonNull
     private NovelInfo novelInfo;
-    @NonNull
-    private ArrayList<VolumeInfo> listVolumeInfo;
+    @Nullable
+    private ArrayList<VolumeInfo> listVolumeInfo; // if local, null
 
-    public BookshelfSaver(@NonNull BOOK_TYPE type, @Nullable String dataSourceTag, @NonNull NovelInfo novelInfo, @NonNull ArrayList<VolumeInfo> listVolumeInfo) {
+    public BookshelfSaver(@NonNull BOOK_TYPE type, @Nullable String dataSourceTag, @NonNull NovelInfo novelInfo, @Nullable ArrayList<VolumeInfo> listVolumeInfo) {
         // path: .. / plug-in's tag / novelInfo's tag
         this.type = type;
         this.dataSourceTag = dataSourceTag;
@@ -62,7 +62,7 @@ public class BookshelfSaver {
         this.novelInfo = novelInfo;
     }
 
-    @NonNull
+    @Nullable
     public ArrayList<VolumeInfo> getListVolumeInfo() {
         return listVolumeInfo;
     }

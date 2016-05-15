@@ -392,9 +392,10 @@ public class XsDmzj extends NovelDataSourceBasic {
             if (temp.contains(imageSearch)) {
                 // this is an image
                 Matcher matcher = Pattern.compile(imageRegex, Pattern.DOTALL).matcher(temp);
-                matcher.find();
-                nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
-                        imgBaseUrl + matcher.group(1)));
+                while (matcher.find()) {
+                    nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
+                            imgBaseUrl + matcher.group(1)));
+                }
             } else {
                 // process as text
                 nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.TEXT, purifyHtmlToDisplayable(temp)));

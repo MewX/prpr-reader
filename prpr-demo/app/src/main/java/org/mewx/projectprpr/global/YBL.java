@@ -55,9 +55,11 @@ public class YBL {
     public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + FOLDER_NAME_DOWNLOAD; // download plugins
     public static final String PROJECT_FOLDER_READER_IMAGES = PROJECT_FOLDER + File.separator + FOLDER_NAME_IMAGE_READER;
     public static final String PROJECT_FOLDER_NETNOVEL = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_NETNOVEL; // download novels
-    public static final String FILE_NAME_READER_SETTINGS = "reader_settings.prpr";
-    public static final String FILE_NAME_READER_SAVES = "reader_saves.prpr";
+    private static final String FILE_NAME_READER_SETTINGS = "reader_settings.prpr";
+    private static final String FILE_NAME_READER_SAVES = "reader_saves.prpr";
+    private static final String FILE_NAME_LOCAL_BOOKSHELF = "bookshelf.prpr";
     public static final String PROJECT_FILE_READER_SETTINGS = PROJECT_FOLDER + File.separator + FILE_NAME_READER_SETTINGS;
+    public static final String PROJECT_FILE_LOCAL_BOOKSHELF = PROJECT_FOLDER + File.separator + FILE_NAME_LOCAL_BOOKSHELF;
 
     public static final String STANDARD_CHARSET = "UTF-8";
     public static final int MAX_NET_RETRY_TIME = 5;
@@ -121,16 +123,6 @@ public class YBL {
     public static void setSkipSplashScreen(boolean skip) {
         skipSplashScreen = skip;
     }
-
-//    public static void setNovelDataSourceBasic(NovelDataSourceBasic ds) {
-//        novelDataSourceBasic = ds;
-//    }
-//
-//    public static NovelDataSourceBasic getNovelDataSourceBasic() {
-//        return novelDataSourceBasic;
-//    }
-//
-//    public static isNovelDataSourceBasicSaved
 
 
     /** Read Saves (V1) */

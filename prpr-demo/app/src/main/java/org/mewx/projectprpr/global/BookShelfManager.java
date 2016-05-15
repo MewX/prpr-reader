@@ -27,6 +27,9 @@ import java.util.List;
  *
  * save: dataSourceTag/netnovelTag/_volume.prpr
  *       (raw serializable)
+ *
+ * save: /bookshelf.prpr
+ *      base64_tag:base64_title|base64_tag:base64_title
  */
 public class BookShelfManager {
     public static final String NETNOVEL_INFO_SAVE_FILE_NAME = "_info.prpr"; // in netnovelTag folder
@@ -36,8 +39,8 @@ public class BookShelfManager {
     private static List<BookshelfSaver> bookList = new ArrayList<>();
 
     public static void loadAllBook() {
-        // todo: load directory structure, which is the NETNOVEL list
-        // todo: datasource folder; novel folder;
+        // load directory structure, which is the NETNOVEL list
+        //  datasource folder; novel folder;
         String[] pluginTagList = FileTool.getFolderList(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL));
 
         for (String pluginTag : pluginTagList) {
@@ -66,10 +69,6 @@ public class BookShelfManager {
                             ni.setDataSource(value);
                             break;
 
-//                        case NovelInfo.TAG_BOOKTAG:
-//                            ni.setBookTag(value); // todo  no need to save
-//                            break;
-
                         case NovelInfo.TAG_AUTHOR:
                             ni.setAuthor(value);
                             break;
@@ -94,8 +93,22 @@ public class BookShelfManager {
             }
         }
 
-        // todo: load local books
+        // load local book
+        String readNovelInfo = FileTool.loadFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_LOCAL_BOOKSHELF));
+        if(!TextUtils.isEmpty(readNovelInfo)) {
+            String[] sets = readNovelInfo.split("\\|");
+            for (String set : sets) {
+                String[] temp = set.split(":");
+                if (temp.length != 2 || TextUtils.isEmpty(temp[0]) || TextUtils.isEmpty(temp[1]))
+                    continue;
 
+                String key = CryptoTool.base64DecodeString(temp[0], YBL.STANDARD_CHARSET);
+                String value = CryptoTool.base64DecodeString(temp[1], YBL.STANDARD_CHARSET);
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) continue;
+
+                bookList.add(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, new NovelInfo(key, value), null));
+            }
+        }
     }
 
 
@@ -125,12 +138,18 @@ public class BookShelfManager {
         bookList.remove(i);
     }
 
+    public static void addLocalBookToBookshelf(@NonNull String fullPath, @NonNull String title) {
+        addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, new NovelInfo(fullPath, title), null));
+    }
+
     public static void addToBookshelf(BookshelfSaver saver) {
         // path: .. / plug-in's tag / novelInfo's tag
         if (saver.getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
             // save volumes
-            FileTool.writeFullSerializable(YBL.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
-                    + File.separator + NETNOVEL_VOLUME_SAVE_FILE_NAME, saver.getListVolumeInfo());
+            if(saver.getListVolumeInfo() != null) {
+                FileTool.writeFullSerializable(YBL.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
+                        + File.separator + NETNOVEL_VOLUME_SAVE_FILE_NAME, saver.getListVolumeInfo());
+            }
 
             // save novel info
             StringBuilder fileContent = new StringBuilder(CryptoTool.base64Encode(NovelInfo.TAG_TITLE) + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getTitle())
@@ -140,11 +159,30 @@ public class BookShelfManager {
             for(String key : saver.getNovelInfo().getInfoPairs().keySet()) {
                 fileContent.append("|" + CryptoTool.base64Encode(key) + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getInfoPairs().get(key).toString()));
             }
+            FileTool.writeFullFileContent(YBL.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
+                    + File.separator + NETNOVEL_INFO_SAVE_FILE_NAME, fileContent.toString());
 
+            // add to bookshelf
+            bookList.add(saver);
         } else if (saver.getType() == BookshelfSaver.BOOK_TYPE.LOCAL_BOOK) {
-            // todo save novel book list, save to file
+            // save novel book list, save to file
+            bookList.add(saver);
+            saveAllLocalBookList();
         }
 
+    }
+
+    private static void saveAllLocalBookList() {
+        // known information: full path(novel tag), novel title
+        StringBuilder fileContent = new StringBuilder();
+        for (BookshelfSaver saver : bookList) {
+            if (saver.getType() == BookshelfSaver.BOOK_TYPE.LOCAL_BOOK) {
+                if(fileContent.length() != 0) fileContent.append("|");
+                fileContent.append(CryptoTool.base64Encode(saver.getNovelInfo().getBookTag()) // url, in fact
+                    + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getTitle()));
+            }
+        }
+        FileTool.writeFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_LOCAL_BOOKSHELF), fileContent.toString());
     }
 
     public static boolean inBookshelf(@Nullable String dataSourceTag, @NonNull String novelTag) {

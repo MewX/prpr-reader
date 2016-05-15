@@ -20,6 +20,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterItem;
+import org.mewx.projectprpr.global.BookShelfManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.JavaCallLuaJava;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatTemplateActivity
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
+
+        // load bookshelf
+        BookShelfManager.loadAllBook();
 
         // initial okHttp & Fresco, share the same chache size! I am so clever!!!
         CookieManager cookieManager = new CookieManager(); // enable cookies
@@ -144,16 +148,16 @@ public class MainActivity extends AppCompatTemplateActivity
         if(currentFragmentId != id) {
             if (id == R.id.nav_library_local) {
                 currentFragmentId = R.id.nav_library_local;
+                cleanRecyclerView();
                 switchToLocalBookshelf();
             } else if (id == R.id.nav_plug_in_center) {
                 currentFragmentId = R.id.nav_plug_in_center;
+                cleanRecyclerView();
                 switchToPluginCenter();
             } else if (id == R.id.nav_dictionary) {
-                // currentFragmentId = R.id.nav_dictionary;
-                if(navigationView != null) {
-                    // reset click status
-                    navigationView.getMenu().findItem(currentFragmentId).setChecked(true);
-                }
+                currentFragmentId = R.id.nav_dictionary;
+                cleanRecyclerView();
+                switchToDictionary();
             } else if (id == R.id.nav_cloud) {
                 Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_settings) {
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void switchToLocalBookshelf() {
         if(recyclerView != null) {
+            // todo
         }
     }
 
@@ -221,7 +226,7 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void switchToDictionary() {
         if(recyclerView != null) {
-
+            Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
         }
     }
 

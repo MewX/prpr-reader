@@ -9,6 +9,7 @@ import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,17 +38,21 @@ import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
+import org.mewx.projectprpr.plugin.component.NovelContentLine;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
 import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
 import org.mewx.projectprpr.toolkit.CryptoTool;
+import org.mewx.projectprpr.toolkit.FileTool;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -388,7 +393,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                             .show();
                 } else {
                     // add to bookshelf
-                    BookShelfManager.addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.NETNOVEL, dataSourceBasic.getTag(), novelInfo, volumeInfoList));
+                    BookShelfManager.addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.NETNOVEL, dataSourceBasic.getTag(), novelInfo, (ArrayList<VolumeInfo>)volumeInfoList));
                     Toast.makeText(this, getResources().getString(R.string.app_done), Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -439,16 +444,14 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
 
     private void dlUpdateAll() {
         // task params: 1
-        isLoading = true;
         AsyncDownloadNovel adn = new AsyncDownloadNovel();
-        adn.execute(1);
+        adn.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 1);
     }
 
     private void dlForceOverwrite() {
         // task params: 2
-        isLoading = true;
         AsyncDownloadNovel adn = new AsyncDownloadNovel();
-        adn.execute(2);
+        adn.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, 2);
     }
 
     private void dlChooseVolume() {
@@ -475,7 +478,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
 
                         // run async task
                         AsyncDownloadNovel adn = new AsyncDownloadNovel();
-                        adn.execute(arrayWithOption);
+                        adn.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayWithOption);
                         return true;
                     }
                 })
@@ -483,9 +486,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                 .show();
     }
 
-    // todo
     class AsyncDownloadNovel extends AsyncTask<Integer, Integer, Integer> {
-        private boolean isLoading = false;
         private MaterialDialog md;
 
         private int preCountProgress(Integer[] idList) {
@@ -498,7 +499,10 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            if (isLoading) cancel(true); // prevent multiple instance
+            if (isLoading) {
+                cancel(true); // prevent multiple instance
+            }
+            isLoading = true;
 
             md = new MaterialDialog.Builder(DataSourceItemDetailActivity.this)
                     .theme(Theme.LIGHT)
@@ -512,8 +516,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                             md.dismiss();
                             isLoading = false;
                         }
-                    })
-                    .show();
+                    }).build();
 
             md.setProgress(0);
             md.setMaxProgress(preCountProgress(getAllVolumeList()));
@@ -530,6 +533,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
 
         @Override
         protected Integer doInBackground(Integer... params) {
+            boolean skipMode = params[0] != 2; // only 2 is not skip mode
             int currentProgress = 0, maxProgress = 0;
             Integer[] dlVolumeList;
             if (params[0] == 3) {
@@ -538,36 +542,76 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                 dlVolumeList = getAllVolumeList();
             }
             maxProgress = preCountProgress(dlVolumeList);
+            Log.e(TAG, "maxProgress: " + maxProgress);
             md.setMaxProgress(preCountProgress(dlVolumeList)); // update progress
 
             // load volumes one by one
             for (Integer id : dlVolumeList) {
                 VolumeInfo vi = volumeInfoList.get(id);
+                Log.e(TAG, "v: " + vi.getVolumeTag());
 
                 // load chapters one by one
                 for (int c = 0; c < vi.getChapterListSize(); c++) {
                     ChapterInfo ci = vi.getChapterByListIndex(c);
+                    Log.e(TAG, "c: " + ci.getChapterTag());
                     try {
                         Response response;
-                        int time = YBL.MAX_NET_RETRY_TIME;
-                        while (true) {
+
+                        String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
+                                + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag());
+                        NovelContent nc;
+                        if(skipMode && FileTool.existFile(filePath)) {
+                            // skipMode, load from local storage
+                            nc = new NovelContent(YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
+                                    + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag()));
+                        } else {
+                            // request novel content
                             response = YBL.globalOkHttpClient3.newCall(
                                     dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(YBL.STANDARD_CHARSET)).execute();
 
-                            time -= 1;
-                            if(response.isSuccessful()) {
-                                break;
-                            } else if (time <= 0) {
-                                throw new Exception("MEET MAX RETRY TIME!");
+                            NetRequest[] netRequests = dataSourceBasic.getUltraRequests(ci.getChapterTag(), response.body().string());
+                            byte[][] returnBytes = new byte[netRequests.length][];
+                            for (int i = 0; i < netRequests.length; i++) {
+                                Log.e(TAG, netRequests[i].getFullGetUrl());
+                                returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
                             }
+                            dataSourceBasic.ultraReturn(ci.getChapterTag(), returnBytes);
+
+                            nc = new NovelContent(dataSourceBasic.parseNovelContent(response.body().string()));
+                            nc.setFileName(filePath);
                         }
-                        NovelContent nc = new NovelContent(YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
-                                + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag()));
-                        nc.addToNovelContent(dataSourceBasic.parseNovelContent(response.body().string()));
 
                         // update progress
                         currentProgress += 1;
                         publishProgress(currentProgress, maxProgress);
+
+                        // download images
+                        for(int i = 0; i < nc.getContentLineCount(); i ++) {
+                            if (nc.getContentLine(i).type == NovelContentLine.TYPE.IMAGE_URL
+                                    && !FileTool.existFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"))) {
+                                // download image
+                                publishProgress(currentProgress, ++maxProgress);
+                                int time = YBL.MAX_NET_RETRY_TIME;
+                                while (true) {
+                                    response = YBL.globalOkHttpClient3.newCall(
+                                            new Request.Builder()
+                                                    .url(nc.getContentLine(i).content)
+                                                    .cacheControl(CacheControl.FORCE_NETWORK)
+                                                    .addHeader("User-Agent", YBL.USER_AGENT)
+                                                    .build()
+                                    ).execute();
+
+                                    time -= 1;
+                                    if(response.isSuccessful()) {
+                                        break;
+                                    } else if (time <= 0) {
+                                        throw new Exception("MEET MAX RETRY TIME!");
+                                    }
+                                }
+                                FileTool.saveFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"), response.body().bytes(), true);
+                                currentProgress += 1; // update progress
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         return 1;
@@ -588,6 +632,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Integer integer) {
             // dismiss dialog
             md.dismiss();
+            isLoading = false;
 
             if (integer != 0) {
                 // show error dialog
