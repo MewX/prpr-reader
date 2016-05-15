@@ -47,6 +47,7 @@ public class YBL {
     public static final String PLUGIN_PACKAGE = "org.mewx.projectprpr.plugin.builtin";
     public static final String FOLDER_NAME_CACHE = "cache";
     public static final String FOLDER_NAME_DOWNLOAD = "downloads";
+    public static final String FOLDER_NAME_PLUGIN = "plugins";
     public static final String FOLDER_NAME_IMAGE = "imgs";
     public static final String FOLDER_NAME_IMAGE_READER = "imgrd";
     public static final String FOLDER_NAME_NETNOVEL = "netnovel";
@@ -55,6 +56,7 @@ public class YBL {
     public static final String PROJECT_FOLDER_DOWNLOAD = PROJECT_FOLDER + File.separator + FOLDER_NAME_DOWNLOAD; // download plugins
     public static final String PROJECT_FOLDER_READER_IMAGES = PROJECT_FOLDER + File.separator + FOLDER_NAME_IMAGE_READER;
     public static final String PROJECT_FOLDER_NETNOVEL = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_NETNOVEL; // download novels
+    public static final String PROJECT_FOLDER_PLUGIN = PROJECT_FOLDER_DOWNLOAD + File.separator + FOLDER_NAME_PLUGIN; // download novels
     private static final String FILE_NAME_READER_SETTINGS = "reader_settings.prpr";
     private static final String FILE_NAME_READER_SAVES = "reader_saves.prpr";
     private static final String FILE_NAME_LOCAL_BOOKSHELF = "bookshelf.prpr";

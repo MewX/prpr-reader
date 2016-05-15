@@ -5,8 +5,9 @@
     android:id="@+id/main_recycler"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:clipToPadding="false"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/app_bar_main" >

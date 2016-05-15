@@ -33,6 +33,7 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.DataSourceItemInitialActivity;
+import org.mewx.projectprpr.global.BookShelfManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.NetRequest;
@@ -45,8 +46,11 @@ import org.mewx.projectprpr.reader.slider.SlidingAdapter;
 import org.mewx.projectprpr.reader.slider.SlidingLayout;
 import org.mewx.projectprpr.reader.slider.base.OverlappedSlider;
 import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
+import org.mewx.projectprpr.toolkit.CryptoTool;
+import org.mewx.projectprpr.toolkit.FileTool;
 import org.mewx.projectprpr.toolkit.thirdparty.SystemBarTintManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -61,7 +65,9 @@ import okhttp3.Response;
 public class ReaderActivityV1 extends AppCompatActivity {
     // constant
     private static final String TAG = ReaderActivityV1.class.getSimpleName();
-    private static final String FromLocal = "fav";
+    public static final String TAG_NOVEL = "novel_tag";
+    public static final String TAG_VOLUME = "volume_info";
+    public static final String TAG_CHAPTER = "current_chapter";
 
     // vars
     private String novelTag, currentChapterTag;
@@ -91,9 +97,9 @@ public class ReaderActivityV1 extends AppCompatActivity {
         setContentView(R.layout.layout_reader_swipe_temp);
 
         // fetch values
-        novelTag = getIntent().getStringExtra("novelTag");
-        volumeInfo = (VolumeInfo) getIntent().getSerializableExtra("volumeInfo");
-        currentChapterTag = getIntent().getStringExtra("currentChapterTag");
+        novelTag = getIntent().getStringExtra(TAG_NOVEL);
+        volumeInfo = (VolumeInfo) getIntent().getSerializableExtra(TAG_VOLUME);
+        currentChapterTag = getIntent().getStringExtra(TAG_CHAPTER);
 
         // set indicator enable
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -139,32 +145,51 @@ public class ReaderActivityV1 extends AppCompatActivity {
         // fetch novel content
         dataSourceBasic = DataSourceItemInitialActivity.dataSourceBasic; // get a backup
         if (dataSourceBasic != null) {
-            try {
-                YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
-                        .enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                e.printStackTrace();
-                                Toast.makeText(ReaderActivityV1.this, e.toString(), Toast.LENGTH_SHORT).show();
-                            }
+                try {
+                    String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelTag) + File.separator
+                            + CryptoTool.hashMessageDigest(volumeInfo.getVolumeTag() + currentChapterTag);
+                    if (FileTool.existFile(filePath)) {
+                        // load from local storage
+                        Log.e(TAG, "downloaded: " + filePath);
+                        nc = new NovelContent(filePath);
+                        requestNovelContent("SYSTEM_1_SUCCEEDED");
+                    } else {
+                        // load from Internet
+                        YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
+                                .enqueue(new Callback() {
+                                    @Override
+                                    public void onFailure(Call call, IOException e) {
+                                        e.printStackTrace();
+                                        Toast.makeText(ReaderActivityV1.this, e.toString(), Toast.LENGTH_SHORT).show();
+                                    }
 
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                NetRequest[] netRequests = dataSourceBasic.getUltraRequests(currentChapterTag, response.body().string());
-                                byte[][] returnBytes = new byte[netRequests.length][];
-                                for (int i = 0; i < netRequests.length; i ++) {
-                                    Log.e(TAG, netRequests[i].getFullGetUrl());
-                                    returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
-                                }
-                                dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
-                                nc = dataSourceBasic.parseNovelContent(response.body().string());
-                                requestNovelContent("SYSTEM_1_SUCCEEDED");
-                            }
-                        });
-            } catch (Exception ok) {
-                ok.printStackTrace();
-                Toast.makeText(ReaderActivityV1.this, ok.toString(), Toast.LENGTH_SHORT).show();
-            }
+                                    @Override
+                                    public void onResponse(Call call, Response response) throws IOException {
+                                        String content = response.body().string();
+                                        NetRequest[] netRequests = dataSourceBasic.getUltraRequests(currentChapterTag, content);
+                                        byte[][] returnBytes = new byte[netRequests.length][];
+                                        for (int i = 0; i < netRequests.length; i++) {
+                                            Log.e(TAG, netRequests[i].getFullGetUrl());
+                                            returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
+                                        }
+
+                                        Log.e(TAG, "code: " + response.code());
+                                        if (response.isSuccessful()) {
+                                            dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
+                                            nc = dataSourceBasic.parseNovelContent(content);
+                                            requestNovelContent("SYSTEM_1_SUCCEEDED");
+                                        } else {
+                                            requestNovelContent("FAILED");
+                                        }
+                                    }
+                                });
+                    }
+                } catch (Exception ok) {
+                    ok.printStackTrace();
+                    Toast.makeText(ReaderActivityV1.this, ok.toString(), Toast.LENGTH_SHORT).show();
+                }
+        } else {
+            Toast.makeText(this, "Error, data source is null!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -754,16 +779,16 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                             public void onPositive(MaterialDialog dialog) {
                                                                 super.onPositive(dialog);
                                                                 Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
-                                                                intent.putExtra("novelTag", novelTag);
-                                                                intent.putExtra("volumeInfo", volumeInfo);
-                                                                intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
+                                                                intent.putExtra(TAG_NOVEL, novelTag);
+                                                                intent.putExtra(TAG_VOLUME, volumeInfo);
+                                                                intent.putExtra(TAG_CHAPTER, volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
                                                                 startActivity(intent);
                                                                 overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                                                 ReaderActivityV1.this.finish();
                                                             }
                                                         })
                                                         .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
-                                                        .title(R.string.reader_jump_last)
+                                                        .title(R.string.reader_jump)
                                                         .positiveText(R.string.dialog_positive_yes)
                                                         .negativeText(R.string.dialog_negative_no)
                                                         .content(volumeInfo.getChapterByListIndex(i_bak - 1).getTitle())
@@ -795,16 +820,16 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                             public void onPositive(MaterialDialog dialog) {
                                                                 super.onPositive(dialog);
                                                                 Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
-                                                                intent.putExtra("novelTag", novelTag);
-                                                                intent.putExtra("volumeInfo", volumeInfo);
-                                                                intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
+                                                                intent.putExtra(TAG_NOVEL, novelTag);
+                                                                intent.putExtra(TAG_VOLUME, volumeInfo);
+                                                                intent.putExtra(TAG_CHAPTER, volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
                                                                 startActivity(intent);
                                                                 overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                                                 ReaderActivityV1.this.finish();
                                                             }
                                                         })
                                                         .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
-                                                        .title(R.string.reader_jump_last)
+                                                        .title(R.string.reader_jump)
                                                         .positiveText(R.string.dialog_positive_yes)
                                                         .negativeText(R.string.dialog_negative_no)
                                                         .content(volumeInfo.getChapterByListIndex(i_bak + 1).getTitle())
@@ -877,9 +902,9 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
-                                        intent.putExtra("novelTag", novelTag);
-                                        intent.putExtra("volumeInfo", volumeInfo);
-                                        intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
+                                        intent.putExtra(TAG_NOVEL, novelTag);
+                                        intent.putExtra(TAG_VOLUME, volumeInfo);
+                                        intent.putExtra(TAG_CHAPTER, volumeInfo.getChapterByListIndex(i_bak + 1).getChapterTag());
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                         ReaderActivityV1.this.finish();
@@ -921,9 +946,9 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
                                         Intent intent = new Intent(ReaderActivityV1.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
-                                        intent.putExtra("novelTag", novelTag);
-                                        intent.putExtra("volumeInfo", volumeInfo);
-                                        intent.putExtra("currentChapterTag", volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
+                                        intent.putExtra(TAG_NOVEL, novelTag);
+                                        intent.putExtra(TAG_VOLUME, volumeInfo);
+                                        intent.putExtra(TAG_CHAPTER, volumeInfo.getChapterByListIndex(i_bak - 1).getChapterTag());
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                                         ReaderActivityV1.this.finish();

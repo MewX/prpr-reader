@@ -3,6 +3,7 @@ package org.mewx.projectprpr.global;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
@@ -32,6 +33,7 @@ import java.util.List;
  *      base64_tag:base64_title|base64_tag:base64_title
  */
 public class BookShelfManager {
+    private static final String TAG = BookShelfManager.class.getSimpleName();
     public static final String NETNOVEL_INFO_SAVE_FILE_NAME = "_info.prpr"; // in netnovelTag folder
     public static final String NETNOVEL_VOLUME_SAVE_FILE_NAME = "_volume.prpr"; // in netnovelTag folder
 
@@ -78,6 +80,7 @@ public class BookShelfManager {
                             break;
 
                         default:
+                            Log.e(TAG, "LOAD: " + key + " - " + value);
                             ni.addToInfoPairs(key, value);
                             break;
                     }
@@ -111,14 +114,9 @@ public class BookShelfManager {
         }
     }
 
-
-
-    public static int getBookCount() {
-        return bookList.size();
-    }
-
-    public static BookshelfSaver getBookAt(int i) {
-        return bookList.get(i);
+    @NonNull
+    public static List<BookshelfSaver> getBookList() {
+        return bookList;
     }
 
     public static void removeBook(@Nullable String dataSourceTag, String novelTag) {
@@ -135,6 +133,10 @@ public class BookShelfManager {
     }
 
     public static void removeBookAt(int i) {
+        // remove netnovel
+        if (bookList.get(i).getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
+            FileTool.deleteFolder(YBL.getProjectFolderNetNovel(bookList.get(i).getDataSourceTag(), bookList.get(i).getNovelInfo().getBookTag()));
+        }
         bookList.remove(i);
     }
 

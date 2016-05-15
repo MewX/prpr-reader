@@ -110,5 +110,8 @@
     <string name="setting_clear_cache_cancelled">Cancelled</string>
     <string name="setting_clear_cache_succeeded">Done!</string>
     <string name="setting_about">About</string>
+    
+    <string name="bookshelf_remove">Remove this book</string>
+    <string name="bookshelf_view_detail">View detail</string>
 
 </resources>

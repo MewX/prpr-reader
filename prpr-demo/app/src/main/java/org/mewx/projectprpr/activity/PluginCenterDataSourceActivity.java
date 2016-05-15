@@ -14,14 +14,14 @@ import org.mewx.projectprpr.activity.adapter.DataSourceItem;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
+import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PluginCenterDataSourceActivity extends AppCompatActivity {
+public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {
     private static final String TAG = PluginCenterDataSourceActivity.class.getSimpleName();
-    public static final String DATA_SOURCE_TAG = "datasource";
 
     private List<PluginInfo> pluginList = Arrays.asList(YBL.BUILTIN_PLUGIN); // for operation
     private List<DataSourceItem> itemList = new ArrayList<>(); // for displaying
@@ -96,7 +96,7 @@ public class PluginCenterDataSourceActivity extends AppCompatActivity {
     private void gotoPluginInitialActivity(int index) {
         if (0 <= index && index < pluginList.size()) {
             Intent intent = new Intent(PluginCenterDataSourceActivity.this, DataSourceItemInitialActivity.class);
-            intent.putExtra(DATA_SOURCE_TAG, pluginList.get(index));
+            intent.putExtra(DataSourceItemInitialActivity.DATA_SOURCE_TAG, pluginList.get(index));
             startActivity(intent);
         }
     }

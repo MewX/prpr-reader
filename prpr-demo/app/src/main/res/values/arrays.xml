@@ -39,4 +39,9 @@
         <item>@string/setting_clear_cache_simple</item>
         <item>@string/setting_clear_cache_advanced</item>
     </string-array>
+
+    <string-array name="bookshelf_item_option">
+        <item>@string/bookshelf_remove</item>
+        <item>@string/bookshelf_view_detail</item>
+    </string-array>
 </resources>

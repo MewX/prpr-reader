@@ -3,7 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
-    card_view:cardElevation="4dp"
+    card_view:cardElevation="2dp"
     card_view:cardBackgroundColor="@color/plugin_center_card_background"
     card_view:cardUseCompatPadding="true"
     android:clickable="true"
@@ -20,9 +20,9 @@
             android:id="@+id/domain_logo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:layout_centerInParent="true"
             fresco:fadeDuration="250"
+            fresco:actualImageScaleType="centerCrop"
             fresco:placeholderImageScaleType="centerCrop"
             fresco:placeholderImage="@drawable/ic_empty_image" />
 

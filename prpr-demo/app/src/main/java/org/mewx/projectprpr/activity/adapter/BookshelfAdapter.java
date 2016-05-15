@@ -3,6 +3,7 @@ package org.mewx.projectprpr.activity.adapter;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +12,15 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 
 import java.util.List;
 
 /**
- * Created by MewX on 04/17/2016.
- * This class adapt the data source list in plug-in list.
+ * Created by MewX on 05/15/2016.
+ * Grid view for local bookshelf.
  */
-@SuppressWarnings("unused")
-public class DataSourceAdapter extends RecyclerView.Adapter {
+public class BookshelfAdapter extends RecyclerView.Adapter {
     private static final String TAG = DataSourceAdapter.class.getSimpleName();
 
     public static interface OnRecyclerViewListener {
@@ -33,15 +34,15 @@ public class DataSourceAdapter extends RecyclerView.Adapter {
         this.onRecyclerViewListener = onRecyclerViewListener;
     }
 
-    private List<DataSourceItem> list;
+    private List<BookshelfSaver> list;
 
-    public DataSourceAdapter(List<DataSourceItem> list) {
+    public BookshelfAdapter(List<BookshelfSaver> list) {
         this.list = list;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recycler_item_data_source, null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recycler_item_bookshelf, null);
         CardView.LayoutParams lp = new CardView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         view.setLayoutParams(lp);
         return new DataSourceViewHolder(view);
@@ -51,10 +52,11 @@ public class DataSourceAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         final DataSourceViewHolder holder = (DataSourceViewHolder) viewHolder;
         holder.position = i;
-        DataSourceItem item = list.get(i);
-        holder.textMain.setText(item.getDisplayName() + " [ v" + item.getVersionCode() + " ], by: " + item.getPluginAuthor());
-        holder.textSub.setText(item.getWebsiteDomain());
-        holder.image.setImageURI(Uri.parse(item.getLogoUrl()));
+        BookshelfSaver item = list.get(i);
+        holder.textTitle.setText(item.getNovelInfo().getTitle());
+        if (!TextUtils.isEmpty(item.getNovelInfo().getCoverUrl())) {
+            holder.image.setImageURI(Uri.parse(item.getNovelInfo().getCoverUrl()));
+        }
     }
 
     @Override
@@ -64,16 +66,14 @@ public class DataSourceAdapter extends RecyclerView.Adapter {
 
     class DataSourceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View rootView;
-        public TextView textMain;
-        public TextView textSub;
+        public TextView textTitle;
         public SimpleDraweeView image;
         public int position;
 
         public DataSourceViewHolder(View itemView) {
             super(itemView);
-            textMain = (TextView) itemView.findViewById(R.id.site_info);
-            textSub = (TextView) itemView.findViewById(R.id.site_meta);
-            image = (SimpleDraweeView) itemView.findViewById(R.id.domain_logo);
+            textTitle = (TextView) itemView.findViewById(R.id.cardtext);
+            image = (SimpleDraweeView) itemView.findViewById(R.id.cardimage);
             rootView = itemView.findViewById(R.id.cardview);
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);

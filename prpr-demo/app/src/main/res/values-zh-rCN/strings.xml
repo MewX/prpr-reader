@@ -100,4 +100,6 @@
     <string name="dialog_content_downloading">下载中……</string>
     <string name="dialog_positive_confirm">确认</string>
     <string name="app_network_error">网络连接错误</string>
+    <string name="bookshelf_remove">移出书架</string>
+    <string name="bookshelf_view_detail">详细信息</string>
 </resources>

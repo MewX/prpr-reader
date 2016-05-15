@@ -24,6 +24,7 @@ import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.PageNumBetween;
 import org.mewx.projectprpr.plugin.component.PlugInTools;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
+import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.toolkit.thirdparty.IntentTool;
 
 import java.io.IOException;
@@ -40,14 +41,12 @@ import okhttp3.Response;
  * In one word, this activity is the start page of one data source plug-in.
  */
 
-public class DataSourceItemInitialActivity extends AppCompatActivity {
+public class DataSourceItemInitialActivity extends AppCompatTemplateActivity {
     private static final String TAG = DataSourceItemInitialActivity.class.getSimpleName();
-    public static final String NOVEL_TAG = "novel_tag";
-    public static final String NOVEL_TITLE = "novel_title";
-    public static final String NOVEL_DATA_SOURCE = "novel_data_source";
-    public static final String NOVEL_AUTHOR = "novel_author";
-    public static final String NOVEL_COVER_URL = "novel_cover_url";
-    public static NovelDataSourceBasic dataSourceBasic; // for global access
+    public static final String DATA_SOURCE_TAG = "datasource";
+
+    // for global access
+    public static NovelDataSourceBasic dataSourceBasic;
 
     private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
@@ -64,7 +63,7 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_data_source_item_initial);
 
         // fetch data
-        pluginInfo = (PluginInfo) getIntent().getSerializableExtra(PluginCenterDataSourceActivity.DATA_SOURCE_TAG);
+        pluginInfo = (PluginInfo) getIntent().getSerializableExtra(DATA_SOURCE_TAG);
         dataSourceBasic = PlugInTools.generateNovelDataSourceBasic(pluginInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -83,6 +82,11 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
         // first time to request novel list
         pageRange = dataSourceBasic.getMainListPageNum(); // this value should be updated after every request
         requestLatestNovelList();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     private void requestLatestNovelList() {
@@ -160,11 +164,11 @@ public class DataSourceItemInitialActivity extends AppCompatActivity {
                 public void onItemClick(int position) {
                     // jump to detail activity
                     Intent intent = new Intent(DataSourceItemInitialActivity.this, DataSourceItemDetailActivity.class);
-                    intent.putExtra(NOVEL_TAG, novelList.get(position).getBookTag());
-                    intent.putExtra(NOVEL_TITLE, novelList.get(position).getTitle());
-                    intent.putExtra(NOVEL_DATA_SOURCE, novelList.get(position).getDataSource());
-                    intent.putExtra(NOVEL_AUTHOR, novelList.get(position).getAuthor());
-                    intent.putExtra(NOVEL_COVER_URL, novelList.get(position).getCoverUrl());
+                    intent.putExtra(DataSourceItemDetailActivity.NOVEL_TAG, novelList.get(position).getBookTag());
+                    intent.putExtra(DataSourceItemDetailActivity.NOVEL_TITLE, novelList.get(position).getTitle());
+                    intent.putExtra(DataSourceItemDetailActivity.NOVEL_DATA_SOURCE, novelList.get(position).getDataSource());
+                    intent.putExtra(DataSourceItemDetailActivity.NOVEL_AUTHOR, novelList.get(position).getAuthor());
+                    intent.putExtra(DataSourceItemDetailActivity.NOVEL_COVER_URL, novelList.get(position).getCoverUrl());
                     startActivity(intent);
                 }
 

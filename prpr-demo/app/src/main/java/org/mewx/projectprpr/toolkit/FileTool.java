@@ -24,9 +24,9 @@ import java.io.UnsupportedEncodingException;
 public class FileTool {
     private static final String TAG = FileTool.class.getSimpleName();
 
-    public static boolean deleteFile(@NonNull String filepath) {
-        Log.v(TAG, "Path: " + filepath);
-        File file = new File(filepath);
+    public static boolean deleteFile(@NonNull String filePath) {
+        Log.v(TAG, "Path: " + filePath);
+        File file = new File(filePath);
 
         if (file.delete()) {
             Log.v(TAG, "Delete successfully.");
@@ -35,6 +35,14 @@ public class FileTool {
             Log.e(TAG, "Delete failed.");
             return false;
         }
+    }
+
+    public static void deleteFolder(@NonNull String folderPath) {
+        File fileOrDirectory = new File(folderPath);
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteFolder(child.getAbsolutePath());
+        fileOrDirectory.delete();
     }
 
     public static boolean existFile(@NonNull String path) {

@@ -7,6 +7,8 @@ import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.toolkit.FileTool;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -52,7 +54,7 @@ public class NovelContent {
 
         // intelligent decision
         if(loadedContent.size() == 0) loadFile();
-        else  saveFile();
+        else saveFile();
     }
 
     private void loadFile() {
@@ -91,13 +93,12 @@ public class NovelContent {
     private void saveFile() {
         // TODO: need to rewrite to support large file.
         if(!TextUtils.isEmpty(filePath)) {
-            // delete file first
-            FileTool.deleteFile(filePath);
-
             String line;
             try {
+                File file = new File(filePath);
+                file.createNewFile(); // create file
                 OutputStreamWriter osw = new OutputStreamWriter(
-                        new FileOutputStream(filePath), Charset.forName(YBL.STANDARD_CHARSET));
+                        new FileOutputStream(file), Charset.forName(YBL.STANDARD_CHARSET));
 
                 for (NovelContentLine ncl : loadedContent) {
                     if (ncl.content.length() == 0) {
@@ -130,7 +131,7 @@ public class NovelContent {
 
     public void addToNovelContent(NovelContentLine content) {
         loadedContent.add(content);
-        saveFile(); // TODO: delta file
+        saveFile(); // TODO: save delta file
     }
 
     public void addToNovelContent(List<NovelContentLine> content) {
@@ -140,7 +141,7 @@ public class NovelContent {
 
     public void addToNovelContent(NovelContent nc) {
         for(int i = 0; i < nc.getContentLineCount(); i ++) {
-            addToNovelContent(nc.getContentLine(i));
+            loadedContent.add(nc.getContentLine(i));
         }
         saveFile();
     }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,11 +19,14 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 import org.mewx.projectprpr.R;
+import org.mewx.projectprpr.activity.adapter.BookshelfAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterItem;
 import org.mewx.projectprpr.global.BookShelfManager;
+import org.mewx.projectprpr.global.DataSourcePluginManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.JavaCallLuaJava;
+import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.template.NavigationFitSystemView;
 import org.mewx.projectprpr.toolkit.thirdparty.OkHttp3NetworkFetcher;
@@ -71,16 +75,20 @@ public class MainActivity extends AppCompatTemplateActivity
             navigationView.setNavigationItemSelectedListener(this);
             navigationView.getMenu().getItem(0).setChecked(true); // set default selected item
         }
-        switchToPluginCenter(); // TODO: remove when release
 
         // initial all folders
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
+        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL)).mkdirs();
+        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN)).mkdirs();
 
         // load bookshelf
         BookShelfManager.loadAllBook();
+
+        // load plugins
+        DataSourcePluginManager.loadAllLocalDataSourcePlugin();
 
         // initial okHttp & Fresco, share the same chache size! I am so clever!!!
         CookieManager cookieManager = new CookieManager(); // enable cookies
@@ -103,9 +111,19 @@ public class MainActivity extends AppCompatTemplateActivity
 
         // set recyclerView
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
-        switchToPluginCenter();
+        switchToLocalBookshelf();
 
         Toast.makeText(this, new JavaCallLuaJava().helloLuaJavaCallFromLuaWithReturn(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        // refresh bookshelf
+        if (recyclerView != null && recyclerView.getAdapter() != null) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -140,7 +158,6 @@ public class MainActivity extends AppCompatTemplateActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -174,13 +191,54 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void cleanRecyclerView() {
         if(recyclerView != null) {
-            // TODO
+            recyclerView.removeAllViews();
+            recyclerView.setAdapter(null);
         }
     }
 
     public void switchToLocalBookshelf() {
         if(recyclerView != null) {
-            // todo
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+            BookshelfAdapter bookshelfAdapter = (new BookshelfAdapter(BookShelfManager.getBookList()));
+            bookshelfAdapter.setOnRecyclerViewListener(new BookshelfAdapter.OnRecyclerViewListener() {
+                @Override
+                public void onItemClick(int position) {
+                    if (BookShelfManager.getBookList().get(position).getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
+                        // todo: seek to book information activity, and need to seek for plugin
+                        // if plugin not ready, ask to run in offline mode
+                        DataSourceItemInitialActivity.dataSourceBasic = DataSourcePluginManager.loadDataSourcePluginClassByTag(
+                                BookShelfManager.getBookList().get(position).getDataSourceTag());
+
+                        if (DataSourceItemInitialActivity.dataSourceBasic != null) {
+                            // todo: online mode
+                            // jump to detail activity
+                            Intent intent = new Intent(MainActivity.this, DataSourceItemDetailActivity.class);
+                            intent.putExtra(DataSourceItemDetailActivity.NOVEL_TAG, BookShelfManager.getBookList().get(position).getNovelInfo().getBookTag());
+                            intent.putExtra(DataSourceItemDetailActivity.NOVEL_TITLE, BookShelfManager.getBookList().get(position).getNovelInfo().getTitle());
+                            intent.putExtra(DataSourceItemDetailActivity.NOVEL_DATA_SOURCE, BookShelfManager.getBookList().get(position).getNovelInfo().getDataSource());
+                            intent.putExtra(DataSourceItemDetailActivity.NOVEL_AUTHOR, BookShelfManager.getBookList().get(position).getNovelInfo().getAuthor());
+                            intent.putExtra(DataSourceItemDetailActivity.NOVEL_COVER_URL, BookShelfManager.getBookList().get(position).getNovelInfo().getCoverUrl());
+                            intent.putExtra(DataSourceItemDetailActivity.TAG_BOOKSHELF_ID, position);
+                            startActivity(intent);
+                        } else {
+                            // todo: offline mode
+                            Toast.makeText(MainActivity.this, "not found!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // todo, judge type and instant load book using specific loader!
+                    }
+                }
+
+                @Override
+                public boolean onItemLongClick(int position) {
+                    // todo: delete, view full information
+                    Toast.makeText(MainActivity.this, "long", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+            recyclerView.setAdapter(bookshelfAdapter);
         }
     }
 
@@ -203,7 +261,6 @@ public class MainActivity extends AppCompatTemplateActivity
                     switch (position) {
                         case 0:
                             // data source
-                             /* 新建一个Intent对象 */
                             Intent intent = new Intent();
                             intent.setClass(MainActivity.this, PluginCenterDataSourceActivity.class);
                             MainActivity.this.startActivity(intent);

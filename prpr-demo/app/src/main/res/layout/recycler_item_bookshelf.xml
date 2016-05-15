@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="2dp"
+    card_view:cardBackgroundColor="@color/plugin_center_card_background"
+    card_view:cardUseCompatPadding="true"
+    android:clickable="true"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/cardimage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            fresco:fadeDuration="250"
+            fresco:viewAspectRatio="0.75"
+            fresco:actualImageScaleType="focusCrop"
+            fresco:placeholderImageScaleType="fitXY"
+            fresco:placeholderImage="@drawable/ic_empty_image" />
+
+        <TextView
+            android:id="@+id/cardtext"
+            android:gravity="start"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:maxLines="1"
+            android:layout_below="@id/cardimage"
+            android:textColor="@color/colorAccent" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

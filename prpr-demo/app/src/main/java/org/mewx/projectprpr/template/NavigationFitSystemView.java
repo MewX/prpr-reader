@@ -27,6 +27,7 @@ public class NavigationFitSystemView extends NavigationView {
     protected void onMeasure(int widthSpec, int heightSpec) {
 
         // TODO: optimize for tablet screen layout
-        super.onMeasure(widthSpec, heightSpec- ScreenTool.getCurrentNavigationBarSize(getContext()).y);
+        // super.onMeasure(widthSpec, heightSpec- ScreenTool.getCurrentNavigationBarSize(getContext()).y);
+        super.onMeasure(widthSpec, heightSpec); // todo: this is temporary solution
     }
 }

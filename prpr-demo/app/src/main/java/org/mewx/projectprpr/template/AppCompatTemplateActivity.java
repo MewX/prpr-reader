@@ -22,10 +22,15 @@ public class AppCompatTemplateActivity extends AppCompatActivity {
 
         // set StatusBar Color
         // TODO: should change when theme change? like dark mode?
+        SystemBarTintManager systemBarTintManager = new SystemBarTintManager(this);
         if(Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            SystemBarTintManager systemBarTintManager = new SystemBarTintManager(this);
             systemBarTintManager.setStatusBarTintEnabled(true);
             systemBarTintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        }
+        if(Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+            // set navigation bar color (todo temporary solution)
+            systemBarTintManager.setNavigationBarTintEnabled(true);
+            systemBarTintManager.setNavigationBarTintColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
 
         // TODO: Umeng statistic codes can be added here

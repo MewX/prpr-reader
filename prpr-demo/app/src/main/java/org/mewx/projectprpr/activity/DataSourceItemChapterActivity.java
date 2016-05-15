@@ -15,12 +15,15 @@ import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
 import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
+import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataSourceItemChapterActivity extends AppCompatActivity {
+public class DataSourceItemChapterActivity extends AppCompatTemplateActivity {
     private static final String TAG = DataSourceItemChapterActivity.class.getSimpleName();
+    public static final String NOVEL_TAG = "novel";
+    public static final String VOLUME_TAG = "volume";
 
     private LinearLayout linearLayout;
 
@@ -37,8 +40,8 @@ public class DataSourceItemChapterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // fetch data
-        novelTag = getIntent().getStringExtra(DataSourceItemDetailActivity.NOVEL_TAG);
-        volumeInfo = (VolumeInfo) getIntent().getSerializableExtra(DataSourceItemDetailActivity.VOLUME_TAG);
+        novelTag = getIntent().getStringExtra(NOVEL_TAG);
+        volumeInfo = (VolumeInfo) getIntent().getSerializableExtra(VOLUME_TAG);
         getSupportActionBar().setTitle(volumeInfo.getTitle());
 
         chapterInfoList = new ArrayList<>();
@@ -68,9 +71,9 @@ public class DataSourceItemChapterActivity extends AppCompatActivity {
 
                     // todo: jump to reader activity
                     Intent intent = new Intent(DataSourceItemChapterActivity.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
-                    intent.putExtra("novelTag", novelTag);
-                    intent.putExtra("volumeInfo", volumeInfo);
-                    intent.putExtra("currentChapterTag", ci.getChapterTag());
+                    intent.putExtra(ReaderActivityV1.TAG_NOVEL, novelTag);
+                    intent.putExtra(ReaderActivityV1.TAG_VOLUME, volumeInfo);
+                    intent.putExtra(ReaderActivityV1.TAG_CHAPTER, ci.getChapterTag());
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                 }

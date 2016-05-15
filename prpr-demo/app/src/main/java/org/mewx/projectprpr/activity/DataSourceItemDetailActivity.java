@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +44,7 @@ import org.mewx.projectprpr.plugin.component.NovelContentLine;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
 import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
+import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.toolkit.CryptoTool;
 import org.mewx.projectprpr.toolkit.FileTool;
 
@@ -62,10 +65,14 @@ import okhttp3.Response;
  * Todo: need to make a debug kit built in app!
  */
 
-public class DataSourceItemDetailActivity extends AppCompatActivity {
+public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
     private static final String TAG = DataSourceItemDetailActivity.class.getSimpleName();
-    public static final String NOVEL_TAG = "novel";
-    public static final String VOLUME_TAG = "volume";
+    public static final String NOVEL_TAG = "novel_tag";
+    public static final String NOVEL_TITLE = "novel_title";
+    public static final String NOVEL_DATA_SOURCE = "novel_data_source";
+    public static final String NOVEL_AUTHOR = "novel_author";
+    public static final String NOVEL_COVER_URL = "novel_cover_url";
+    public static final String TAG_BOOKSHELF_ID = "bookshelf_idd";
 
     // views
     private LinearLayout linearLayout;
@@ -78,7 +85,7 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
     private TextView novelIntro;
 
     // info
-    private boolean isLoading = true;
+    private boolean isLoading = false;
     private String responseBody;
     private String novelTag;
     private NovelDataSourceBasic dataSourceBasic;
@@ -94,11 +101,12 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        novelTag = getIntent().getStringExtra(DataSourceItemInitialActivity.NOVEL_TAG);
-        String title = getIntent().getStringExtra(DataSourceItemInitialActivity.NOVEL_TITLE);
-        String dataSource = getIntent().getStringExtra(DataSourceItemInitialActivity.NOVEL_DATA_SOURCE);
-        String author = getIntent().getStringExtra(DataSourceItemInitialActivity.NOVEL_AUTHOR);
-        String coverUrl = getIntent().getStringExtra(DataSourceItemInitialActivity.NOVEL_COVER_URL);
+        novelTag = getIntent().getStringExtra(NOVEL_TAG);
+        String title = getIntent().getStringExtra(NOVEL_TITLE);
+        String dataSource = getIntent().getStringExtra(NOVEL_DATA_SOURCE);
+        String author = getIntent().getStringExtra(NOVEL_AUTHOR);
+        String coverUrl = getIntent().getStringExtra(NOVEL_COVER_URL);
+        int bookshelfId = getIntent().getIntExtra(TAG_BOOKSHELF_ID, -1); // if <0, load online
         dataSourceBasic = DataSourceItemInitialActivity.dataSourceBasic; // get a copy of reference
         if(novelInfo != null) {
             getSupportActionBar().setTitle(novelInfo.getTitle());
@@ -134,7 +142,18 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
 
         // request novel info
-        requestNovelInfoDetail(true);
+        if(bookshelfId < 0) {
+            // not in bookshelf, load from Internet
+            requestNovelInfoDetail(true);
+        } else {
+            // load from bookshelf directly
+            Log.e(TAG, "in bookshelf: " + bookshelfId);
+            novelInfo = BookShelfManager.getBookList().get(bookshelfId).getNovelInfo();
+            novelInfo.setDataSource(dataSourceBasic.getName()); // set data source name
+            volumeInfoList = BookShelfManager.getBookList().get(bookshelfId).getListVolumeInfo();
+            updateNovelInfo();
+            updateChapterInfo();
+        }
     }
 
     private void requestNovelInfoDetail(boolean forceLoad) {
@@ -344,8 +363,8 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     // todo: jump to chapter select activity
                     Intent intent = new Intent(DataSourceItemDetailActivity.this, DataSourceItemChapterActivity.class);
-                    intent.putExtra(VOLUME_TAG, vl);
-                    intent.putExtra(NOVEL_TAG, novelInfo.getBookTag());
+                    intent.putExtra(DataSourceItemChapterActivity.VOLUME_TAG, vl);
+                    intent.putExtra(DataSourceItemChapterActivity.NOVEL_TAG, novelInfo.getBookTag());
                     startActivity(intent);
                 }
             });
@@ -531,6 +550,23 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
             return list;
         }
 
+        @NonNull
+        private Response retryRequest(Request request) throws Exception {
+            int time = YBL.MAX_NET_RETRY_TIME;
+            Response response;
+            while (true) {
+                response = YBL.globalOkHttpClient3.newCall(request).execute();
+
+                time -= 1;
+                if(response.isSuccessful()) {
+                    break;
+                } else if (time <= 0) {
+                    throw new Exception("MEET MAX RETRY TIME!" + request.url());
+                }
+            }
+            return response;
+        }
+
         @Override
         protected Integer doInBackground(Integer... params) {
             boolean skipMode = params[0] != 2; // only 2 is not skip mode
@@ -566,18 +602,17 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                                     + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag()));
                         } else {
                             // request novel content
-                            response = YBL.globalOkHttpClient3.newCall(
-                                    dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(YBL.STANDARD_CHARSET)).execute();
-
-                            NetRequest[] netRequests = dataSourceBasic.getUltraRequests(ci.getChapterTag(), response.body().string());
+                            response = retryRequest(dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(YBL.STANDARD_CHARSET));
+                            String content = response.body().string();
+                            NetRequest[] netRequests = dataSourceBasic.getUltraRequests(ci.getChapterTag(), content);
                             byte[][] returnBytes = new byte[netRequests.length][];
                             for (int i = 0; i < netRequests.length; i++) {
                                 Log.e(TAG, netRequests[i].getFullGetUrl());
-                                returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
+                                returnBytes[i] = retryRequest(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).body().bytes();
                             }
                             dataSourceBasic.ultraReturn(ci.getChapterTag(), returnBytes);
 
-                            nc = new NovelContent(dataSourceBasic.parseNovelContent(response.body().string()));
+                            nc = new NovelContent(dataSourceBasic.parseNovelContent(content));
                             nc.setFileName(filePath);
                         }
 
@@ -592,22 +627,13 @@ public class DataSourceItemDetailActivity extends AppCompatActivity {
                                 // download image
                                 publishProgress(currentProgress, ++maxProgress);
                                 int time = YBL.MAX_NET_RETRY_TIME;
-                                while (true) {
-                                    response = YBL.globalOkHttpClient3.newCall(
-                                            new Request.Builder()
-                                                    .url(nc.getContentLine(i).content)
-                                                    .cacheControl(CacheControl.FORCE_NETWORK)
-                                                    .addHeader("User-Agent", YBL.USER_AGENT)
-                                                    .build()
-                                    ).execute();
-
-                                    time -= 1;
-                                    if(response.isSuccessful()) {
-                                        break;
-                                    } else if (time <= 0) {
-                                        throw new Exception("MEET MAX RETRY TIME!");
-                                    }
-                                }
+                                response = retryRequest(
+                                        new Request.Builder()
+                                                .url(nc.getContentLine(i).content)
+                                                .cacheControl(CacheControl.FORCE_NETWORK)
+                                                .addHeader("User-Agent", YBL.USER_AGENT)
+                                                .build()
+                                );
                                 FileTool.saveFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"), response.body().bytes(), true);
                                 currentProgress += 1; // update progress
                             }
