@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.DataSourceAdapter;
 import org.mewx.projectprpr.activity.adapter.DataSourceItem;
+import org.mewx.projectprpr.global.DataSourcePluginManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
@@ -23,7 +24,6 @@ import java.util.List;
 public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {
     private static final String TAG = PluginCenterDataSourceActivity.class.getSimpleName();
 
-    private List<PluginInfo> pluginList = Arrays.asList(YBL.BUILTIN_PLUGIN); // for operation
     private List<DataSourceItem> itemList = new ArrayList<>(); // for displaying
     private RecyclerView recyclerView;
 
@@ -38,17 +38,14 @@ public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_data_source);
 
         // add all to itemList
-        for (PluginInfo info : pluginList) {
-            // make class and get info to itemList, from pluginList
-            try {
-                Class<?> aClass = Class.forName(YBL.PLUGIN_PACKAGE + "." + info.getClassName());
-                NovelDataSourceBasic obj = (NovelDataSourceBasic) aClass.newInstance();
+        for(int i = 0; i < DataSourcePluginManager.getLocalDataSourcePluginCount(); i ++) {
+            NovelDataSourceBasic obj = DataSourcePluginManager.loadDataSourcePluginClassById(i);
+            if (obj != null) {
                 itemList.add(new DataSourceItem(obj.getName(), obj.getUrl(), obj.getVersionCode(), obj.getLogoUrl(), obj.getAuthor()));
-            } catch (Exception e) {
-                e.printStackTrace();
-                itemList.add(new DataSourceItem(info.getClassName(), info.getPath(), 0, "", "unknown"));
+            } else {
+                itemList.add(new DataSourceItem(DataSourcePluginManager.getLocalDataSourcePluginInfoById(i).getClassName(),
+                        DataSourcePluginManager.getLocalDataSourcePluginInfoById(i).getPath(), 0, "", "unknown"));
             }
-
         }
 
         // get plugin list, pluginList has already filled with built-in plug-ins
@@ -67,7 +64,7 @@ public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {
             adapter.setOnRecyclerViewListener(new DataSourceAdapter.OnRecyclerViewListener() {
                 @Override
                 public void onItemClick(int position) {
-                    if (pluginList.get(position).getPath().contains("http")) {
+                    if (DataSourcePluginManager.getLocalDataSourcePluginInfoById(position).getPath().contains("http")) {
                         // TODO: when click, judge whether downloaded, if not, download, else jump to Activity
 
                         // TODO: change pluginList, and run the following code
@@ -94,9 +91,9 @@ public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {
     }
 
     private void gotoPluginInitialActivity(int index) {
-        if (0 <= index && index < pluginList.size()) {
+        if (0 <= index && index < DataSourcePluginManager.getLocalDataSourcePluginCount()) {
             Intent intent = new Intent(PluginCenterDataSourceActivity.this, DataSourceItemInitialActivity.class);
-            intent.putExtra(DataSourceItemInitialActivity.DATA_SOURCE_TAG, pluginList.get(index));
+            intent.putExtra(DataSourceItemInitialActivity.DATA_SOURCE_TAG, DataSourcePluginManager.getLocalDataSourcePluginInfoById(index));
             startActivity(intent);
         }
     }

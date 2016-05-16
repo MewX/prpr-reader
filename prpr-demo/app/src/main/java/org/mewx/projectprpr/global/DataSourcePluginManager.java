@@ -6,7 +6,6 @@ import android.util.Log;
 
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
-import org.mewx.projectprpr.plugin.component.PlugInTools;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 import org.mewx.projectprpr.toolkit.FileTool;
 
@@ -27,24 +26,18 @@ public class DataSourcePluginManager {
     private static final String TAG = DataSourcePluginManager.class.getSimpleName();
     private static final String OPTIMIZED_DEX_FOLDER = "outdex";
 
-    private static List<PluginInfo> pluginListLocal = Arrays.asList(YBL.BUILTIN_PLUGIN);
+    private static ArrayList<PluginInfo> pluginListLocal = new ArrayList<>(Arrays.asList(YBL.BUILTIN_PLUGIN));
     private static List<PluginInfo> pluginListCloud = new ArrayList<>();
 
     public static void loadAllLocalDataSourcePlugin() {
-        for (PluginInfo info : pluginListLocal) {
-            // make class and get info to itemList, from pluginListLocal
-            try {
-                Class<?> aClass = Class.forName(YBL.PLUGIN_PACKAGE + "." + info.getClassName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
         // load local plugins, local plugin can overwrite built-in!!!
         final File optimizedDexOutputPath = MyApp.getContext().getDir(OPTIMIZED_DEX_FOLDER, 0);
         String[] pluginList = FileTool.getFileList(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN));
+
+        LocalPlugin:
         for (String pluginFileName : pluginList) {
             String fullPath = YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN + File.separator + pluginFileName);
+            Log.e(TAG, "Full path: " + fullPath);
             DexClassLoader dexClassLoader = new DexClassLoader(fullPath, optimizedDexOutputPath.getAbsolutePath(), null, MyApp.getContext().getClassLoader());
             Class libProviderClass = null;
             try {
@@ -69,8 +62,12 @@ public class DataSourcePluginManager {
                             && pluginListLocal.get(i).getClassName().equals(pluginInfo.getClassName())) {
                         // replace this record
                         pluginListLocal.set(i, pluginInfo);
+                        continue LocalPlugin;
                     }
                 }
+
+                // add to back
+                pluginListLocal.add(pluginInfo);
             } catch (Exception exception) {
                 // Handle exception gracefully here.
                 exception.printStackTrace();
@@ -99,6 +96,14 @@ public class DataSourcePluginManager {
             if (pi.getClassName().equals(name)) {
                 return loadDataSourcePluginClassByInfo(pi);
             }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static NovelDataSourceBasic loadDataSourcePluginClassById(int index) {
+        if (0 <= index && index < pluginListLocal.size()) {
+            return loadDataSourcePluginClassByInfo(pluginListLocal.get(index));
         }
         return null;
     }
@@ -139,5 +144,14 @@ public class DataSourcePluginManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static int getLocalDataSourcePluginCount() {
+        return pluginListLocal.size();
+    }
+
+    @Nullable
+    public static PluginInfo getLocalDataSourcePluginInfoById(int id) {
+        return pluginListLocal.get(id);
     }
 }

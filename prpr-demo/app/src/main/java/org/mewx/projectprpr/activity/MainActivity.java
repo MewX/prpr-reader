@@ -165,15 +165,12 @@ public class MainActivity extends AppCompatTemplateActivity
         if(currentFragmentId != id) {
             if (id == R.id.nav_library_local) {
                 currentFragmentId = R.id.nav_library_local;
-                cleanRecyclerView();
                 switchToLocalBookshelf();
             } else if (id == R.id.nav_plug_in_center) {
                 currentFragmentId = R.id.nav_plug_in_center;
-                cleanRecyclerView();
                 switchToPluginCenter();
             } else if (id == R.id.nav_dictionary) {
                 currentFragmentId = R.id.nav_dictionary;
-                cleanRecyclerView();
                 switchToDictionary();
             } else if (id == R.id.nav_cloud) {
                 Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
@@ -197,6 +194,7 @@ public class MainActivity extends AppCompatTemplateActivity
     }
 
     public void switchToLocalBookshelf() {
+        cleanRecyclerView();
         if(recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -243,6 +241,7 @@ public class MainActivity extends AppCompatTemplateActivity
     }
 
     public void switchToPluginCenter() {
+        cleanRecyclerView();
         if(recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -282,6 +281,7 @@ public class MainActivity extends AppCompatTemplateActivity
     }
 
     public void switchToDictionary() {
+        cleanRecyclerView();
         if(recyclerView != null) {
             Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
         }

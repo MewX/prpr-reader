@@ -18,7 +18,7 @@ public class VolumeInfo implements Serializable {
      @NonNull private ArrayList<ChapterInfo> chapterList = new ArrayList<>();
 
     public VolumeInfo(@NonNull String volumeTag) {
-        this("", volumeTag);
+        this(volumeTag, volumeTag);
     }
 
     public VolumeInfo(@NonNull String title, @NonNull String volumeTag) {

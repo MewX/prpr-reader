@@ -102,4 +102,5 @@
     <string name="app_network_error">网络连接错误</string>
     <string name="bookshelf_remove">移出书架</string>
     <string name="bookshelf_view_detail">详细信息</string>
+    <string name="novel_info_word_count">字数</string>
 </resources>

@@ -110,8 +110,10 @@ public class YBL {
     // global constants
     public static final VERSION_TYPE_ENUM VERSION_TYPE = VERSION_TYPE_ENUM.TEST;
     public static final int IMAGE_CACHE_DISK_SIZE = 100 * 1024 * 1024;
-    public static final PluginInfo[] BUILTIN_PLUGIN = {new PluginInfo("XsDmzj", PluginInfo.PluginType.BUILTIN, "")};
-
+    public static final PluginInfo[] BUILTIN_PLUGIN = {
+            // new PluginInfo("XsDmzj", PluginInfo.PluginType.BUILTIN, ""),
+            new PluginInfo("Kana8", PluginInfo.PluginType.BUILTIN, "")
+    };
 
     // global common variables
     public static OkHttpClient globalOkHttpClient3;

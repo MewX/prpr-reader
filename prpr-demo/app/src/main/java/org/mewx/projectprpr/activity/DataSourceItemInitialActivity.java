@@ -1,33 +1,27 @@
 package org.mewx.projectprpr.activity;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.NetNovelListAdapter;
+import org.mewx.projectprpr.global.DataSourcePluginManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.PageNumBetween;
-import org.mewx.projectprpr.plugin.component.PlugInTools;
 import org.mewx.projectprpr.plugin.component.PluginInfo;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
-import org.mewx.projectprpr.toolkit.thirdparty.IntentTool;
 
 import java.io.IOException;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +47,6 @@ public class DataSourceItemInitialActivity extends AppCompatTemplateActivity {
     private NetNovelListAdapter adapter;
 
     private boolean isLoading = true; // escape scroll initial actions
-    private PluginInfo pluginInfo;
     private PageNumBetween pageRange;
     private List<NovelInfo> novelList = new ArrayList<>();
 
@@ -63,8 +56,8 @@ public class DataSourceItemInitialActivity extends AppCompatTemplateActivity {
         setContentView(R.layout.activity_data_source_item_initial);
 
         // fetch data
-        pluginInfo = (PluginInfo) getIntent().getSerializableExtra(DATA_SOURCE_TAG);
-        dataSourceBasic = PlugInTools.generateNovelDataSourceBasic(pluginInfo);
+        PluginInfo pluginInfo = (PluginInfo) getIntent().getSerializableExtra(DATA_SOURCE_TAG);
+        dataSourceBasic = DataSourcePluginManager.loadDataSourcePluginClassByInfo(pluginInfo);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

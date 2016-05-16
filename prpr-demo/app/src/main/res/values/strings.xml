@@ -49,6 +49,7 @@
     <string name="novel_info_latest_chapter">Latest Chapter</string>
     <string name="novel_info_short_intro">Short Intro</string>
     <string name="novel_info_full_intro">Full Intro</string>
+    <string name="novel_info_word_count">Word Count</string>
 
     <string name="netnovel_download_not_added">Please add book to bookshelf first!</string>
     <string name="netnovel_download_option_check_for_update">Check Updates</string>
