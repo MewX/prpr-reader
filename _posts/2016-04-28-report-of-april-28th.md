@@ -16,4 +16,4 @@ published: true
 
 顺便吐槽下，Play Book的夜间模式竟然是黄色的，好怪，然后就是Play Book的设置界面滚动条没有贴边啊！！
 
-<img src="{{ site.baseurl }}images/post/Screenshot_2016-04-15-15-48-26.png" width = "50%" height = "50%" /><img src="{{ site.baseurl }}images/post/Screenshot_2016-04-15-15-48-47.png" width = "50%" height = "50%" />
+<img src="{{ site.baseurl }}images/post/Screenshot_2016-04-15-15-48-26.jpg" max-height="360px" width = "50%" height = "50%" /><img src="{{ site.baseurl }}images/post/Screenshot_2016-04-15-15-48-47.jpg" max-height="360px" width = "50%" height = "50%" />
