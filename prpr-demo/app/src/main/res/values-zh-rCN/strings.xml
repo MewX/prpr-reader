@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Project PRPR 演示版</string>
+    <string name="app_name">增量数据源小说阅读器</string>
     <string name="action_settings">通用设置</string>
     <string name="navigation_drawer_close">关闭导航栏</string>
     <string name="navigation_drawer_open">打开导航栏</string>
     <string name="drawer_item_name_library_local">本地书架</string>
-    <string name="title_activity_main">Project PRPR</string>
+    <string name="title_activity_main">增量数据源小说阅读器</string>
     <string name="drawer_item_name_cloud">云端服务</string>
     <string name="drawer_item_name_dictionary">词典</string>
     <string name="drawer_item_name_plug_in_center">插件中心</string>
@@ -103,5 +103,5 @@
     <string name="bookshelf_remove">移出书架</string>
     <string name="bookshelf_view_detail">详细信息</string>
     <string name="novel_info_word_count">字数</string>
-    <string name="action_local_book_add"></string>
+    <string name="action_local_book_add">添加本地图书</string>
 </resources>

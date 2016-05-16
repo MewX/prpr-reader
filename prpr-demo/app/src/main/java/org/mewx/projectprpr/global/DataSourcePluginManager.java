@@ -26,10 +26,12 @@ public class DataSourcePluginManager {
     private static final String TAG = DataSourcePluginManager.class.getSimpleName();
     private static final String OPTIMIZED_DEX_FOLDER = "outdex";
 
-    private static ArrayList<PluginInfo> pluginListLocal = new ArrayList<>(Arrays.asList(YBL.BUILTIN_PLUGIN));
+    private static ArrayList<PluginInfo> pluginListLocal = new ArrayList<>();
     private static List<PluginInfo> pluginListCloud = new ArrayList<>();
 
     public static void loadAllLocalDataSourcePlugin() {
+        pluginListLocal = new ArrayList<>(Arrays.asList(YBL.BUILTIN_PLUGIN));
+
         // load local plugins, local plugin can overwrite built-in!!!
         final File optimizedDexOutputPath = MyApp.getContext().getDir(OPTIMIZED_DEX_FOLDER, 0);
         String[] pluginList = FileTool.getFileList(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN));

@@ -3,6 +3,8 @@ package org.mewx.projectprpr.activity;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,11 +23,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
+import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.BookshelfAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
@@ -37,6 +43,7 @@ import org.mewx.projectprpr.plugin.JavaCallLuaJava;
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
 import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
+import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.template.NavigationFitSystemView;
 import org.mewx.projectprpr.toolkit.FileTool;
@@ -47,6 +54,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -79,6 +87,9 @@ public class MainActivity extends AppCompatTemplateActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         if(drawer != null) drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        // set language
+        setLanguage();
 
         // set navigation view, and default fragments
         navigationView = (NavigationFitSystemView) findViewById(R.id.nav_view);
@@ -264,9 +275,24 @@ public class MainActivity extends AppCompatTemplateActivity
                 }
 
                 @Override
-                public boolean onItemLongClick(int position) {
-                    // todo: delete, view full information
-                    Toast.makeText(MainActivity.this, "long", Toast.LENGTH_SHORT).show();
+                public boolean onItemLongClick(final int position) {
+                    // todo: delete, view full information option list
+                    new MaterialDialog.Builder(MainActivity.this)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    BookShelfManager.removeBookAt(position);
+                                    onResume();
+                                }
+                            })
+                            .theme(ReaderPageViewBasic.getInDayMode() ? Theme.LIGHT : Theme.DARK)
+                            .title(R.string.dialog_title_remove_from_bookshelf)
+                            .positiveText(R.string.dialog_positive_yes)
+                            .negativeText(R.string.dialog_negative_no)
+                            .content(R.string.dialog_content_remove_from_bookshelf)
+                            .contentGravity(GravityEnum.START)
+                            .show();
                     return true;
                 }
             });
@@ -380,6 +406,31 @@ public class MainActivity extends AppCompatTemplateActivity
                 BookShelfManager.addLocalBookToBookshelf(uri.toString());
             }
         }
+    }
+
+    private void setLanguage() {
+//        SharedPreferences sp = getPreferences(MODE_PRIVATE); // // get shared preference
+//        int option = sp.getInt("language_list", 0);
+//        Locale locale = Locale.ENGLISH; // default
+//        switch (option) {
+//            case 0:
+//                locale = Resources.getSystem().getConfiguration().locale; // system
+//                break;
+//            case 1:
+//                locale = Locale.ENGLISH;
+//                break;
+//            case 2:
+//                locale = Locale.SIMPLIFIED_CHINESE;
+//                break;
+//            case 3:
+//                locale = Locale.TRADITIONAL_CHINESE;
+//                break;
+//        }
+//
+//        android.content.res.Configuration config = new android.content.res.Configuration();
+//        config.locale = locale;
+//        Locale.setDefault(locale);
+//        MyApp.getContext().getApplicationContext().getResources().updateConfiguration(config, null);
     }
 
     private void exitBy2Click() {

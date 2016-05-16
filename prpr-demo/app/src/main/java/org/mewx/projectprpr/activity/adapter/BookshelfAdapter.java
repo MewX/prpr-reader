@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 
@@ -56,6 +57,8 @@ public class BookshelfAdapter extends RecyclerView.Adapter {
         holder.textTitle.setText(item.getNovelInfo().getTitle());
         if (!TextUtils.isEmpty(item.getNovelInfo().getCoverUrl())) {
             holder.image.setImageURI(Uri.parse(item.getNovelInfo().getCoverUrl()));
+        } else {
+            holder.image.setImageURI(Uri.parse("android.resource://" + MyApp.getContext().getPackageName() + "/" + R.drawable.ic_empty_image));
         }
     }
 

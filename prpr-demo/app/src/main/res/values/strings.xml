@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project PRPR DEMO</string>
+    <string name="app_name">Project PRPR</string>
     <string name="app_developing">Under developing&#8230;</string>
     <string name="app_please_wait">Please wait&#8230;</string>
     <string name="app_proceeding">Proceeding&#8230;</string>
@@ -21,10 +21,10 @@
 
     <string name="title_activity_main">Project PRPR</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_plugin_center_data_source">PluginCenterDataSourceActivity</string>
-    <string name="title_activity_data_source_item_initial">DataSourceItemInitialActivity</string>
-    <string name="title_activity_data_source_item_detail">DataSourceItemDetailActivity</string>
-    <string name="title_activity_data_source_item_chapter">DataSourceItemChapterActivity</string>
+    <string name="title_activity_plugin_center_data_source">DataSource Plugin Center</string>
+    <string name="title_activity_data_source_item_initial">DataSource Initial Page</string>
+    <string name="title_activity_data_source_item_detail">DataSource Detail Page</string>
+    <string name="title_activity_data_source_item_chapter">DataSource Chapter Page</string>
     <string name="title_activity_reader">ReaderActivity</string>
     <string name="title_activity_view_image">ViewImageActivity</string>
 

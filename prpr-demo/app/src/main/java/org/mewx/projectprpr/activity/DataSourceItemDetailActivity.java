@@ -569,6 +569,7 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
 
         @Override
         protected Integer doInBackground(Integer... params) {
+            // todo: update novel info as well
             boolean skipMode = params[0] != 2; // only 2 is not skip mode
             int currentProgress = 0, maxProgress = 0;
             Integer[] dlVolumeList;
@@ -587,7 +588,7 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
                 Log.e(TAG, "v: " + vi.getVolumeTag());
 
                 // load chapters one by one
-                for (int c = 0; c < vi.getChapterListSize(); c++) {
+                for (int c = 0; c < vi.getChapterListSize() && isLoading; c++) {
                     ChapterInfo ci = vi.getChapterByListIndex(c);
                     Log.e(TAG, "c: " + ci.getChapterTag());
                     try {
@@ -621,7 +622,7 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
                         publishProgress(currentProgress, maxProgress);
 
                         // download images
-                        for(int i = 0; i < nc.getContentLineCount(); i ++) {
+                        for(int i = 0; i < nc.getContentLineCount() && isLoading; i ++) {
                             if (nc.getContentLine(i).type == NovelContentLine.TYPE.IMAGE_URL
                                     && !FileTool.existFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"))) {
                                 // download image
