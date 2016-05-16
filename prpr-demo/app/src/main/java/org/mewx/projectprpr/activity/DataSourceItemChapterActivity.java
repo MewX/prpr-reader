@@ -69,7 +69,7 @@ public class DataSourceItemChapterActivity extends AppCompatTemplateActivity {
                     // todo: test does file exist, load from cloud or local
                     // if not downloaded yet, download first
 
-                    // todo: jump to reader activity
+                    // jump to reader activity
                     Intent intent = new Intent(DataSourceItemChapterActivity.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
                     intent.putExtra(ReaderActivityV1.TAG_NOVEL, novelTag);
                     intent.putExtra(ReaderActivityV1.TAG_VOLUME, volumeInfo);

@@ -1,7 +1,12 @@
 package org.mewx.projectprpr.activity;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,6 +14,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +24,7 @@ import android.widget.Toast;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.BookshelfAdapter;
@@ -27,8 +35,11 @@ import org.mewx.projectprpr.global.DataSourcePluginManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.JavaCallLuaJava;
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
+import org.mewx.projectprpr.plugin.component.VolumeInfo;
+import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.template.NavigationFitSystemView;
+import org.mewx.projectprpr.toolkit.FileTool;
 import org.mewx.projectprpr.toolkit.thirdparty.OkHttp3NetworkFetcher;
 
 import java.io.File;
@@ -76,11 +87,12 @@ public class MainActivity extends AppCompatTemplateActivity
             navigationView.getMenu().getItem(0).setChecked(true); // set default selected item
         }
 
-        // initial all folders
+        // initial all folders and files
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
+        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES + File.separator + ".nomedia")).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL)).mkdirs();
         new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN)).mkdirs();
 
@@ -117,8 +129,8 @@ public class MainActivity extends AppCompatTemplateActivity
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onResume() {
+        super.onResume();
 
         // refresh bookshelf
         if (recyclerView != null && recyclerView.getAdapter() != null) {
@@ -140,6 +152,11 @@ public class MainActivity extends AppCompatTemplateActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        if (currentFragmentId != R.id.nav_library_local) {
+            MenuItem actionAddLocalBook = menu.findItem(R.id.action_bar_add);
+            actionAddLocalBook.setVisible(false);
+        }
         return true;
     }
 
@@ -151,7 +168,16 @@ public class MainActivity extends AppCompatTemplateActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_bar_add) {
+            // todo add a local book
+            Intent i = new Intent(this, FilePickerActivity.class);
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+            i.putExtra(FilePickerActivity.EXTRA_START_PATH,
+                    TextUtils.isEmpty(YBL.pathPickedSave) ?
+                            Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
+            startActivityForResult(i, 0); // add book is 1
             return true;
         }
 
@@ -195,6 +221,8 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void switchToLocalBookshelf() {
         cleanRecyclerView();
+        invalidateOptionsMenu();
+
         if(recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -210,8 +238,7 @@ public class MainActivity extends AppCompatTemplateActivity
                                 BookShelfManager.getBookList().get(position).getDataSourceTag());
 
                         if (DataSourceItemInitialActivity.dataSourceBasic != null) {
-                            // todo: online mode
-                            // jump to detail activity
+                            // online mode, jump to detail activity
                             Intent intent = new Intent(MainActivity.this, DataSourceItemDetailActivity.class);
                             intent.putExtra(DataSourceItemDetailActivity.NOVEL_TAG, BookShelfManager.getBookList().get(position).getNovelInfo().getBookTag());
                             intent.putExtra(DataSourceItemDetailActivity.NOVEL_TITLE, BookShelfManager.getBookList().get(position).getNovelInfo().getTitle());
@@ -226,6 +253,13 @@ public class MainActivity extends AppCompatTemplateActivity
                         }
                     } else {
                         // todo, judge type and instant load book using specific loader!
+                        // jump to reader activity
+                        Intent intent = new Intent(MainActivity.this, ReaderActivityV1.class); //VerticalReaderActivity.class);
+                        Log.e(TAG, BookShelfManager.getBookList().get(position).getNovelInfo().getDataSource());
+                        intent.putExtra(ReaderActivityV1.TAG_NOVEL, BookShelfManager.getBookList().get(position).getNovelInfo().getDataSource().replace("file://", ""));
+                        intent.putExtra(ReaderActivityV1.TAG_LOCAL_BOOK, true);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.hold); // fade in animation
                     }
                 }
 
@@ -242,6 +276,8 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void switchToPluginCenter() {
         cleanRecyclerView();
+        invalidateOptionsMenu();
+
         if(recyclerView != null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -282,6 +318,8 @@ public class MainActivity extends AppCompatTemplateActivity
 
     public void switchToDictionary() {
         cleanRecyclerView();
+        invalidateOptionsMenu();
+
         if(recyclerView != null) {
             Toast.makeText(this, getResources().getString(R.string.app_developing), Toast.LENGTH_SHORT).show();
         }
@@ -307,6 +345,40 @@ public class MainActivity extends AppCompatTemplateActivity
         @Override
         public void onDrawerStateChanged(int newState) {
 
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            // get local book file path
+            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
+                // For JellyBean and above
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ClipData clip = data.getClipData();
+                    if (clip != null) {
+                        for (int i = 0; i < clip.getItemCount(); i++) {
+                            Uri uri = clip.getItemAt(i).getUri();
+                            // Do something with the URI
+                            BookShelfManager.addLocalBookToBookshelf(uri.toString());
+                        }
+                    }
+                    // For Ice Cream Sandwich
+                } else {
+                    ArrayList<String> paths = data.getStringArrayListExtra(FilePickerActivity.EXTRA_PATHS);
+                    if (paths != null) {
+                        for (String path: paths) {
+                            Uri uri = Uri.parse(path);
+                            // Do something with the URI
+                            BookShelfManager.addLocalBookToBookshelf(uri.toString());
+                        }
+                    }
+                }
+            } else {
+                Uri uri = data.getData();
+                // Do something with the URI
+                BookShelfManager.addLocalBookToBookshelf(uri.toString());
+            }
         }
     }
 

@@ -2,8 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_bar_add"
+        android:icon="@drawable/ic_menu_net_book_add"
+        android:orderInCategory="1"
+        android:title="@string/action_local_book_add"
+        app:showAsAction="withText|ifRoom" />
 </menu>

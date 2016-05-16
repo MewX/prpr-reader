@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.mewx.projectprpr.toolkit.CryptoTool;
+
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by MewX on 4/9/2016.
@@ -19,13 +22,14 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class NovelInfo implements Serializable {
     public static final String TAG_TITLE = "title";
+    public static final String LOCAL_BOOK_PREFIX = "file://";
     public static final String TAG_DATASOURCE = "datasource";
     public static final String TAG_BOOKTAG = "booktag";
     public static final String TAG_AUTHOR = "author";
     public static final String TAG_COVERURL = "coverurl";
 
-    @NonNull private String title;
-    @NonNull private String dataSource = ""; // TODO: set by parent, or file path (URI: file://)
+    @NonNull private String title; // file name generated automatically or manually set
+    @NonNull private String dataSource = ""; // MUST: set by parent, or file path (URI: file://)
     @NonNull private String bookTag; // id in data source, just an identifier (may be id? hash?)
     @NonNull private String author = "";
     @NonNull private String coverUrl = ""; // if has none, set empty
@@ -48,7 +52,7 @@ public class NovelInfo implements Serializable {
     }
 
     public boolean isLocal() {
-        return dataSource.contains("file://");
+        return dataSource.contains(LOCAL_BOOK_PREFIX);
     }
 
     @NonNull
@@ -89,6 +93,11 @@ public class NovelInfo implements Serializable {
      */
     public void setDataSource(@NonNull String dataSource) {
         this.dataSource = dataSource;
+        if (dataSource.contains(LOCAL_BOOK_PREFIX)) {
+            // local book
+            int separatorIndex = dataSource.lastIndexOf('/') < 0 ? dataSource.lastIndexOf('\\') : dataSource.lastIndexOf('/');
+            this.bookTag = this.title = dataSource.substring(separatorIndex + 1);
+        }
     }
 
     @NonNull

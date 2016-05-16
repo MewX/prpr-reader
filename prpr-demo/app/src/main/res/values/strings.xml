@@ -17,6 +17,7 @@
     <string name="action_net_book_add">Add to favorite</string>
     <string name="action_net_book_download">Download this book</string>
     <string name="action_watch_image">View image</string>
+    <string name="action_local_book_add">Add a local book</string>
 
     <string name="title_activity_main">Project PRPR</string>
     <string name="title_activity_settings">Settings</string>

@@ -34,11 +34,14 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.DataSourceItemInitialActivity;
 import org.mewx.projectprpr.global.BookShelfManager;
+import org.mewx.projectprpr.global.FormatPluginManager;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
+import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
 import org.mewx.projectprpr.plugin.component.NovelContent;
 import org.mewx.projectprpr.plugin.component.VolumeInfo;
+import org.mewx.projectprpr.reader.loader.ReaderFormatLoader;
 import org.mewx.projectprpr.reader.loader.ReaderFormatLoaderBasic;
 import org.mewx.projectprpr.reader.setting.ReaderSaveBasic;
 import org.mewx.projectprpr.reader.setting.ReaderSettingBasic;
@@ -68,9 +71,12 @@ public class ReaderActivityV1 extends AppCompatActivity {
     public static final String TAG_NOVEL = "novel_tag";
     public static final String TAG_VOLUME = "volume_info";
     public static final String TAG_CHAPTER = "current_chapter";
+    public static final String TAG_LOCAL_BOOK = "local_book"; // todo: need further optimize
 
     // vars
-    private String novelTag, currentChapterTag;
+    private boolean readLocalBook;
+    private String novelTag; // MUST when in local
+    private String currentChapterTag;
     private VolumeInfo volumeInfo = null;
     private NovelContent nc;
     private RelativeLayout mSliderHolder;
@@ -79,7 +85,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
     // components
     private SystemBarTintManager tintManager;
     private SlidingPageAdapter mSlidingPageAdapter;
-    private ReaderFormatLoaderBasic loader;
+    private ReaderFormatLoader loader;
     private ReaderSettingBasic setting;
     private NovelDataSourceBasic dataSourceBasic;
 
@@ -97,15 +103,22 @@ public class ReaderActivityV1 extends AppCompatActivity {
         setContentView(R.layout.layout_reader_swipe_temp);
 
         // fetch values
+        readLocalBook = getIntent().getBooleanExtra(TAG_LOCAL_BOOK, false);
         novelTag = getIntent().getStringExtra(TAG_NOVEL);
-        volumeInfo = (VolumeInfo) getIntent().getSerializableExtra(TAG_VOLUME);
-        currentChapterTag = getIntent().getStringExtra(TAG_CHAPTER);
+        if(!readLocalBook) {
+            volumeInfo = (VolumeInfo) getIntent().getSerializableExtra(TAG_VOLUME);
+            currentChapterTag = getIntent().getStringExtra(TAG_CHAPTER);
+        } else {
+            volumeInfo = new VolumeInfo(novelTag);
+            volumeInfo.addToChapterList(new ChapterInfo(novelTag));
+            currentChapterTag = novelTag;
+        }
 
         // set indicator enable
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
         if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(volumeInfo.getTitle());
+            getSupportActionBar().setTitle(readLocalBook ? novelTag: volumeInfo.getTitle());
             final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             if (upArrow != null)
                 upArrow.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -142,54 +155,13 @@ public class ReaderActivityV1 extends AppCompatActivity {
         btnNextChapter = findViewById(R.id.text_next);
         btnPreviewChapter = findViewById(R.id.text_previous);
 
-        // fetch novel content
-        dataSourceBasic = DataSourceItemInitialActivity.dataSourceBasic; // get a backup
-        if (dataSourceBasic != null) {
-                try {
-                    String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelTag) + File.separator
-                            + CryptoTool.hashMessageDigest(volumeInfo.getVolumeTag() + currentChapterTag);
-                    if (FileTool.existFile(filePath)) {
-                        // load from local storage
-                        Log.e(TAG, "downloaded: " + filePath);
-                        nc = new NovelContent(filePath);
-                        requestNovelContent("SYSTEM_1_SUCCEEDED");
-                    } else {
-                        // load from Internet
-                        YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
-                                .enqueue(new Callback() {
-                                    @Override
-                                    public void onFailure(Call call, IOException e) {
-                                        e.printStackTrace();
-                                        Toast.makeText(ReaderActivityV1.this, e.toString(), Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onResponse(Call call, Response response) throws IOException {
-                                        String content = response.body().string();
-                                        NetRequest[] netRequests = dataSourceBasic.getUltraRequests(currentChapterTag, content);
-                                        byte[][] returnBytes = new byte[netRequests.length][];
-                                        for (int i = 0; i < netRequests.length; i++) {
-                                            Log.e(TAG, netRequests[i].getFullGetUrl());
-                                            returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
-                                        }
-
-                                        Log.e(TAG, "code: " + response.code());
-                                        if (response.isSuccessful()) {
-                                            dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
-                                            nc = dataSourceBasic.parseNovelContent(content);
-                                            requestNovelContent("SYSTEM_1_SUCCEEDED");
-                                        } else {
-                                            requestNovelContent("FAILED");
-                                        }
-                                    }
-                                });
-                    }
-                } catch (Exception ok) {
-                    ok.printStackTrace();
-                    Toast.makeText(ReaderActivityV1.this, ok.toString(), Toast.LENGTH_SHORT).show();
-                }
+        if (readLocalBook) {
+            // todo fetch local book
+            requestNovelContent("SYSTEM_1_SUCCEEDED");
         } else {
-            Toast.makeText(this, "Error, data source is null!", Toast.LENGTH_SHORT).show();
+            // fetch net novel content
+            dataSourceBasic = DataSourceItemInitialActivity.dataSourceBasic; // get a reference
+            fetchNetNovel();
         }
     }
 
@@ -275,9 +247,9 @@ public class ReaderActivityV1 extends AppCompatActivity {
         if(mSlidingPageAdapter != null && loader != null) {
             loader.setCurrentIndex(mSlidingPageAdapter.getCurrentLastLineIndex());
             if (volumeInfo.getChapterListSize() > 1 && volumeInfo.getChapterByListIndex(volumeInfo.getChapterListSize() - 1).getChapterTag().equals(currentChapterTag) && mSlidingPageAdapter.getCurrentLastWordIndex() == loader.getCurrentAsString().length() - 1)
-                YBL.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
+                YBL.removeReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
             else
-                YBL.addReadSavesRecordV1(dataSourceBasic.getTag() + novelTag, volumeInfo.getVolumeTag(), currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
+                YBL.addReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag, volumeInfo.getVolumeTag(), currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
         }
     }
 
@@ -292,6 +264,56 @@ public class ReaderActivityV1 extends AppCompatActivity {
                 return true;
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    private void fetchNetNovel() {
+        if (dataSourceBasic != null) {
+            try {
+                String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelTag) + File.separator
+                        + CryptoTool.hashMessageDigest(volumeInfo.getVolumeTag() + currentChapterTag);
+                if (FileTool.existFile(filePath)) {
+                    // load from local storage
+                    Log.e(TAG, "downloaded: " + filePath);
+                    nc = new NovelContent(filePath);
+                    requestNovelContent("SYSTEM_1_SUCCEEDED");
+                } else {
+                    // load from Internet
+                    YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
+                            .enqueue(new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(ReaderActivityV1.this, e.toString(), Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    String content = response.body().string();
+                                    NetRequest[] netRequests = dataSourceBasic.getUltraRequests(currentChapterTag, content);
+                                    byte[][] returnBytes = new byte[netRequests.length][];
+                                    for (int i = 0; i < netRequests.length; i++) {
+                                        Log.e(TAG, netRequests[i].getFullGetUrl());
+                                        returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
+                                    }
+
+                                    Log.e(TAG, "code: " + response.code());
+                                    if (response.isSuccessful()) {
+                                        dataSourceBasic.ultraReturn(currentChapterTag, returnBytes);
+                                        nc = dataSourceBasic.parseNovelContent(content);
+                                        requestNovelContent("SYSTEM_1_SUCCEEDED");
+                                    } else {
+                                        requestNovelContent("FAILED");
+                                    }
+                                }
+                            });
+                }
+            } catch (Exception ok) {
+                ok.printStackTrace();
+                Toast.makeText(ReaderActivityV1.this, ok.toString(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Error, data source is null!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     class SlidingPageAdapter extends SlidingAdapter<ReaderPageViewBasic> {
@@ -456,15 +478,22 @@ public class ReaderActivityV1 extends AppCompatActivity {
         Log.e("MewX", "-- 小说获取完成");
 
         // init components
-        loader = new ReaderFormatLoaderBasic(nc);
+        Log.e(TAG, "NovelTag: " + novelTag);
+        loader = readLocalBook ? FormatPluginManager.detectFileAndLoadFormatLoader(novelTag) : new ReaderFormatLoaderBasic(nc);
+        if (loader == null) {
+            Toast.makeText(this, "error loading loader class!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         setting = new ReaderSettingBasic();
         loader.setCurrentIndex(0);
 
-        for (int i = 0; i < volumeInfo.getChapterListSize(); i++) {
-            // get chapter name
-            if (volumeInfo.getChapterByListIndex(i).getChapterTag().equals(currentChapterTag)) {
-                loader.setChapterName(volumeInfo.getChapterByListIndex(i).getTitle());
-                break;
+        if(!readLocalBook) {
+            for (int i = 0; i < volumeInfo.getChapterListSize(); i++) {
+                // get chapter name
+                if (volumeInfo.getChapterByListIndex(i).getChapterTag().equals(currentChapterTag)) {
+                    loader.setChapterName(volumeInfo.getChapterByListIndex(i).getTitle());
+                    break;
+                }
             }
         }
 
@@ -706,7 +735,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                     i.putExtra(FilePickerActivity.EXTRA_START_PATH,
                                                                             TextUtils.isEmpty(YBL.pathPickedSave) ?
                                                                                     Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
-                                                                    startActivityForResult(i, 0); // chooose font is 0
+                                                                    startActivityForResult(i, 0); // choose font is 0
                                                                     break;
                                                             }
                                                         }
@@ -742,7 +771,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                     i.putExtra(FilePickerActivity.EXTRA_START_PATH,
                                                                             TextUtils.isEmpty(YBL.pathPickedSave) ?
                                                                                     Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
-                                                                    startActivityForResult(i, 1); // chooose image is 1
+                                                                    startActivityForResult(i, 1); // choose image is 1
                                                                     break;
                                                             }
                                                         }
@@ -874,7 +903,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                 // todo: end loading dialog
 
                 // show dialog, jump to last read position
-                ReaderSaveBasic rs = YBL.getReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
+                ReaderSaveBasic rs = YBL.getReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
                 if (rs != null && rs.vid.equals(volumeInfo.getVolumeTag()) && rs.cid.equals(currentChapterTag)) {
                     mSlidingPageAdapter.setCurrentIndex(rs.lineId, rs.wordId);
                     mSlidingPageAdapter.restoreState(null, null);

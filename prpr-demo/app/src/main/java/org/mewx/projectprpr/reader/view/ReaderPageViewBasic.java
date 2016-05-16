@@ -11,12 +11,7 @@ import android.graphics.Point;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,41 +19,29 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
-import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableBitmap;
 import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.CloseableStaticBitmap;
 import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.ViewImageDetailActivity;
 import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.component.NovelContentLine;
-import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
-import org.mewx.projectprpr.reader.loader.ReaderFormatLoaderBasic;
+import org.mewx.projectprpr.reader.loader.ReaderFormatLoader;
 import org.mewx.projectprpr.reader.setting.ReaderSettingBasic;
 import org.mewx.projectprpr.toolkit.FigureTool;
 import org.mewx.projectprpr.toolkit.FileTool;
-import org.mewx.projectprpr.toolkit.thirdparty.SingletonThreadPool;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by MewX on 2015/7/8.
@@ -98,7 +81,7 @@ public class ReaderPageViewBasic extends View {
     // core variables
     static private boolean inDayMode = true;
     static private String sampleText = "轻";
-    static private ReaderFormatLoaderBasic mLoader;
+    static private ReaderFormatLoader mLoader;
     static private ReaderSettingBasic mSetting;
     static private int pxLineDistance, pxParagraphDistance, pxParagraphEdgeDistance, pxPageEdgeDistance, pxWidgetHeight;
     static private Point screenSize;
@@ -137,7 +120,7 @@ public class ReaderPageViewBasic extends View {
      * @param wrl loader
      * @param wrs setting
      */
-    static public void setViewComponents(ReaderFormatLoaderBasic wrl, ReaderSettingBasic wrs, boolean forceMode) {
+    static public void setViewComponents(ReaderFormatLoader wrl, ReaderSettingBasic wrs, boolean forceMode) {
         mLoader = wrl;
         mSetting = wrs;
         pxLineDistance = FigureTool.dip2px(MyApp.getContext(), mSetting.getLineDistance());

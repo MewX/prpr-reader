@@ -3,6 +3,7 @@ package org.mewx.projectprpr.reader.loader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
@@ -25,12 +26,24 @@ import java.util.List;
  */
 public class ReaderFormatLoaderBasic extends ReaderFormatLoader {
 
-    private int currentIndex = 0;
-    private NovelContent nc;
+    private int currentIndex;
+    @NonNull
+    private NovelContent nc = new NovelContent();
     public String chapterName = "";
 
-    public ReaderFormatLoaderBasic(NovelContent nc) {
+    protected ReaderFormatLoaderBasic() {
+        // this is for child class
+        // note: child class must call setNovelContent(...) in constructor
+    }
+
+    public ReaderFormatLoaderBasic(@NonNull NovelContent nc) {
         this.nc = nc;
+        currentIndex = 0;
+    }
+
+    public void setNovelContent(@NonNull NovelContent nc) {
+        this.nc = nc;
+        currentIndex = 0;
     }
 
     @Override

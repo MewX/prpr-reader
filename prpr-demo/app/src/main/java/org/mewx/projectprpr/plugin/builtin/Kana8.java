@@ -174,7 +174,7 @@ public class Kana8 extends NovelDataSourceBasic {
 
         NovelContent nc = new NovelContent();
         while (paragraphMatcher.find()) {
-            nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.TEXT, Html.fromHtml(paragraphMatcher.group(1)).toString().trim()));
+            nc.addToNovelContentAndSaveFile(new NovelContentLine(NovelContentLine.TYPE.TEXT, Html.fromHtml(paragraphMatcher.group(1)).toString().trim()));
         }
         return nc;
     }

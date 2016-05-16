@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -367,7 +366,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
         for (byte[] temp : requestResult) {
             try {
-                novelContentSaveTemp.addToNovelContent(purifyNovelContent(new String(temp, YBL.STANDARD_CHARSET)));
+                novelContentSaveTemp.addToNovelContentAndSaveFile(purifyNovelContent(new String(temp, YBL.STANDARD_CHARSET)));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -393,12 +392,12 @@ public class XsDmzj extends NovelDataSourceBasic {
                 // this is an image
                 Matcher matcher = Pattern.compile(imageRegex, Pattern.DOTALL).matcher(temp);
                 while (matcher.find()) {
-                    nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
+                    nc.addToNovelContentAndSaveFile(new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL,
                             imgBaseUrl + matcher.group(1)));
                 }
             } else {
                 // process as text
-                nc.addToNovelContent(new NovelContentLine(NovelContentLine.TYPE.TEXT, purifyHtmlToDisplayable(temp)));
+                nc.addToNovelContentAndSaveFile(new NovelContentLine(NovelContentLine.TYPE.TEXT, purifyHtmlToDisplayable(temp)));
             }
         }
         return nc;

@@ -41,6 +41,9 @@ public class BookShelfManager {
     private static List<BookshelfSaver> bookList = new ArrayList<>();
 
     public static void loadAllBook() {
+        // clear first
+        bookList.clear();
+
         // load directory structure, which is the NETNOVEL list
         //  datasource folder; novel folder;
         String[] pluginTagList = FileTool.getFolderList(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL));
@@ -102,14 +105,17 @@ public class BookShelfManager {
             String[] sets = readNovelInfo.split("\\|");
             for (String set : sets) {
                 String[] temp = set.split(":");
-                if (temp.length != 2 || TextUtils.isEmpty(temp[0]) || TextUtils.isEmpty(temp[1]))
+                if (temp.length != 3 || TextUtils.isEmpty(temp[0]) || TextUtils.isEmpty(temp[1]) || TextUtils.isEmpty(temp[2]))
                     continue;
 
-                String key = CryptoTool.base64DecodeString(temp[0], YBL.STANDARD_CHARSET);
-                String value = CryptoTool.base64DecodeString(temp[1], YBL.STANDARD_CHARSET);
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) continue;
+                String tag = CryptoTool.base64DecodeString(temp[0], YBL.STANDARD_CHARSET);
+                String title = CryptoTool.base64DecodeString(temp[1], YBL.STANDARD_CHARSET);
+                String dataSource = CryptoTool.base64DecodeString(temp[2], YBL.STANDARD_CHARSET);
+                if (TextUtils.isEmpty(tag) || TextUtils.isEmpty(title) || TextUtils.isEmpty(dataSource)) continue;
 
-                bookList.add(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, new NovelInfo(key, value), null));
+                NovelInfo ni = new NovelInfo(tag, title);
+                ni.setDataSource(dataSource);
+                bookList.add(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, ni, null));
             }
         }
     }
@@ -136,12 +142,20 @@ public class BookShelfManager {
         // remove netnovel
         if (bookList.get(i).getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
             FileTool.deleteFolder(YBL.getProjectFolderNetNovel(bookList.get(i).getDataSourceTag(), bookList.get(i).getNovelInfo().getBookTag()));
+
+            // todo remove related records
+        } else {
+            // todo remvoe local book reading records
+            // YBL.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
         }
         bookList.remove(i);
     }
 
-    public static void addLocalBookToBookshelf(@NonNull String fullPath, @NonNull String title) {
-        addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, new NovelInfo(fullPath, title), null));
+    public static void addLocalBookToBookshelf(@NonNull String fullPath) {
+        fullPath = fullPath.contains(NovelInfo.LOCAL_BOOK_PREFIX) ? fullPath : NovelInfo.LOCAL_BOOK_PREFIX + fullPath;
+        NovelInfo ni = new NovelInfo(fullPath, fullPath);
+        ni.setDataSource(fullPath);
+        addToBookshelf(new BookshelfSaver(BookshelfSaver.BOOK_TYPE.LOCAL_BOOK, null, ni, null));
     }
 
     public static void addToBookshelf(BookshelfSaver saver) {
@@ -181,7 +195,8 @@ public class BookShelfManager {
             if (saver.getType() == BookshelfSaver.BOOK_TYPE.LOCAL_BOOK) {
                 if(fileContent.length() != 0) fileContent.append("|");
                 fileContent.append(CryptoTool.base64Encode(saver.getNovelInfo().getBookTag()) // url, in fact
-                    + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getTitle()));
+                        + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getTitle())
+                        + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getDataSource()));
             }
         }
         FileTool.writeFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_LOCAL_BOOKSHELF), fileContent.toString());

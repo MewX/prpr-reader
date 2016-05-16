@@ -7,7 +7,6 @@ import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.toolkit.FileTool;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,11 +36,11 @@ public class NovelContent {
     }
 
     public NovelContent(@NonNull NovelContent nc) {
-        addToNovelContent(nc);
+        addToNovelContentAndSaveFile(nc);
     }
 
     public NovelContent(@NonNull List<NovelContentLine> content) {
-        addToNovelContent(content);
+        addToNovelContentAndSaveFile(content);
     }
 
     public NovelContent(@NonNull String filePath) {
@@ -70,13 +69,13 @@ public class NovelContent {
                     switch (line.charAt(0)) {
                         case TAG_IMAGE_URL_CHAR:
                             // transferred meaning: IMAGE_URL
-                            addToNovelContent(
+                            loadedContent.add(
                                     new NovelContentLine(NovelContentLine.TYPE.IMAGE_URL, line.substring(1)));
                             break;
                         case TAG_TEXT_CHAR:
                         default:
                             // transferred meaning: TEXT
-                            addToNovelContent(
+                            loadedContent.add(
                                     new NovelContentLine(NovelContentLine.TYPE.TEXT, line.substring(1)));
                             break;
                     }
@@ -126,20 +125,20 @@ public class NovelContent {
 
     public void setNovelContent(List<NovelContentLine> content) {
         removeAllContent();
-        addToNovelContent(content);
+        addToNovelContentAndSaveFile(content);
     }
 
-    public void addToNovelContent(NovelContentLine content) {
+    public void addToNovelContentAndSaveFile(NovelContentLine content) {
         loadedContent.add(content);
         saveFile(); // TODO: save delta file
     }
 
-    public void addToNovelContent(List<NovelContentLine> content) {
+    public void addToNovelContentAndSaveFile(List<NovelContentLine> content) {
         loadedContent.addAll(content);
         saveFile();
     }
 
-    public void addToNovelContent(NovelContent nc) {
+    public void addToNovelContentAndSaveFile(NovelContent nc) {
         for(int i = 0; i < nc.getContentLineCount(); i ++) {
             loadedContent.add(nc.getContentLine(i));
         }
