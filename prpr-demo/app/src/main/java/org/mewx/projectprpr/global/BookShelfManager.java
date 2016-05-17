@@ -149,6 +149,7 @@ public class BookShelfManager {
             // YBL.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
         }
         bookList.remove(i);
+        saveAllLocalBookList();
     }
 
     public static void addLocalBookToBookshelf(@NonNull String fullPath) {

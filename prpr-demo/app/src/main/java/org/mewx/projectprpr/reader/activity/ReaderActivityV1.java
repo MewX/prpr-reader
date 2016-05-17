@@ -1013,7 +1013,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                         for (int i = 0; i < clip.getItemCount(); i++) {
                             Uri uri = clip.getItemAt(i).getUri();
                             // Do something with the URI
-                            runSaveCustomFontPath(uri.toString().replaceAll("file://", ""));
+                            runSaveCustomFontPath(uri.getPath().replaceAll("file://", ""));
                         }
                     }
                     // For Ice Cream Sandwich
@@ -1023,14 +1023,14 @@ public class ReaderActivityV1 extends AppCompatActivity {
                         for (String path: paths) {
                             Uri uri = Uri.parse(path);
                             // Do something with the URI
-                            runSaveCustomFontPath(uri.toString().replaceAll("file://", ""));
+                            runSaveCustomFontPath(uri.getPath().replaceAll("file://", ""));
                         }
                     }
                 }
             } else {
                 Uri uri = data.getData();
                 // Do something with the URI
-                runSaveCustomFontPath(uri.toString().replaceAll("file://", ""));
+                runSaveCustomFontPath(uri.getPath().replaceAll("file://", ""));
             }
         }
         else if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
@@ -1043,7 +1043,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                         for (int i = 0; i < clip.getItemCount(); i++) {
                             Uri uri = clip.getItemAt(i).getUri();
                             // Do something with the URI
-                            runSaveCustomBackgroundPath(uri.toString().replaceAll("file://", ""));
+                            runSaveCustomBackgroundPath(uri.getPath().replaceAll("file://", ""));
                         }
                     }
                     // For Ice Cream Sandwich
@@ -1053,14 +1053,14 @@ public class ReaderActivityV1 extends AppCompatActivity {
                         for (String path: paths) {
                             Uri uri = Uri.parse(path);
                             // Do something with the URI
-                            runSaveCustomBackgroundPath(uri.toString().replaceAll("file://", ""));
+                            runSaveCustomBackgroundPath(uri.getPath().replaceAll("file://", ""));
                         }
                     }
                 }
             } else {
                 Uri uri = data.getData();
                 // Do something with the URI
-                runSaveCustomBackgroundPath(uri.toString().replaceAll("file://", ""));
+                runSaveCustomBackgroundPath(uri.getPath().replaceAll("file://", ""));
             }
 
         }

@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatTemplateActivity
                         for (int i = 0; i < clip.getItemCount(); i++) {
                             Uri uri = clip.getItemAt(i).getUri();
                             // Do something with the URI
-                            BookShelfManager.addLocalBookToBookshelf(uri.toString());
+                            BookShelfManager.addLocalBookToBookshelf(uri.getPath());
                         }
                     }
                     // For Ice Cream Sandwich
@@ -396,14 +396,14 @@ public class MainActivity extends AppCompatTemplateActivity
                         for (String path: paths) {
                             Uri uri = Uri.parse(path);
                             // Do something with the URI
-                            BookShelfManager.addLocalBookToBookshelf(uri.toString());
+                            BookShelfManager.addLocalBookToBookshelf(uri.getPath());
                         }
                     }
                 }
             } else {
                 Uri uri = data.getData();
                 // Do something with the URI
-                BookShelfManager.addLocalBookToBookshelf(uri.toString());
+                BookShelfManager.addLocalBookToBookshelf(uri.getPath());
             }
         }
     }
