@@ -46,23 +46,23 @@ public class BookShelfManager {
 
         // load directory structure, which is the NETNOVEL list
         //  datasource folder; novel folder;
-        String[] pluginTagList = FileTool.getFolderList(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL));
+        String[] pluginTagList = FileTool.getFolderList(G.getStoragePath(G.PROJECT_FOLDER_NETNOVEL));
 
         for (String pluginTag : pluginTagList) {
-            String[] netnovelList = FileTool.getFolderList(YBL.getProjectFolderDataSource(pluginTag));
+            String[] netnovelList = FileTool.getFolderList(G.getProjectFolderDataSource(pluginTag));
 
             for (String netnovelTag : netnovelList) {
                 // load NovelInfo
                 NovelInfo ni = new NovelInfo(netnovelTag, netnovelTag);
-                String readNovelInfo = FileTool.loadFullFileContent(YBL.getProjectFolderNetNovel(pluginTag, netnovelTag)
+                String readNovelInfo = FileTool.loadFullFileContent(G.getProjectFolderNetNovel(pluginTag, netnovelTag)
                         + File.separator + NETNOVEL_INFO_SAVE_FILE_NAME);
                 String[] sets = readNovelInfo.split("\\|");
                 for(String set : sets) {
                     String[] temp = set.split(":");
                     if(temp.length != 2 || TextUtils.isEmpty(temp[0]) || TextUtils.isEmpty(temp[1])) continue;
 
-                    String key = CryptoTool.base64DecodeString(temp[0], YBL.STANDARD_CHARSET);
-                    String value = CryptoTool.base64DecodeString(temp[1], YBL.STANDARD_CHARSET);
+                    String key = CryptoTool.base64DecodeString(temp[0], G.STANDARD_CHARSET);
+                    String value = CryptoTool.base64DecodeString(temp[1], G.STANDARD_CHARSET);
                     if(TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) continue;
 
                     switch (key) {
@@ -90,7 +90,7 @@ public class BookShelfManager {
                 }
 
                 // load volumes
-                Serializable readObject = FileTool.loadFullSerializable(YBL.getProjectFolderNetNovel(pluginTag, netnovelTag)
+                Serializable readObject = FileTool.loadFullSerializable(G.getProjectFolderNetNovel(pluginTag, netnovelTag)
                         + File.separator + NETNOVEL_VOLUME_SAVE_FILE_NAME);
                 if(readObject == null) continue;
 
@@ -100,7 +100,7 @@ public class BookShelfManager {
         }
 
         // load local book
-        String readNovelInfo = FileTool.loadFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_LOCAL_BOOKSHELF));
+        String readNovelInfo = FileTool.loadFullFileContent(G.getStoragePath(G.PROJECT_FILE_LOCAL_BOOKSHELF));
         if(!TextUtils.isEmpty(readNovelInfo)) {
             String[] sets = readNovelInfo.split("\\|");
             for (String set : sets) {
@@ -108,9 +108,9 @@ public class BookShelfManager {
                 if (temp.length != 3 || TextUtils.isEmpty(temp[0]) || TextUtils.isEmpty(temp[1]) || TextUtils.isEmpty(temp[2]))
                     continue;
 
-                String tag = CryptoTool.base64DecodeString(temp[0], YBL.STANDARD_CHARSET);
-                String title = CryptoTool.base64DecodeString(temp[1], YBL.STANDARD_CHARSET);
-                String dataSource = CryptoTool.base64DecodeString(temp[2], YBL.STANDARD_CHARSET);
+                String tag = CryptoTool.base64DecodeString(temp[0], G.STANDARD_CHARSET);
+                String title = CryptoTool.base64DecodeString(temp[1], G.STANDARD_CHARSET);
+                String dataSource = CryptoTool.base64DecodeString(temp[2], G.STANDARD_CHARSET);
                 if (TextUtils.isEmpty(tag) || TextUtils.isEmpty(title) || TextUtils.isEmpty(dataSource)) continue;
 
                 NovelInfo ni = new NovelInfo(tag, title);
@@ -141,12 +141,12 @@ public class BookShelfManager {
     public static void removeBookAt(int i) {
         // remove netnovel
         if (bookList.get(i).getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
-            FileTool.deleteFolder(YBL.getProjectFolderNetNovel(bookList.get(i).getDataSourceTag(), bookList.get(i).getNovelInfo().getBookTag()));
+            FileTool.deleteFolder(G.getProjectFolderNetNovel(bookList.get(i).getDataSourceTag(), bookList.get(i).getNovelInfo().getBookTag()));
 
             // todo remove related records
         } else {
             // todo remvoe local book reading records
-            // YBL.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
+            // G.removeReadSavesRecordV1(dataSourceBasic.getTag() + novelTag);
         }
         bookList.remove(i);
         saveAllLocalBookList();
@@ -164,7 +164,7 @@ public class BookShelfManager {
         if (saver.getType() == BookshelfSaver.BOOK_TYPE.NETNOVEL) {
             // save volumes
             if(saver.getListVolumeInfo() != null) {
-                FileTool.writeFullSerializable(YBL.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
+                FileTool.writeFullSerializable(G.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
                         + File.separator + NETNOVEL_VOLUME_SAVE_FILE_NAME, saver.getListVolumeInfo());
             }
 
@@ -176,7 +176,7 @@ public class BookShelfManager {
             for(String key : saver.getNovelInfo().getInfoPairs().keySet()) {
                 fileContent.append("|" + CryptoTool.base64Encode(key) + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getInfoPairs().get(key).toString()));
             }
-            FileTool.writeFullFileContent(YBL.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
+            FileTool.writeFullFileContent(G.getProjectFolderNetNovel(saver.getDataSourceTag(), saver.getNovelInfo().getBookTag())
                     + File.separator + NETNOVEL_INFO_SAVE_FILE_NAME, fileContent.toString());
 
             // add to bookshelf
@@ -200,7 +200,7 @@ public class BookShelfManager {
                         + ":" + CryptoTool.base64Encode(saver.getNovelInfo().getDataSource()));
             }
         }
-        FileTool.writeFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_LOCAL_BOOKSHELF), fileContent.toString());
+        FileTool.writeFullFileContent(G.getStoragePath(G.PROJECT_FILE_LOCAL_BOOKSHELF), fileContent.toString());
     }
 
     public static boolean inBookshelf(@Nullable String dataSourceTag, @NonNull String novelTag) {

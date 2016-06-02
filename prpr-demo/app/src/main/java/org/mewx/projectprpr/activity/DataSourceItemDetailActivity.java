@@ -6,9 +6,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,7 +31,7 @@ import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.NetNovelListAdapter;
 import org.mewx.projectprpr.global.BookShelfManager;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
@@ -50,7 +47,6 @@ import org.mewx.projectprpr.toolkit.FileTool;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -160,7 +156,7 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
         if (forceLoad || dataSourceBasic != null && !isLoading) {
             try {
                 isLoading = true;
-                YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelInfoRequest(novelTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
+                G.globalOkHttpClient3.newCall(dataSourceBasic.getNovelInfoRequest(novelTag).getOkHttpRequest(G.STANDARD_CHARSET))
                         .enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
@@ -228,7 +224,7 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
             } else {
                 // new request
                 try {
-                    YBL.globalOkHttpClient3.newCall(netRequest.getOkHttpRequest(YBL.STANDARD_CHARSET))
+                    G.globalOkHttpClient3.newCall(netRequest.getOkHttpRequest(G.STANDARD_CHARSET))
                             .enqueue(new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
@@ -552,10 +548,10 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
 
         @NonNull
         private Response retryRequest(Request request) throws Exception {
-            int time = YBL.MAX_NET_RETRY_TIME;
+            int time = G.MAX_NET_RETRY_TIME;
             Response response;
             while (true) {
-                response = YBL.globalOkHttpClient3.newCall(request).execute();
+                response = G.globalOkHttpClient3.newCall(request).execute();
 
                 time -= 1;
                 if(response.isSuccessful()) {
@@ -594,22 +590,22 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
                     try {
                         Response response;
 
-                        String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
+                        String filePath = G.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
                                 + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag());
                         NovelContent nc;
                         if(skipMode && FileTool.existFile(filePath)) {
                             // skipMode, load from local storage
-                            nc = new NovelContent(YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
+                            nc = new NovelContent(G.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelInfo.getBookTag()) + File.separator
                                     + CryptoTool.hashMessageDigest(vi.getVolumeTag() + ci.getChapterTag()));
                         } else {
                             // request novel content
-                            response = retryRequest(dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(YBL.STANDARD_CHARSET));
+                            response = retryRequest(dataSourceBasic.getNovelContentRequest(ci.getChapterTag()).getOkHttpRequest(G.STANDARD_CHARSET));
                             String content = response.body().string();
                             NetRequest[] netRequests = dataSourceBasic.getUltraRequests(ci.getChapterTag(), content);
                             byte[][] returnBytes = new byte[netRequests.length][];
                             for (int i = 0; i < netRequests.length; i++) {
                                 Log.e(TAG, netRequests[i].getFullGetUrl());
-                                returnBytes[i] = retryRequest(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).body().bytes();
+                                returnBytes[i] = retryRequest(netRequests[i].getOkHttpRequest(G.STANDARD_CHARSET)).body().bytes();
                             }
                             dataSourceBasic.ultraReturn(ci.getChapterTag(), returnBytes);
 
@@ -624,18 +620,18 @@ public class DataSourceItemDetailActivity extends AppCompatTemplateActivity {
                         // download images
                         for(int i = 0; i < nc.getContentLineCount() && isLoading; i ++) {
                             if (nc.getContentLine(i).type == NovelContentLine.TYPE.IMAGE_URL
-                                    && !FileTool.existFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"))) {
+                                    && !FileTool.existFile(G.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"))) {
                                 // download image
                                 publishProgress(currentProgress, ++maxProgress);
-                                int time = YBL.MAX_NET_RETRY_TIME;
+                                int time = G.MAX_NET_RETRY_TIME;
                                 response = retryRequest(
                                         new Request.Builder()
                                                 .url(nc.getContentLine(i).content)
                                                 .cacheControl(CacheControl.FORCE_NETWORK)
-                                                .addHeader("User-Agent", YBL.USER_AGENT)
+                                                .addHeader("User-Agent", G.USER_AGENT)
                                                 .build()
                                 );
-                                FileTool.saveFile(YBL.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"), response.body().bytes(), true);
+                                FileTool.saveFile(G.generateImageFileFullPathByURL(nc.getContentLine(i).content, "jpg"), response.body().bytes(), true);
                                 currentProgress += 1; // update progress
                             }
                         }

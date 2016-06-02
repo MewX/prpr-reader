@@ -7,7 +7,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -26,7 +26,7 @@ public class SplashActivity extends Activity {
 
         findViewById(R.id.splash_image).setOnClickListener(new OnClickSkipSplashScreen());
 
-        if(YBL.VERSION_TYPE == YBL.VERSION_TYPE_ENUM.TEST || YBL.getSkipSplashScreen()) {
+        if(G.VERSION_TYPE == G.VERSION_TYPE_ENUM.TEST || G.getSkipSplashScreen()) {
             endActivityInstantly();
         } else {
             activityDeadCounter = new CountDownTimer(AUTO_HIDE_DELAY_MILLIS, 100) {

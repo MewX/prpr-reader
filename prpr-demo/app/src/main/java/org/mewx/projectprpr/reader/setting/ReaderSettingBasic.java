@@ -1,9 +1,10 @@
 package org.mewx.projectprpr.reader.setting;
 
 import android.graphics.Color;
+import android.util.Log;
 
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.global.SettingManager;
-import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.toolkit.FigureTool;
 import org.mewx.projectprpr.toolkit.FileTool;
 
@@ -18,6 +19,7 @@ public class ReaderSettingBasic {
      * Setting values, containing default value;
      * Setting Class must be defined before reader activity created.
      */
+    public static final String NO_EXTRA_FONT = "0";
 
     // enum type
     public enum PAGE_BACKGROUND_TYPE {
@@ -54,7 +56,7 @@ public class ReaderSettingBasic {
      */
     public ReaderSettingBasic() {
         // font size
-        String str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_font_size);
+        String str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_font_size);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
             if(4 <= temp && temp <= 48)
@@ -62,7 +64,7 @@ public class ReaderSettingBasic {
         }
 
         // line distance
-        str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_line_distance);
+        str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_line_distance);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
             if(0 <= temp && temp <= 32)
@@ -70,7 +72,7 @@ public class ReaderSettingBasic {
         }
 
         // paragraph distance
-        str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_paragraph_distance);
+        str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_paragraph_distance);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
             if(0 <= temp && temp <= 48)
@@ -78,7 +80,7 @@ public class ReaderSettingBasic {
         }
 
         // paragraph edge distance
-        str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_paragraph_edge_distance);
+        str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_paragraph_edge_distance);
         if(str != null && FigureTool.isInteger(str)) {
             int temp = Integer.parseInt(str);
             if(0 <= temp && temp <= 32)
@@ -86,7 +88,7 @@ public class ReaderSettingBasic {
         }
 
         // background path
-        str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_background_path);
+        str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_background_path);
         if(str != null) {
             if(str.equals("0")) {
                 pageBackgroundType = PAGE_BACKGROUND_TYPE.SYSTEM_DEFAULT;
@@ -98,9 +100,9 @@ public class ReaderSettingBasic {
         }
 
         // font path
-        str = SettingManager.getFromAllSetting(YBL.SettingItemsBasic.reader_font_path);
+        str = SettingManager.getFromAllSetting(G.SettingItemsBasic.reader_font_path);
         if(str != null) {
-            if(str.equals("0")) {
+            if(str.equals(NO_EXTRA_FONT)) {
                 useCustomFont = false;
             }
             else if(FileTool.existFile(str)) {
@@ -117,16 +119,11 @@ public class ReaderSettingBasic {
 
     public void setFontSize(int s) {
         fontSize = s;
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_font_size, Integer.toString(s));
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_font_size, Integer.toString(s));
     }
 
     public int getFontSize() {
         return fontSize;
-    }
-
-    public void setUseCustomFont(boolean b) {
-        if(!b) setCustomFontPath("0");
-        useCustomFont = b;
     }
 
     public boolean getUseCustomFont() {
@@ -135,18 +132,20 @@ public class ReaderSettingBasic {
 
     public void setCustomFontPath(String s) {
         // should test file before set this value, allow setting, but not allow use!
+        Log.e("TAG", s);
         customFontPath = s;
-        useCustomFont = !s.equals("0");
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_font_path, s);
+        useCustomFont = !s.equals(NO_EXTRA_FONT);
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_font_path, s);
     }
 
     public String getCustomFontPath() {
+        Log.e("TAG", customFontPath);
         return customFontPath;
     }
 
     public void setLineDistance(int l) {
         lineDistance = l;
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_line_distance, Integer.toString(l));
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_line_distance, Integer.toString(l));
     }
 
     public int getLineDistance() {
@@ -155,7 +154,7 @@ public class ReaderSettingBasic {
 
     public void setParagraphDistance(int l) {
         paragraphDistance = l;
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_paragraph_distance, Integer.toString(l));
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_paragraph_distance, Integer.toString(l));
     }
 
     public int getParagraphDistance() {
@@ -164,7 +163,7 @@ public class ReaderSettingBasic {
 
     public void setParagraphEdgeDistance(int l) {
         paragraghEdgeDistance = l;
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_paragraph_edge_distance, Integer.toString(l));
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_paragraph_edge_distance, Integer.toString(l));
     }
 
     public int getParagraphEdgeDistance() {
@@ -192,7 +191,7 @@ public class ReaderSettingBasic {
         pageBackgroundCustomPath = s;
         if(s.equals("0")) pageBackgroundType = PAGE_BACKGROUND_TYPE.SYSTEM_DEFAULT;
         else pageBackgroundType = PAGE_BACKGROUND_TYPE.CUSTOM;
-        SettingManager.setToAllSetting(YBL.SettingItemsBasic.reader_background_path, s);
+        SettingManager.setToAllSetting(G.SettingItemsBasic.reader_background_path, s);
     }
 
     public String getPageBackgrounCustomPath() {

@@ -26,7 +26,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.toolkit.FileTool;
 import org.mewx.projectprpr.toolkit.thirdparty.SystemBarTintManager;
 
@@ -152,8 +152,8 @@ public class ViewImageDetailActivity extends AppCompatActivity {
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
                 i.putExtra(FilePickerActivity.EXTRA_START_PATH,
-                        TextUtils.isEmpty(YBL.pathPickedSave) ?
-                                Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
+                        TextUtils.isEmpty(G.pathPickedSave) ?
+                                Environment.getExternalStorageDirectory().getPath() : G.pathPickedSave);
                 startActivityForResult(i, 0);
             }
         });
@@ -201,7 +201,7 @@ public class ViewImageDetailActivity extends AppCompatActivity {
 
     private void runSaveProcedure(String uri) {
         final String newuri = uri.replaceAll("file://", "");
-        YBL.pathPickedSave = newuri;
+        G.pathPickedSave = newuri;
         new MaterialDialog.Builder(this)
                 .theme(Theme.LIGHT)
                 .title(R.string.dialog_title_save_file_name)

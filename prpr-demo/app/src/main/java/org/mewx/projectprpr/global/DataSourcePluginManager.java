@@ -30,15 +30,15 @@ public class DataSourcePluginManager {
     private static List<PluginInfo> pluginListCloud = new ArrayList<>();
 
     public static void loadAllLocalDataSourcePlugin() {
-        pluginListLocal = new ArrayList<>(Arrays.asList(YBL.BUILTIN_PLUGIN));
+        pluginListLocal = new ArrayList<>(Arrays.asList(G.BUILTIN_PLUGIN));
 
         // load local plugins, local plugin can overwrite built-in!!!
         final File optimizedDexOutputPath = MyApp.getContext().getDir(OPTIMIZED_DEX_FOLDER, 0);
-        String[] pluginList = FileTool.getFileList(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN));
+        String[] pluginList = FileTool.getFileList(G.getStoragePath(G.PROJECT_FOLDER_PLUGIN));
 
         LocalPlugin:
         for (String pluginFileName : pluginList) {
-            String fullPath = YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN + File.separator + pluginFileName);
+            String fullPath = G.getStoragePath(G.PROJECT_FOLDER_PLUGIN + File.separator + pluginFileName);
             Log.e(TAG, "Full path: " + fullPath);
             DexClassLoader dexClassLoader = new DexClassLoader(fullPath, optimizedDexOutputPath.getAbsolutePath(), null, MyApp.getContext().getClassLoader());
             Class libProviderClass = null;
@@ -116,7 +116,7 @@ public class DataSourcePluginManager {
         try {
             switch (pluginInfo.getType()) {
                 case BUILTIN:
-                    novelDataSourceBasic = ((NovelDataSourceBasic) Class.forName(YBL.PLUGIN_PACKAGE + "." + pluginInfo.getClassName()).newInstance());
+                    novelDataSourceBasic = ((NovelDataSourceBasic) Class.forName(G.PLUGIN_PACKAGE + "." + pluginInfo.getClassName()).newInstance());
                     break;
 
                 case DEX:

@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -80,7 +80,7 @@ public class NetRequest {
                 request = new Request.Builder()
                         .url(getFullGetUrl())
                         .cacheControl(CacheControl.FORCE_NETWORK)
-                        .addHeader("User-Agent", YBL.USER_AGENT)
+                        .addHeader("User-Agent", G.USER_AGENT)
                         .build();
                 return request;
 
@@ -89,9 +89,9 @@ public class NetRequest {
                         .url(getFullGetUrl())
                         .cacheControl(CacheControl.FORCE_NETWORK)
                         .post(RequestBody.create(MediaType.parse("text/plain; charset=" + charset), args))
-                        .addHeader("User-Agent", YBL.USER_AGENT)
+                        .addHeader("User-Agent", G.USER_AGENT)
                         .build();
-                return request; //YBL.globalOkHttpClient3.newCall(request).execute();
+                return request; //G.globalOkHttpClient3.newCall(request).execute();
 
             default:
                 Log.e(TAG, "Unsupported request type: " + type.toString() + "; " + url + "; " + args);

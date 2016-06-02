@@ -3,8 +3,6 @@ package org.mewx.projectprpr.activity;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,22 +29,19 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
-import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.BookshelfAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterAdapter;
 import org.mewx.projectprpr.activity.adapter.PluginCenterItem;
 import org.mewx.projectprpr.global.BookShelfManager;
 import org.mewx.projectprpr.global.DataSourcePluginManager;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.JavaCallLuaJava;
 import org.mewx.projectprpr.plugin.component.BookshelfSaver;
-import org.mewx.projectprpr.plugin.component.VolumeInfo;
 import org.mewx.projectprpr.reader.activity.ReaderActivityV1;
 import org.mewx.projectprpr.reader.view.ReaderPageViewBasic;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 import org.mewx.projectprpr.template.NavigationFitSystemView;
-import org.mewx.projectprpr.toolkit.FileTool;
 import org.mewx.projectprpr.toolkit.thirdparty.OkHttp3NetworkFetcher;
 
 import java.io.File;
@@ -54,12 +49,10 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Cache;
-import okhttp3.CacheControl;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 
@@ -99,13 +92,13 @@ public class MainActivity extends AppCompatTemplateActivity
         }
 
         // initial all folders and files
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER)).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_READER_IMAGES + File.separator + ".nomedia")).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_NETNOVEL)).mkdirs();
-        new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_PLUGIN)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_CACHE)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_DOWNLOAD)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_READER_IMAGES)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_READER_IMAGES + File.separator + ".nomedia")).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_NETNOVEL)).mkdirs();
+        new File(G.getStoragePath(G.PROJECT_FOLDER_PLUGIN)).mkdirs();
 
         // load bookshelf
         BookShelfManager.loadAllBook();
@@ -116,18 +109,18 @@ public class MainActivity extends AppCompatTemplateActivity
         // initial okHttp & Fresco, share the same chache size! I am so clever!!!
         CookieManager cookieManager = new CookieManager(); // enable cookies
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        YBL.globalOkHttpClient3 = new OkHttpClient.Builder()
+        G.globalOkHttpClient3 = new OkHttpClient.Builder()
                 .cookieJar(new JavaNetCookieJar(cookieManager))
-                .cache(new Cache(new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)), YBL.IMAGE_CACHE_DISK_SIZE))
+                .cache(new Cache(new File(G.getStoragePath(G.PROJECT_FOLDER_CACHE)), G.IMAGE_CACHE_DISK_SIZE))
                 .build();
         DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(this)
                 //.setBaseDirectoryPath(new File(Environment.getExternalStorageDirectory().getAbsoluteFile(),getPackageName())).setBaseDirectoryName("image")
-                .setBaseDirectoryPath(new File(YBL.getStoragePath(YBL.PROJECT_FOLDER_CACHE)))
-                .setBaseDirectoryName(YBL.FOLDER_NAME_IMAGE)
-                .setMaxCacheSize(YBL.IMAGE_CACHE_DISK_SIZE)
+                .setBaseDirectoryPath(new File(G.getStoragePath(G.PROJECT_FOLDER_CACHE)))
+                .setBaseDirectoryName(G.FOLDER_NAME_IMAGE)
+                .setMaxCacheSize(G.IMAGE_CACHE_DISK_SIZE)
                 .build();
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
-                .setNetworkFetcher(new OkHttp3NetworkFetcher(YBL.globalOkHttpClient3))
+                .setNetworkFetcher(new OkHttp3NetworkFetcher(G.globalOkHttpClient3))
                 .setMainDiskCacheConfig(diskCacheConfig)
                 .build();
         Fresco.initialize(this, config);
@@ -186,8 +179,8 @@ public class MainActivity extends AppCompatTemplateActivity
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
             i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
             i.putExtra(FilePickerActivity.EXTRA_START_PATH,
-                    TextUtils.isEmpty(YBL.pathPickedSave) ?
-                            Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
+                    TextUtils.isEmpty(G.pathPickedSave) ?
+                            Environment.getExternalStorageDirectory().getPath() : G.pathPickedSave);
             startActivityForResult(i, 0); // add book is 1
             return true;
         }

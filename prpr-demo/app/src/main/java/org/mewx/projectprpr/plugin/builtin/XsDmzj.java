@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mewx.projectprpr.R;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
@@ -366,7 +366,7 @@ public class XsDmzj extends NovelDataSourceBasic {
 
         for (byte[] temp : requestResult) {
             try {
-                novelContentSaveTemp.addToNovelContentAndSaveFile(purifyNovelContent(new String(temp, YBL.STANDARD_CHARSET)));
+                novelContentSaveTemp.addToNovelContentAndSaveFile(purifyNovelContent(new String(temp, G.STANDARD_CHARSET)));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

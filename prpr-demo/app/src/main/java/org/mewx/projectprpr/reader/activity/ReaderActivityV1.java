@@ -33,9 +33,8 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.DataSourceItemInitialActivity;
-import org.mewx.projectprpr.global.BookShelfManager;
 import org.mewx.projectprpr.global.FormatPluginManager;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.ChapterInfo;
 import org.mewx.projectprpr.plugin.component.NetRequest;
@@ -247,9 +246,9 @@ public class ReaderActivityV1 extends AppCompatActivity {
         if(mSlidingPageAdapter != null && loader != null) {
             loader.setCurrentIndex(mSlidingPageAdapter.getCurrentLastLineIndex());
             if (volumeInfo.getChapterListSize() > 1 && volumeInfo.getChapterByListIndex(volumeInfo.getChapterListSize() - 1).getChapterTag().equals(currentChapterTag) && mSlidingPageAdapter.getCurrentLastWordIndex() == loader.getCurrentAsString().length() - 1)
-                YBL.removeReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
+                G.removeReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
             else
-                YBL.addReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag, volumeInfo.getVolumeTag(), currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
+                G.addReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag, volumeInfo.getVolumeTag(), currentChapterTag, mSlidingPageAdapter.getCurrentFirstLineIndex(), mSlidingPageAdapter.getCurrentFirstWordIndex());
         }
     }
 
@@ -269,7 +268,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
     private void fetchNetNovel() {
         if (dataSourceBasic != null) {
             try {
-                String filePath = YBL.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelTag) + File.separator
+                String filePath = G.getProjectFolderNetNovel(dataSourceBasic.getTag(), novelTag) + File.separator
                         + CryptoTool.hashMessageDigest(volumeInfo.getVolumeTag() + currentChapterTag);
                 if (FileTool.existFile(filePath)) {
                     // load from local storage
@@ -278,7 +277,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                     requestNovelContent("SYSTEM_1_SUCCEEDED");
                 } else {
                     // load from Internet
-                    YBL.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(YBL.STANDARD_CHARSET))
+                    G.globalOkHttpClient3.newCall(dataSourceBasic.getNovelContentRequest(currentChapterTag).getOkHttpRequest(G.STANDARD_CHARSET))
                             .enqueue(new Callback() {
                                 @Override
                                 public void onFailure(Call call, IOException e) {
@@ -293,7 +292,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                     byte[][] returnBytes = new byte[netRequests.length][];
                                     for (int i = 0; i < netRequests.length; i++) {
                                         Log.e(TAG, netRequests[i].getFullGetUrl());
-                                        returnBytes[i] = YBL.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(YBL.STANDARD_CHARSET)).execute().body().bytes();
+                                        returnBytes[i] = G.globalOkHttpClient3.newCall(netRequests[i].getOkHttpRequest(G.STANDARD_CHARSET)).execute().body().bytes();
                                     }
 
                                     Log.e(TAG, "code: " + response.code());
@@ -721,7 +720,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                             switch (which) {
                                                                 case 0:
                                                                     // system default
-                                                                    setting.setUseCustomFont(false);
+                                                                    setting.setCustomFontPath(ReaderSettingBasic.NO_EXTRA_FONT);
                                                                     ReaderPageViewBasic.setViewComponents(loader, setting, false);
                                                                     mSlidingPageAdapter.restoreState(null, null);
                                                                     mSlidingPageAdapter.notifyDataSetChanged();
@@ -733,8 +732,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                                                                     i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
                                                                     i.putExtra(FilePickerActivity.EXTRA_START_PATH,
-                                                                            TextUtils.isEmpty(YBL.pathPickedSave) ?
-                                                                                    Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
+                                                                            TextUtils.isEmpty(G.pathPickedSave) ?
+                                                                                    Environment.getExternalStorageDirectory().getPath() : G.pathPickedSave);
                                                                     startActivityForResult(i, 0); // choose font is 0
                                                                     break;
                                                             }
@@ -769,8 +768,8 @@ public class ReaderActivityV1 extends AppCompatActivity {
                                                                     i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                                                                     i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
                                                                     i.putExtra(FilePickerActivity.EXTRA_START_PATH,
-                                                                            TextUtils.isEmpty(YBL.pathPickedSave) ?
-                                                                                    Environment.getExternalStorageDirectory().getPath() : YBL.pathPickedSave);
+                                                                            TextUtils.isEmpty(G.pathPickedSave) ?
+                                                                                    Environment.getExternalStorageDirectory().getPath() : G.pathPickedSave);
                                                                     startActivityForResult(i, 1); // choose image is 1
                                                                     break;
                                                             }
@@ -903,7 +902,7 @@ public class ReaderActivityV1 extends AppCompatActivity {
                 // todo: end loading dialog
 
                 // show dialog, jump to last read position
-                ReaderSaveBasic rs = YBL.getReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
+                ReaderSaveBasic rs = G.getReadSavesRecordV1((readLocalBook ? "" : dataSourceBasic.getTag()) + novelTag);
                 if (rs != null && rs.vid.equals(volumeInfo.getVolumeTag()) && rs.cid.equals(currentChapterTag)) {
                     mSlidingPageAdapter.setCurrentIndex(rs.lineId, rs.wordId);
                     mSlidingPageAdapter.restoreState(null, null);

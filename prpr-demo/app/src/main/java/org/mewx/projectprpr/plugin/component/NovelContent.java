@@ -3,7 +3,7 @@ package org.mewx.projectprpr.plugin.component;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.toolkit.FileTool;
 
 import java.io.BufferedReader;
@@ -62,7 +62,7 @@ public class NovelContent {
             String line;
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(filePath), Charset.forName(YBL.STANDARD_CHARSET)));
+                        new FileInputStream(filePath), Charset.forName(G.STANDARD_CHARSET)));
 
                 while ((line = br.readLine()) != null) {
                     if(line.length() == 0) continue;
@@ -97,7 +97,7 @@ public class NovelContent {
                 File file = new File(filePath);
                 file.createNewFile(); // create file
                 OutputStreamWriter osw = new OutputStreamWriter(
-                        new FileOutputStream(file), Charset.forName(YBL.STANDARD_CHARSET));
+                        new FileOutputStream(file), Charset.forName(G.STANDARD_CHARSET));
 
                 for (NovelContentLine ncl : loadedContent) {
                     if (ncl.content.length() == 0) {

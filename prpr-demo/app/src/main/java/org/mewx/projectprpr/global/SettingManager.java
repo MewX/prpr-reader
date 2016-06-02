@@ -18,7 +18,7 @@ public class SettingManager {
 
     public static void loadAllSetting() {
         allSetting = new ContentValues();
-        String h = FileTool.loadFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_READER_SETTINGS));
+        String h = FileTool.loadFullFileContent(G.getStoragePath(G.PROJECT_FILE_READER_SETTINGS));
         String[] sets = h.split("\\|\\|\\|\\|");
         for(String set : sets) {
             String[] temp = set.split("::::");
@@ -27,8 +27,8 @@ public class SettingManager {
             allSetting.put(temp[0], temp[1]);
         }
 
-        if(TextUtils.isEmpty(getFromAllSetting(YBL.SettingItemsBasic.version)))
-            setToAllSetting(YBL.SettingItemsBasic.version, "1");
+        if(TextUtils.isEmpty(getFromAllSetting(G.SettingItemsBasic.version)))
+            setToAllSetting(G.SettingItemsBasic.version, "1");
     }
 
     public static void saveAllSetting() {
@@ -39,16 +39,16 @@ public class SettingManager {
             result = result + key + "::::" + allSetting.getAsString(key);
         }
 
-        FileTool.writeFullFileContent(YBL.getStoragePath(YBL.PROJECT_FILE_READER_SETTINGS), result);
+        FileTool.writeFullFileContent(G.getStoragePath(G.PROJECT_FILE_READER_SETTINGS), result);
     }
 
     @Nullable
-    public static String getFromAllSetting(YBL.SettingItemsBasic name) {
+    public static String getFromAllSetting(G.SettingItemsBasic name) {
         if(allSetting == null) loadAllSetting();
         return allSetting.getAsString(name.toString());
     }
 
-    public static void setToAllSetting(YBL.SettingItemsBasic name, String value) {
+    public static void setToAllSetting(G.SettingItemsBasic name, String value) {
         if(allSetting == null) loadAllSetting();
         if(name != null && value != null) {
             allSetting.remove(name.toString());

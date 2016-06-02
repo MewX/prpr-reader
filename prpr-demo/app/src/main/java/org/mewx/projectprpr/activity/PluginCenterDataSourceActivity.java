@@ -2,7 +2,6 @@ package org.mewx.projectprpr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,13 +11,10 @@ import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.DataSourceAdapter;
 import org.mewx.projectprpr.activity.adapter.DataSourceItem;
 import org.mewx.projectprpr.global.DataSourcePluginManager;
-import org.mewx.projectprpr.global.YBL;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
-import org.mewx.projectprpr.plugin.component.PluginInfo;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PluginCenterDataSourceActivity extends AppCompatTemplateActivity {

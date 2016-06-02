@@ -30,7 +30,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import org.mewx.projectprpr.MyApp;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.ViewImageDetailActivity;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.component.NovelContentLine;
 import org.mewx.projectprpr.reader.loader.ReaderFormatLoader;
 import org.mewx.projectprpr.reader.setting.ReaderSettingBasic;
@@ -133,6 +133,8 @@ public class ReaderPageViewBasic extends View {
         try {
             if (mSetting.getUseCustomFont())
                 typeface = Typeface.createFromFile(mSetting.getCustomFontPath()); // custom font
+            else
+                typeface = null;
         } catch (Exception e) {
             Toast.makeText(MyApp.getContext(), e.toString() + "\n可能的原因有：字体文件不在内置SD卡；内存太小字体太大，请使用简体中文字体，而不是CJK或GBK，谢谢，此功能为试验性功能；", Toast.LENGTH_SHORT).show();
         }
@@ -313,7 +315,7 @@ public class ReaderPageViewBasic extends View {
             }
 
             NovelContentLine.TYPE type = mLoader.getCurrentType();
-            String temp = mLoader.getCurrentAsString().charAt(curWordIndex) + "";
+            String temp = mLoader.getCurrentAsString().charAt(curWordIndex) + ""; // TODO: fix out of index exception
             int tempWidth = (int) textPaint.measureText(temp);
 
             // Line full?
@@ -621,7 +623,7 @@ public class ReaderPageViewBasic extends View {
     }
 
     private void AsyncLoadBitmap(final BitmapInfo bitmapInfo) {
-        final String imagePath = YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfo.idxLineInfo).content, YBL.STANDARD_IMAGE_FORMAT);
+        final String imagePath = G.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfo.idxLineInfo).content, G.STANDARD_IMAGE_FORMAT);
         ImageRequest imageRequest;
         if(!FileTool.existFile(imagePath)) {
             imageRequest = ImageRequest.fromUri(lineInfoList.get(bitmapInfo.idxLineInfo).content);
@@ -686,7 +688,7 @@ public class ReaderPageViewBasic extends View {
         } else {
             String imagePath = "";
             if (lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.contains("http")) {
-                imagePath = YBL.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content, YBL.STANDARD_IMAGE_FORMAT);
+                imagePath = G.generateImageFileFullPathByURL(lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content, G.STANDARD_IMAGE_FORMAT);
             } else if (lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.contains("file")) {
                 imagePath = lineInfoList.get(bitmapInfoList.get(0).idxLineInfo).content.replace("file://", "");
             }

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import org.mewx.projectprpr.R;
 import org.mewx.projectprpr.activity.adapter.NetNovelListAdapter;
 import org.mewx.projectprpr.global.DataSourcePluginManager;
-import org.mewx.projectprpr.global.YBL;
+import org.mewx.projectprpr.global.G;
 import org.mewx.projectprpr.plugin.NovelDataSourceBasic;
 import org.mewx.projectprpr.plugin.component.NovelInfo;
 import org.mewx.projectprpr.plugin.component.PageNumBetween;
@@ -21,7 +21,6 @@ import org.mewx.projectprpr.plugin.component.PluginInfo;
 import org.mewx.projectprpr.template.AppCompatTemplateActivity;
 
 import java.io.IOException;
-import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +84,7 @@ public class DataSourceItemInitialActivity extends AppCompatTemplateActivity {
     private void requestLatestNovelList() {
         try {
             isLoading = true;
-            YBL.globalOkHttpClient3.newCall(dataSourceBasic.getMainListRequest(pageRange.getNext()).getOkHttpRequest(YBL.STANDARD_CHARSET))
+            G.globalOkHttpClient3.newCall(dataSourceBasic.getMainListRequest(pageRange.getNext()).getOkHttpRequest(G.STANDARD_CHARSET))
                     .enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {

@@ -25,7 +25,7 @@ import okhttp3.OkHttpClient;
  * Static for all classes to call.
  */
 @SuppressWarnings("unused")
-public class YBL {
+public class G {
     // enumerables
     public enum VERSION_TYPE_ENUM {
         TEST,
