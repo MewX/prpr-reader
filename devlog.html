@@ -5,7 +5,7 @@ title: "开发日志"
 
 {% for post in site.posts %}
 <hr>
-<blockquote contenteditable="true">
+<blockquote contenteditable="false">
   <h3>{{ post.title }}&nbsp;&nbsp;-&nbsp;&nbsp;{{ post.subtitle }}</h3><hr>
   {{ post.content }}
   <small>Posted by <i>{{ post.author }}</i> on {{ post.date | date: "%b %d, %Y" }}</small>
