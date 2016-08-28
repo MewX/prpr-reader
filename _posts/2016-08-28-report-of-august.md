@@ -2,7 +2,7 @@
 layout: sub
 title: "8月简报"
 subtitle: "真没先到一个机器学习够我学好几个月 QAQ"
-date: 2016-08-28 15:07
+date: 2016-08-28 13:07
 comments: false
 author: MewX
 published: true
